@@ -72,3 +72,48 @@ usersController.register = async (req, res, next) => {
         });
     }
 }
+usersController.login = async (req, res, next) => {
+    try {
+        const {
+            phone,
+            password
+        } = req.body;
+        const user = await UserModel.findOne({
+            phone: phone
+        })
+        if (!user) {
+            return res.status(httpStatus.BAD_REQUEST).json({
+                message: 'Username or password incorrect'
+            });
+        }
+
+        // password
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+            return res.status(httpStatus.BAD_REQUEST).json({
+                message: 'Username or password incorrect'
+            });
+        }
+
+        // login success
+
+        // create and assign a token
+        const token = jwt.sign(
+            {username: user.username, firstName: user.firstName, lastName: user.lastName, id: user._id},
+            JWT_SECRET
+        );
+        delete user["password"];
+        return res.status(httpStatus.OK).json({
+            data: {
+                id: user._id,
+                phone: user.phone,
+                username: user.username,
+            },
+            token: token
+        })
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}

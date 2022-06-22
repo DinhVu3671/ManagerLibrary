@@ -117,3 +117,137 @@ usersController.login = async (req, res, next) => {
         });
     }
 }
+usersController.edit = async (req, res, next) => {
+    try {
+        let userId = req.userId;
+        let user;
+        const {
+            fullName,
+            gmail,
+        } = req.body;
+        const dataUserUpdate = {};
+        const listPros = [
+            "fullName",
+            "gmail",
+        ];
+        for (let i = 0; i < listPros.length; i++) {
+            let pro = listPros[i];
+            if (req.body.hasOwnProperty(pro)) {
+                switch (pro) {
+                    case "fullName":
+                        if (fullName && fullName.trim().length > 0 ) {
+                            dataUserUpdate[pro] = fullName.trim();
+                        }
+                        break;
+                    case "gmail":
+                        if (gmail && gmail.trim().length > 0 ) {
+                            dataUserUpdate[pro] = gmail.trim();
+                        }
+                        break;
+                    default:
+                        dataUserUpdate[pro] = req.body[pro];
+                        break;
+                }
+            }
+        }
+        user = await UserModel.findOneAndUpdate({_id: userId}, dataUserUpdate, {
+            new: true,
+            runValidators: true
+        });
+        if (!user) {
+            return res.status(httpStatus.NOT_FOUND).json({message: "Can not find user"});
+        }
+        user = await UserModel.findById(userId).select('fullName phone username gmail');
+        return res.status(httpStatus.OK).json({
+            data: user
+        });
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+usersController.show = async (req, res, next) => {
+    try {
+        let userId = null;
+        if (req.params.id) {
+            userId = req.params.id;
+        } else {
+            userId = req.userId;
+        }
+        let user = await UserModel.findById(userId).select('fullName phone username gmail');
+        if (user == null) {
+            return res.status(httpStatus.NOT_FOUND).json({message: "Can not find user"});
+        }
+        return res.status(httpStatus.OK).json({
+            data: user
+        });
+    } catch (error) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({message: error.message});
+    }
+}
+usersController.changePassword = async (req, res, next) => {
+    try {
+        let userId = req.userId;
+        let  user = await UserModel.findById(userId);
+        if (user == null) {
+            return res.status(httpStatus.UNAUTHORIZED).json({
+                message: "UNAUTHORIZED"
+            });
+        }
+        const {
+            currentPassword,
+            newPassword,
+        } = req.body;
+        // password
+        const validPassword = await bcrypt.compare(currentPassword, user.password);
+        if (!validPassword) {
+            return res.status(httpStatus.BAD_REQUEST).json({
+                message: 'Current password incorrect',
+                code: 'CURRENT_PASSWORD_INCORRECT'
+            });
+        }
+        //Hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+        user = await UserModel.findOneAndUpdate({_id: userId}, {
+            password: hashedNewPassword
+        }, {
+            new: true,
+            runValidators: true
+        });
+        if (!user) {
+            return res.status(httpStatus.NOT_FOUND).json({message: "Can not find user"});
+        }
+        // create and assign a token
+        const token = jwt.sign(
+            {username: user.username, firstName: user.firstName, lastName: user.lastName, id: user._id},
+            JWT_SECRET
+        );
+        user = await UserModel.findById(userId).select('phonenumber username gender birthday avatar cover_image blocked_inbox blocked_diary').populate('avatar').populate('cover_image');
+        return res.status(httpStatus.OK).json({
+            data: user,
+            token: token
+        });
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message,
+        });
+    }
+}
+usersController.searchUser = async (req, res, next) => {
+    try {
+        let searchKey = new RegExp(req.body.keyword, 'i')
+        let result = await UserModel.find({phone: searchKey}).limit(10).exec();
+        res.status(200).json({
+            code: 200,
+            message: "Tìm kiếm thành công",
+            data: result
+        });
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+module.exports = usersController;

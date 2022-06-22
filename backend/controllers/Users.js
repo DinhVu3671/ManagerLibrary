@@ -117,3 +117,53 @@ usersController.login = async (req, res, next) => {
         });
     }
 }
+usersController.edit = async (req, res, next) => {
+    try {
+        let userId = req.userId;
+        let user;
+        const {
+            fullName,
+            gmail,
+        } = req.body;
+        const dataUserUpdate = {};
+        const listPros = [
+            "fullName",
+            "gmail",
+        ];
+        for (let i = 0; i < listPros.length; i++) {
+            let pro = listPros[i];
+            if (req.body.hasOwnProperty(pro)) {
+                switch (pro) {
+                    case "fullName":
+                        if (fullName && fullName.trim().length > 0 ) {
+                            dataUserUpdate[pro] = fullName.trim();
+                        }
+                        break;
+                    case "gmail":
+                        if (gmail && gmail.trim().length > 0 ) {
+                            dataUserUpdate[pro] = gmail.trim();
+                        }
+                        break;
+                    default:
+                        dataUserUpdate[pro] = req.body[pro];
+                        break;
+                }
+            }
+        }
+        user = await UserModel.findOneAndUpdate({_id: userId}, dataUserUpdate, {
+            new: true,
+            runValidators: true
+        });
+        if (!user) {
+            return res.status(httpStatus.NOT_FOUND).json({message: "Can not find user"});
+        }
+        user = await UserModel.findById(userId).select('fullName phone username gmail');
+        return res.status(httpStatus.OK).json({
+            data: user
+        });
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}

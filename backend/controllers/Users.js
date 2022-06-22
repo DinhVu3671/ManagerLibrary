@@ -186,4 +186,53 @@ usersController.show = async (req, res, next) => {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({message: error.message});
     }
 }
+usersController.changePassword = async (req, res, next) => {
+    try {
+        let userId = req.userId;
+        let  user = await UserModel.findById(userId);
+        if (user == null) {
+            return res.status(httpStatus.UNAUTHORIZED).json({
+                message: "UNAUTHORIZED"
+            });
+        }
+        const {
+            currentPassword,
+            newPassword,
+        } = req.body;
+        // password
+        const validPassword = await bcrypt.compare(currentPassword, user.password);
+        if (!validPassword) {
+            return res.status(httpStatus.BAD_REQUEST).json({
+                message: 'Current password incorrect',
+                code: 'CURRENT_PASSWORD_INCORRECT'
+            });
+        }
+        //Hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+        user = await UserModel.findOneAndUpdate({_id: userId}, {
+            password: hashedNewPassword
+        }, {
+            new: true,
+            runValidators: true
+        });
+        if (!user) {
+            return res.status(httpStatus.NOT_FOUND).json({message: "Can not find user"});
+        }
+        // create and assign a token
+        const token = jwt.sign(
+            {username: user.username, firstName: user.firstName, lastName: user.lastName, id: user._id},
+            JWT_SECRET
+        );
+        user = await UserModel.findById(userId).select('phonenumber username gender birthday avatar cover_image blocked_inbox blocked_diary').populate('avatar').populate('cover_image');
+        return res.status(httpStatus.OK).json({
+            data: user,
+            token: token
+        });
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message,
+        });
+    }
+}
 module.exports = usersController;

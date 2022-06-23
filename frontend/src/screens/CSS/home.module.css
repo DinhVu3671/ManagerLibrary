@@ -22,3 +22,29 @@
     margin-bottom: 20px;
     background-color: #fff;
 }
+
+.start{
+    display: flex;
+    justify-content: space-between;
+}
+
+.introduceRight{
+    margin-right: 15%;
+    background-color: rgb(245, 242, 242);
+}
+.introduceLeft{
+    margin-left: 15%;
+    background-color: rgb(245, 242, 242);
+    margin-top: 25px;
+}
+.note{
+    margin-top: 20px;
+    width: 350px;
+    height: 300px;
+}
+.notetext{
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    padding-left: 10px;
+}

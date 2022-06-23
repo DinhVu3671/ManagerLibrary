@@ -4,21 +4,17 @@
     margin-left: 20px;
 }
 
-.productTitle{
-    margin-top: -20px;
+.information{
+    margin-top: 0px;
     margin-left: 20px;
 }
 .ratingScore{
     margin-top: -5px;
     margin-left: 40px;
 }
-.ratingInfo{
-    margin-top: 20px;
-    display: flex;
-}
-.ratingInfo{
-    margin-top: 20px;
-    display: flex;
+.star{
+    margin-top: 15px;
+    margin-left: 10px;
 }
 
 .ratingUser{
@@ -26,9 +22,9 @@
     display: flex;
 }
 
-.soldInfo{
+.rating{
     display: flex;
-    margin-top: -30px;
+    margin-top: -18px;
 }
 .tap{
     margin-left: 4px;
@@ -38,32 +34,6 @@
     background-color: rgb(250, 230, 230);
     color: rgb(222, 62, 62);
     font-size: 45px;
-}
-.button{
-    text-align: center;
-    margin-top: 50px;
-    max-height: 30px;
-    max-width: 50px;
-    margin-left: 1px;
-    margin-right: 1px;
-}
-
-.button1{
-    text-align: center;
-    margin-top: 50px;
-    max-height: 25px;
-    max-width: 50px;
-    margin-left: 1px;
-    margin-right: 1px;
-}
-
-.button2{
-    text-align: center;
-    margin-top: 10px;
-    max-height: 35px;
-    margin-left: 5px;
-    margin-right: 5px;
-    font-size: 25px;
 }
 
 .numberProduct{
@@ -90,4 +60,22 @@
     margin-left: 1px;
     margin-right: 20px;
     width: 200px;
+}
+
+.title{
+    display: flex;
+    padding-bottom: 1px;
+    padding-top: 20px;
+}
+
+.content{
+    margin-left: 20px;
+    margin-right: 20px;
+    width: 200px;
+}
+
+.textInfor{
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-weight: bold;
 }

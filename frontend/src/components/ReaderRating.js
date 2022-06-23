@@ -19,7 +19,7 @@ function ReaderRating({imageTest, userName, ratingScore, timeRate, comment}){
             </CardActionArea>
           </Card>
         </div>
-        <div className={stylesBook.productTitle}>
+        <div className={stylesBook.information}>
           <Link to='/testShop' >
             <h4>
               {userName}

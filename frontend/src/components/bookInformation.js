@@ -9,6 +9,11 @@ import imageTest from '../assets/testproduct.jpg'
 import { Rating } from '@mui/material';
 import { Link } from 'react-router-dom';
 import UserRating from './ReaderRating';
+import logo from '../assets/logo.png'
+import face from '../assets/facebook.png'
+import instagram from '../assets/instagram.png'
+import twitter from '../assets/twitter.png'
+import BookImages from './bookImages';
 
 function BookInformation({navigation}) {
     return (
@@ -16,128 +21,105 @@ function BookInformation({navigation}) {
         <Header navigation={navigation}/>
         <div className={styles.content} >
           <div className={styles.wraper}>
-            <p className={styles.tdisplay}> Thong tin san pham </p>
+            <p className={styles.tdisplay}> Thông tin sách </p>
             <div className={stylesBook.productImage}>
               <div className="image">
-                <Card sx={{ maxWidth: 345, minWidth: 300 }}>
-                  <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      image={imageTest}
-                      alt="green iguana"
-                    />
-                  </CardActionArea>
-                </Card>
+                <BookImages images={[face, instagram, twitter, imageTest]} />
               </div>
-              <div className={stylesBook.productTitle}>
-                  <h2> Rubik GAN Monster GO 2x2 / 3x3 / Pyraminx / Skewb Stickerless - Monster GO 3x3 M Có Nam Châm </h2>
-                  <div  className={stylesBook.soldInfo}>               
-                    <h3>3</h3>
-                    <div className={stylesBook.ratingInfo}>                  
-                      <Rating name="half-rating-read" defaultValue={3} readOnly />
-                    </div>       
-                    <div className={stylesBook.tap}>
-                      <h3> | 123 Đánh giá </h3>  
-                    </div>              
+              <div className={stylesBook.information}>
+                <div className={stylesBook.title}>
+                  <div className={stylesBook.content}>
+                    Tên sách:
                   </div>
+                  <div>
+                    Em gái mẹ kế là người yêu cũ
+                  </div>
+                </div>
 
-                  <div className={stylesBook.colInformation}>
-                    <div className={stylesBook.colInformation_2}>
-                      <h3> Gui tu </h3>  
-                    </div>
-                    <div>
-                      <h3> Ha Noi </h3>  
+                <div className={stylesBook.title}>
+                  <div className={stylesBook.content}>
+                    Thể loại:
+                  </div>
+                  <div>
+                    Rom-Com
+                  </div>
+                </div>
+
+                <div className={stylesBook.title}>
+                  <div className={stylesBook.content}>
+                    Đánh giá:
+                  </div>
+                  <div  className={stylesBook.rating}>               
+                    <p>3</p>
+                    <div className={stylesBook.star}>                  
+                      <Rating name="half-rating-read" defaultValue={3} readOnly />     
                     </div>      
                   </div>
+                </div>
 
-                  <div className={stylesBook.colInformation}>
-                    <div className={stylesBook.colInformation_2}>
-                      <h3> Tong so sach </h3>  
-                    </div>
-                    <div>
-                      <h3> 10 </h3>  
-                    </div>      
+                <div className={stylesBook.title}>
+                  <div className={stylesBook.content}>
+                    Lượt đánh giá:
                   </div>
-
-                  <div className={stylesBook.colInformation}>
-                    <div className={stylesBook.colInformation_2}>
-                      <h3> TInh trinh </h3>  
-                    </div>
-                    <div>
-                      <h3> co the muon </h3>  
-                    </div>      
+                  <div>
+                    123 Đánh giá
                   </div>
+                </div>
 
-                  <div className={stylesBook.colInformation}>
-                    <div className={stylesBook.colInformation_2}>
-                      <h3> tac gia </h3>  
-                    </div>
-                    <div>
-                      <h3> DTV </h3>  
-                    </div>      
+                <div className={stylesBook.title}>
+                  <div className={stylesBook.content}>
+                    Tên tác giả:
                   </div>
-
-                  <div className={stylesBook.colInformation}>
-                    <div className={stylesBook.colInformation_2}>
-                      <h3> Cap nhat </h3>  
-                    </div>
-                    <div>
-                      <h3> 21:30:14 21/05/2022 </h3>  
-                    </div>      
+                  <div>
+                    Bạn Vũ giấu tên
                   </div>
-                  <p className={styles.tdisplay}> </p>
+                </div>
 
+                <div className={stylesBook.title}>
+                  <div className={stylesBook.content}>
+                    Năm xuất bản:
+                  </div>
+                  <div>
+                    2022
+                  </div>
+                </div>
+
+                <div className={stylesBook.title}>
+                  <div className={stylesBook.content}>
+                    Tình trạng:
+                  </div>
+                  <div>
+                    Có thể mượn
+                  </div>
+                </div>
+
+                <div className={stylesBook.title}>
+                  <div className={stylesBook.content}>
+                    Cập nhật lần cuối:
+                  </div>
+                  <div>
+                    15:30:00 15/06/2022
+                  </div>
+                </div>
+                <p className={styles.tdisplay}> </p>
               </div>
+            <div className={stylesBook.footFake}>
+              <p>  </p>
+            </div>
+          </div>
+          </div>          
+          <div className={styles.wraper}>
+            <p className={styles.tdisplay}> Nội dung </p>
+            <div className={stylesBook.information}>
+              Tên khác: My stepmom's daughter was my ex-girlfriend; La hija de mi madrastra es mi ex-novia,Mamahaha no tsurego ga moto kanodatta,Mamakano
+              Cái tên nói lên tất cả.
             </div>
             <div className={stylesBook.footFake}>
               <p>  </p>
             </div>
           </div>
-
           <div className={styles.wraper}>
-            <p className={styles.tdisplay}> Chi Tiet san pham </p>
-            <div className={stylesBook.colInformation}>
-              <div className={stylesBook.colInformation_1}>
-                Loai san pham
-              </div>
-              <div>
-                Mo Hinh
-              </div>
-            </div>
-
-            <div className={stylesBook.colInformation}>
-              <div className={stylesBook.colInformation_1}>
-                Kho hang
-              </div>
-              <div>
-                10
-              </div>
-            </div>
-
-            <div className={stylesBook.colInformation}>
-              <div className={stylesBook.colInformation_1}>
-                Gui tu
-              </div>
-              <div>
-                Ha Noi
-              </div>
-            </div>
-
-            <div className={stylesBook.colInformation}>
-              <div className={stylesBook.colInformation_1}>
-                Mo ta san pham
-              </div>
-              <div>
-                <div>Mô Hình Nendoroid Nino Nakano - Nendoroid 1612 Gotoubun No Hanayome</div>
-                <div>Có thể thay đổi tay chân, khuôn mặt như trong ảnh</div>
-                <div>- Kích thước: 10cm</div>
-                <div>- Công ty sản xuất: GSC</div>
-              </div>
-            </div>
-
-          </div>
-          <div className={styles.wraper}>
-            <p className={styles.tdisplay}> Danh gia san pham </p>
+            <p className={styles.tdisplay}> Đánh giá sách </p>
             <div className={stylesBook.colInformation}> 
               <div>    
                 <h3 className={stylesBook.ratingScore}> 3 / 5 </h3>
@@ -155,7 +137,7 @@ function BookInformation({navigation}) {
               userName="Kito"
               ratingScore={5}
               timeRate="14:30:00 29/05/2022"
-              comment="San pham dep"
+              comment="Sách khá hay"
             />
 
             <UserRating
@@ -163,7 +145,7 @@ function BookInformation({navigation}) {
               userName="Ayano"
               ratingScore={4}
               timeRate="14:30:00 29/04/2022"
-              comment="San pham tot"
+              comment="Sách không tệ lắm"
             />
 
             <UserRating
@@ -171,7 +153,7 @@ function BookInformation({navigation}) {
               userName="Mitsuha"
               ratingScore={4}
               timeRate="14:30:00 05/05/2022"
-              comment="Nino is the best"
+              comment="Bao giờ có tập mới vậy?"
             />
 
           </div>

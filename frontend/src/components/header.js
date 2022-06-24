@@ -86,7 +86,7 @@ function Header() {
               className={styles.userIcon}
               onClick={() =>
                 Cookies.get('access_token') == null
-                  ? navigatePath('/customer/login')
+                  ? navigatePath('/login')
                   : navigatePath('/user-information')
               }
             />
@@ -94,7 +94,7 @@ function Header() {
               className={styles.textColor}
               onClick={() =>
                 Cookies.get('access_token') == null
-                  ? navigatePath('/customer/login')
+                  ? navigatePath('/login')
                   : navigatePath('/user-information')
               }
             >

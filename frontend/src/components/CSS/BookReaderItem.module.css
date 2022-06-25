@@ -40,6 +40,10 @@
     margin-top: 100px;
 }
 
+.footFake2{
+    margin-top: 10px;
+}
+
 .moneyItem{
     margin-left: 20px;
     margin-top: 50px;
@@ -87,3 +91,29 @@
 .tap{
     margin-right: 20px;
 }
+
+.star{
+    margin-top: -10px;
+}
+
+.commentBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    background-color: #fff;
+    border: '2px solid #000';
+    box-shadow: 24;
+    padding: 4px;
+}
+
+.formInput {
+    font-size: 1em;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+  }

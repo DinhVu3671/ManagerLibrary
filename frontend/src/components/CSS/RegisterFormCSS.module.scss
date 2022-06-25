@@ -1,6 +1,7 @@
 .row {
   width: 100%;
 }
+
 .registerContainer {
   display: flex;
   min-height: 700px;
@@ -112,4 +113,8 @@
 /* Blue */
 .btn.primary:hover {
   background: #0b7dda;
+}
+
+.col4{
+  margin-right: 360px;
 }

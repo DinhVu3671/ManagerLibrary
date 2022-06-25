@@ -61,6 +61,7 @@ function Header() {
   };
   const handleCloseProfile = () => {
     setAnchorEl(null);
+    navigatePath('/account');
   };
 
   const handleLogout = () => {

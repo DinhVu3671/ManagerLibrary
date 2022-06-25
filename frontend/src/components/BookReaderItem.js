@@ -8,20 +8,76 @@ import imageTest from '../assets/testproduct.jpg'
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import clsx from 'clsx';
+import Box from '@mui/material/Box';
+import Rating from '@mui/material/Rating';
+import Typography from '@mui/material/Typography';
+import { useState } from 'react';
+import stylesBookManger from '../components/CSS/bookManager.module.css';
+import Modal from '@mui/material/Modal';
 
 function ButtonOrder({post, st}){
+    const [value, setValue] = React.useState(0);
+    const [comment, setComment] = React.useState('');
+    const [openRating, setRating] = useState(false);
+    const handleOpen = () =>  {
+        setValue(0);
+        setRating(true);
+        setComment('');
+    };
+    const handleClose = () =>  setRating(false);
     console.log(st)
     return (
         <div >
             {st === "Đã trả" && (
-                <div className={clsx(styleBookReader.soldInfo, styleBookReader.button2)}>          
-                    <div className={clsx(styleBookReader.tap)}>
-                        <Button variant="outlined"> Đánh giá sách </Button>
-                    </div> 
-                    <div>
-                        <Button variant="outlined" > Mượn lại </Button>
+                <div>
+                    <Modal
+                        open={openRating}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                        >
+                        <Box  className={styleBookReader.commentBox}>
+                            <div className={styles.wraper}>  
+                                <p className={stylesBookManger.formdelete}> Đánh giá sách ? </p>
+                            </div>
+                            <div className={stylesBookManger.formdelete}>
+                                <div>
+                                    <Rating
+                                            name="simple-controlled"
+                                            value={value}
+                                            onChange={(event, newValue) => {
+                                            setValue(newValue);
+                                            }}
+                                        />                                    
+                                </div>
+                                <input
+                                id="comment"
+                                name="comment"
+                                type="text"
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                className={clsx(stylesBookManger.formInput, stylesBookManger.row)}
+                                placeholder="Bình luận..."
+                                required
+                                />
+                                <div className={stylesBookManger.footFake2}>
+                                    <p>  </p>
+                                </div>                                
+                            </div>
+                            <div className={stylesBookManger.button}>
+                                <Button onClick={handleClose}> Huỷ </Button>
+                                <Button onClick={handleClose}>Xác nhận</Button>
+                            </div>
+                        </Box>
+                    </Modal>
+                    <div className={clsx(styleBookReader.soldInfo, styleBookReader.button2)}>          
+                        <div className={clsx(styleBookReader.tap)}>
+                            <Button onClick={handleOpen} variant="outlined"> Đánh giá sách </Button>
+                        </div> 
+                        <div>
+                            <Button variant="outlined" > Mượn lại </Button>
+                        </div>
+                        
                     </div>
-                    
                 </div>
             )}
         </div>

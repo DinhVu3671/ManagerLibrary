@@ -18,26 +18,10 @@ import axios from '../config/axios';
 import MuiAlert from '@mui/material/Alert';
 import ImageUploader from '../components/imageUploader';
 import imageTest from '../assets/testproduct.jpg'
-import Select from '@mui/material/Select';
-import Avatar from '@mui/material/Avatar';
 import TablePagination from '@mui/material/TablePagination';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import BlockIcon from '@mui/icons-material/Block';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
-import LockIcon from '@mui/icons-material/Lock';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-import MenuItem from '@mui/material/MenuItem';
 import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -79,10 +63,10 @@ const headCells = [
   { id: 'lastUpdate', numeric: false, disablePadding: false, label: 'Cập nhật lần cuối'},
 ]
 
-function stableSort(array, a, b) {
+function stableSort(array, compare) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
-    const order = (a[0], b[0]);
+    const order = compare(a[0], b[0]);
     if (order !== 0) {
       return order;
     }
@@ -321,7 +305,7 @@ function BookManager(books) {
           aria-describedby="modal-modal-description"
         >
           <Box  className={stylesBookManger.box}>
-              <Modal
+            <Modal
               open={openDelete}
               aria-labelledby="modal-modal-title"
               aria-describedby="modal-modal-description"
@@ -626,7 +610,7 @@ function BookManager(books) {
                   </TableRow>
                 </TableHead> */}
                 <TableBody>
-                  {stableSort(posts, getComparator(order, orderBy))
+                  {posts.slice().sort(getComparator(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((book, index) => {
                       const isItemSelected = isSelected(book.id);

@@ -141,7 +141,7 @@ function RegisterForm(props) {
                       htmlFor="firstName"
                       className={clsx(styles.formLabel, styles.row)}
                     >
-                      Họ và tên đệm:
+                      Họ và tên:
                     </label>
                     <input
                       id="firstName"
@@ -150,26 +150,7 @@ function RegisterForm(props) {
                       onChange={(e) => setFirstName(e.target.value)}
                       type="text"
                       className={clsx(styles.formInput, styles.row)}
-                      placeholder="Họ và tên đệm..."
-                      required
-                    />
-                  </div>
-
-                  <div className={clsx(styles.formField, styles.col3)}>
-                    <label
-                      htmlFor="lastName"
-                      className={clsx(styles.formLabel, styles.row)}
-                    >
-                      Tên:
-                    </label>
-                    <input
-                      id="lastName"
-                      name="lastName"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      type="text"
-                      className={clsx(styles.formInput, styles.row)}
-                      placeholder="Tên..."
+                      placeholder="Họ và tên..."
                       required
                     />
                   </div>
@@ -192,9 +173,7 @@ function RegisterForm(props) {
                       required
                     />
                   </div>
-                </div>
 
-                <div className={clsx(styles.formRow, styles.row)}>
                   <div className={clsx(styles.formField, styles.col3)}>
                     <label
                       htmlFor="phone"
@@ -213,6 +192,9 @@ function RegisterForm(props) {
                       required
                     />
                   </div>
+                </div>
+
+                <div className={clsx(styles.formRow, styles.row)}>
 
                   <div className={clsx(styles.formField, styles.col3)}>
                     <label
@@ -304,9 +286,6 @@ function RegisterForm(props) {
                       required
                     />
                   </div>
-                </div>
-
-                <div className={clsx(styles.formRow, styles.row)}>
                   <div className={clsx(styles.formField, styles.col3)}>
                     <label
                       htmlFor="address"
@@ -325,6 +304,9 @@ function RegisterForm(props) {
                       required
                     />
                   </div>
+                </div>
+
+                <div className={clsx(styles.formRow, styles.row)}>
 
                   <div className={clsx(styles.formField, styles.col3)}>
                     <label
@@ -344,7 +326,7 @@ function RegisterForm(props) {
                     />
                   </div>
 
-                  <div className={clsx(styles.formField, styles.col3)}>
+                  <div className={clsx(styles.formField, styles.col4)}>
                     <label
                       htmlFor="confirmPassword"
                       className={clsx(styles.formLabel, styles.row)}

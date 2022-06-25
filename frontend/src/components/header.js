@@ -12,6 +12,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
 
 function Header() { 
   const navigate = useNavigate();
@@ -51,6 +53,26 @@ function Header() {
 
   const listKeyWord = ['Nhan đề', 'Tác giả', 'Chủ đề', 'Mô tả']
 
+  // profile
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClickProfile = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+  const handleCloseProfile = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    setAnchorEl(null);
+    navigatePath('/login');
+  };
+
+  const handleBookReaderManager = () => {
+    setAnchorEl(null);
+    navigatePath('/bookReaderManager');
+  };
+
   return (
     <div className={styles.Header}>
       <div className={styles.toolBar}>
@@ -80,15 +102,17 @@ function Header() {
               className={`${styles.textColor} ${styles.textDate}`}
             >{`${dayCurr}, ${dateCurr}`}</label>
 
-          <a className={styles.divUser}>
+          <div className={styles.divUser}>
             <img
               src={userImage}
               className={styles.userIcon}
-              onClick={() =>
-                Cookies.get('access_token') == null
-                  ? navigatePath('/login')
-                  : navigatePath('/user-information')
-              }
+              onClick={handleClickProfile}
+              alt="Profile"
+              // onClick={() =>
+              //   Cookies.get('access_token') == null
+              //     ? navigatePath('/login')
+              //     : navigatePath('/user-information')
+              // }
             />
             <p
               className={styles.textColor}
@@ -100,7 +124,21 @@ function Header() {
             >
               {Cookies.get('access_token') == null ? 'Đăng nhập' : username}
             </p>
-          </a>
+          </div>
+
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleCloseProfile}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button',
+            }}
+          >
+            <MenuItem onClick={handleCloseProfile}> Tài khoản của tôi </MenuItem>
+            <MenuItem onClick={handleBookReaderManager}> Quản lý mượn trả </MenuItem>
+            <MenuItem onClick={handleLogout}> Đăng xuất </MenuItem>
+          </Menu>
         </div>
       </div>
 

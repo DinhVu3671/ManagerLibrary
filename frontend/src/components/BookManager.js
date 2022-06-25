@@ -63,10 +63,10 @@ const headCells = [
   { id: 'lastUpdate', numeric: false, disablePadding: false, label: 'Cập nhật lần cuối'},
 ]
 
-function stableSort(array, a, b) {
+function stableSort(array, compare) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
-    const order = (a[0], b[0]);
+    const order = compare(a[0], b[0]);
     if (order !== 0) {
       return order;
     }
@@ -610,7 +610,7 @@ function BookManager(books) {
                   </TableRow>
                 </TableHead> */}
                 <TableBody>
-                  {stableSort(posts, getComparator(order, orderBy))
+                  {posts.slice().sort(getComparator(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((book, index) => {
                       const isItemSelected = isSelected(book.id);

@@ -2,20 +2,27 @@ import Header from './header';
 import Footer from './footer';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
-import { CardActionArea } from '@mui/material';
+import { Button, CardActionArea } from '@mui/material';
 import styles from '../screens/CSS/home.module.css';
 import stylesBook from '../components/CSS/BookInformation.module.css';
 import imageTest from '../assets/testproduct.jpg'
 import { Rating } from '@mui/material';
-import { Link } from 'react-router-dom';
 import UserRating from './ReaderRating';
 import logo from '../assets/logo.png'
 import face from '../assets/facebook.png'
 import instagram from '../assets/instagram.png'
 import twitter from '../assets/twitter.png'
 import BookImages from './bookImages';
+import { Link, useNavigate } from 'react-router-dom';
 
 function BookInformation({navigation}) {
+    const navigate = useNavigate();
+
+    const navigatePath = function (path) {
+      if (window.location.pathname !== path) {
+        navigate(path);
+      }
+    };
     return (
       <div className={styles.Home}>
         <Header navigation={navigation}/>
@@ -102,6 +109,15 @@ function BookInformation({navigation}) {
                   </div>
                 </div>
                 <p className={styles.tdisplay}> </p>
+
+                <div>
+                  <Button> Thêm vào danh sách mượn </Button>
+                  <Button onClick={() => {navigatePath("/cartBook")}}> Mượn ngay </Button>
+                </div>
+                <div className={stylesBook.footFake}>
+                  <p>  </p>
+                </div>
+
               </div>
             <div className={stylesBook.footFake}>
               <p>  </p>

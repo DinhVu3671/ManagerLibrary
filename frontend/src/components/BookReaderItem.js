@@ -5,7 +5,6 @@ import CardMedia from '@mui/material/CardMedia';
 import { CardActionArea } from '@mui/material';
 import styles from '../components/CSS/BookInformation.module.css';
 import imageTest from '../assets/testproduct.jpg'
-import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import clsx from 'clsx';
 import Box from '@mui/material/Box';
@@ -14,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import stylesBookManger from '../components/CSS/bookManager.module.css';
 import Modal from '@mui/material/Modal';
+import { Link, useNavigate } from 'react-router-dom';
 
 function ButtonOrder({post, st}){
     const [value, setValue] = React.useState(0);
@@ -86,6 +86,13 @@ function ButtonOrder({post, st}){
 }
 
 function BookReaderItem({book, idShow}){
+    const navigate = useNavigate();
+
+    const navigatePath = function (path) {
+      if (window.location.pathname !== path) {
+        navigate(path);
+      }
+    };
     const posts = [
         {status: "Đang mượn", button1: "", button2: ""},
         {status: "Đã trả", button1: "Mượn lại", button2: "Đánh giá sách"},
@@ -100,19 +107,19 @@ function BookReaderItem({book, idShow}){
                         }
                     </div>
                     <div className={styleBookReader.productImage}>
-                        <Link to="/ProductTest">
-                            <div className="image">
-                                <Card sx={{ maxWidth: 100, minWidth: 100 }}>
-                                    <CardActionArea>
-                                        <CardMedia
-                                        component="img"
-                                        image={imageTest}
-                                        alt="green iguana"
-                                        />
-                                    </CardActionArea>
-                                </Card>
-                            </div>                        
-                        </Link>
+                        <div className="image">
+                            <Card sx={{ maxWidth: 100, minWidth: 100 }}>
+                                <CardActionArea>
+                                    <CardMedia
+                                    component="img"
+                                    image={imageTest}
+                                    alt="green iguana"
+                                    onClick={() => {navigatePath("/book")}}
+                                    />
+                                </CardActionArea>
+                            </Card>
+                        </div>                        
+    
                         
                         <div className={styleBookReader.productTitle}>
                             <p> Tên sách: {book.title} </p>

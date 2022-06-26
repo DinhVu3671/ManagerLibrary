@@ -1,0 +1,15 @@
+.Home{
+    background-color: rgb(245, 242, 242);
+}
+.content{
+    display: flex;
+    flex-direction: row;
+    margin-right: 2%;
+    margin-left: 1%;
+    justify-content: space-between;
+    
+
+}
+.tab2{
+    width: 80%;
+}

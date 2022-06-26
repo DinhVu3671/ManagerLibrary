@@ -8,6 +8,9 @@ import BookReaderManager from '../components/BookReaderManager';
 import EnhancedTable from '../components/BookManager1';
 import ReaderAccount from '../components/readerAccount';
 import CartBook from '../components/bookCart';
+import OrderBook from '../components/OrderBook';
+import OrderHistory from '../components/OrderHistory';
+import ReturnBook from '../components/ReturnBook';
 
 function RootRoutes() {
   return (
@@ -21,6 +24,9 @@ function RootRoutes() {
       <Route path="/account" element={<ReaderAccount />} />
       <Route path="/t" element={<EnhancedTable />} />
       <Route path="/cartBook" element={<CartBook />} />
+      <Route path="/orderBookManager" element={<OrderBook />} />
+      <Route path="/orderHistoryManager" element={<OrderHistory />} />
+      <Route path="/returnBookManager" element={<ReturnBook />} />
     </Routes>
   );
 }

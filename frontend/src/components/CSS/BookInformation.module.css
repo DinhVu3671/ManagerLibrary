@@ -79,3 +79,8 @@
     margin-bottom: 20px;
     font-weight: bold;
 }
+
+.buttonM{
+    justify-content: end;
+    display: flex;
+}

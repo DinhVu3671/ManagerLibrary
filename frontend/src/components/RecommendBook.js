@@ -7,8 +7,15 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import { Grid } from '@mui/material';
-
+import { Link, useNavigate } from 'react-router-dom';
 function RecommendBook(){
+  const navigate = useNavigate();
+
+  const navigatePath = function (path) {
+    if (window.location.pathname !== path) {
+      navigate(path);
+    }
+  };
     return (
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 8 }}  style={{padding:'5px'}}>
               {Array.from(Array(8)).map((_, index) => (
@@ -20,6 +27,7 @@ function RecommendBook(){
                         height="60"
                         image="/static/images/cards/contemplative-reptile.jpg"
                         alt="green iguana"
+                        onClick={() => {navigatePath("/book")}}
                       />
                       <CardContent>
                         <Typography gutterBottom variant="h5" component="div">

@@ -7,6 +7,7 @@ import Register from '../components/register';
 import BookReaderManager from '../components/BookReaderManager';
 import EnhancedTable from '../components/BookManager1';
 import ReaderAccount from '../components/readerAccount';
+import CartBook from '../components/bookCart';
 
 function RootRoutes() {
   return (
@@ -19,6 +20,7 @@ function RootRoutes() {
       <Route path="/bookReaderManager" element={<BookReaderManager />} />
       <Route path="/account" element={<ReaderAccount />} />
       <Route path="/t" element={<EnhancedTable />} />
+      <Route path="/cartBook" element={<CartBook />} />
     </Routes>
   );
 }

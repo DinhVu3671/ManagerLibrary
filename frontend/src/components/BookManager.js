@@ -23,6 +23,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import { visuallyHidden } from '@mui/utils';
+import stylesTab from './CSS/orderBook.module.css';
+import InformationTab from './InfomationTab';
+import OrderBookItem from './OrderBookItem';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -298,7 +301,6 @@ function BookManager(books) {
     return (
       <div className={styles.Home}>
         <Header />
-
         <Modal
           open={open}
           aria-labelledby="modal-modal-title"
@@ -555,140 +557,145 @@ function BookManager(books) {
           </Box>
         </Modal>
 
-
-        <div className={styles.content} >
-          <div className={styles.wraper}>
-            <div className={stylesBookManger.tdisplay}>  
-                <p>Quản lý sách</p>
-
-                <div className={clsx(stylesBookManger.searchBar)}>
-                  <SearchIcon className={clsx(stylesBookManger.searchIcon)} />
-                  <input
-                    className={clsx(stylesBookManger.searchInput)}
-                    type="text"
-                    placeholder="Tìm kiếm sách . . ."
-                    spellCheck={false}
-                    value={searchTerm}
-                    onChange={(e) => {
-                      console.log(e.target.value);
-                      return setSearchTerm(e.target.value);
-                    }}
-                  />
-                  {searchTerm && (
-                    <button
-                      className={clsx(stylesBookManger.clearButton)}
-                      onClick={() => setSearchTerm('')}
-                    >
-                      <CloseIcon className={clsx(stylesBookManger.clearIcon)} />
-                    </button>
-                  )}
-                </div>
-
-
-                <Button href="#text-buttons" onClick={handleOpen}>Thêm sách</Button>
+        <div className={stylesTab.content} >
+            <div className={stylesTab.tab1} >
+              <InformationTab/>
             </div>
-            
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <EnhancedTableHead
-                  order={order}
-                  orderBy={orderBy}
-                  onRequestSort={handleRequestSort}
-                  rowCount={posts.length}
-                />
-                {/* <TableHead>
-                  <TableRow>
-                    <TableCell> ID </TableCell>
-                    <TableCell align="right"> Tên sách </TableCell>
-                    <TableCell align="right"> Tác giả </TableCell>
-                    <TableCell align="right"> Thể loại </TableCell>
-                    <TableCell align="right"> Năm </TableCell>
-                    <TableCell align="right"> Đã mượn </TableCell>
-                    <TableCell align="right"> Tổng </TableCell>
-                    <TableCell align="right"> Đánh giá </TableCell>
-                    <TableCell align="right"> Cập nhật lần cuối </TableCell>
-                  </TableRow>
-                </TableHead> */}
-                <TableBody>
-                  {posts.slice().sort(getComparator(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((book, index) => {
-                      const isItemSelected = isSelected(book.id);
-                      const labelId = `enhanced-table-checkbox-${index}`;
 
-                      return (
-                        <TableRow
-                          hover
-                          onClick={(event) => handleClick(event, book.id)}
-                          role="checkbox"
-                          aria-checked={isItemSelected}
-                          tabIndex={-1}
-                          key={book.id}
-                          selected={isItemSelected}
+            <div className={stylesTab.tab2} >
+              <div className={styles.wraper}>
+                <div className={stylesBookManger.tdisplay}>  
+                    <p>Quản lý sách</p>
+
+                    <div className={clsx(stylesBookManger.searchBar)}>
+                      <SearchIcon className={clsx(stylesBookManger.searchIcon)} />
+                      <input
+                        className={clsx(stylesBookManger.searchInput)}
+                        type="text"
+                        placeholder="Tìm kiếm sách . . ."
+                        spellCheck={false}
+                        value={searchTerm}
+                        onChange={(e) => {
+                          console.log(e.target.value);
+                          return setSearchTerm(e.target.value);
+                        }}
+                      />
+                      {searchTerm && (
+                        <button
+                          className={clsx(stylesBookManger.clearButton)}
+                          onClick={() => setSearchTerm('')}
                         >
-                        <TableCell component="th" scope="row">
-                          {book.id}
-                        </TableCell>
-                        <TableCell align="right"><Button onClick={() => handleOpenInforBook(book)}>{book.title}</Button></TableCell>
-                        <TableCell align="right">{book.writter}</TableCell>
-                        <TableCell align="right">{book.type}</TableCell>
-                        <TableCell align="right">{book.year}</TableCell>
-                        <TableCell align="right">{book.solded}</TableCell>
-                        <TableCell align="right">{book.count}</TableCell>
-                        <TableCell align="right">{book.rating}</TableCell>
-                        <TableCell align="right">{book.lastUpdate}</TableCell>
-                        </TableRow>
-                      );
-                    })}
-                    {emptyRows > 0 && (
-                      <TableRow
-                      >
+                          <CloseIcon className={clsx(stylesBookManger.clearIcon)} />
+                        </button>
+                      )}
+                    </div>
 
+
+                    <Button href="#text-buttons" onClick={handleOpen}>Thêm sách</Button>
+                </div>
+                
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <EnhancedTableHead
+                      order={order}
+                      orderBy={orderBy}
+                      onRequestSort={handleRequestSort}
+                      rowCount={posts.length}
+                    />
+                    {/* <TableHead>
+                      <TableRow>
+                        <TableCell> ID </TableCell>
+                        <TableCell align="right"> Tên sách </TableCell>
+                        <TableCell align="right"> Tác giả </TableCell>
+                        <TableCell align="right"> Thể loại </TableCell>
+                        <TableCell align="right"> Năm </TableCell>
+                        <TableCell align="right"> Đã mượn </TableCell>
+                        <TableCell align="right"> Tổng </TableCell>
+                        <TableCell align="right"> Đánh giá </TableCell>
+                        <TableCell align="right"> Cập nhật lần cuối </TableCell>
                       </TableRow>
-                    )}
-                </TableBody>
-                {/* <TableBody>
-                  {posts.map((book) => (
-                    <TableRow
-                      key={book.id}
-                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {book.id}
-                      </TableCell>
-                      <TableCell align="right"><Button onClick={() => handleOpenInforBook(book)}>{book.title}</Button></TableCell>
-                      <TableCell align="right">{book.writter}</TableCell>
-                      <TableCell align="right">{book.type}</TableCell>
-                      <TableCell align="right">{book.year}</TableCell>
-                      <TableCell align="right">{book.solded}</TableCell>
-                      <TableCell align="right">{book.count}</TableCell>
-                      <TableCell align="right">{book.rating}</TableCell>
-                      <TableCell align="right">{book.lastUpdate}</TableCell>
-                    </TableRow>
-                  ))}
-                  {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: (dense ? 33 : 53) * emptyRows,
-                      }}
-                    >
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody> */}
-              </Table>
-            </TableContainer>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={posts.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+                    </TableHead> */}
+                    <TableBody>
+                      {posts.slice().sort(getComparator(order, orderBy))
+                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        .map((book, index) => {
+                          const isItemSelected = isSelected(book.id);
+                          const labelId = `enhanced-table-checkbox-${index}`;
 
-          </div>
+                          return (
+                            <TableRow
+                              hover
+                              onClick={(event) => handleClick(event, book.id)}
+                              role="checkbox"
+                              aria-checked={isItemSelected}
+                              tabIndex={-1}
+                              key={book.id}
+                              selected={isItemSelected}
+                            >
+                            <TableCell component="th" scope="row">
+                              {book.id}
+                            </TableCell>
+                            <TableCell align="right"><Button onClick={() => handleOpenInforBook(book)}>{book.title}</Button></TableCell>
+                            <TableCell align="right">{book.writter}</TableCell>
+                            <TableCell align="right">{book.type}</TableCell>
+                            <TableCell align="right">{book.year}</TableCell>
+                            <TableCell align="right">{book.solded}</TableCell>
+                            <TableCell align="right">{book.count}</TableCell>
+                            <TableCell align="right">{book.rating}</TableCell>
+                            <TableCell align="right">{book.lastUpdate}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                        {emptyRows > 0 && (
+                          <TableRow
+                          >
+
+                          </TableRow>
+                        )}
+                    </TableBody>
+                    {/* <TableBody>
+                      {posts.map((book) => (
+                        <TableRow
+                          key={book.id}
+                          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                          <TableCell component="th" scope="row">
+                            {book.id}
+                          </TableCell>
+                          <TableCell align="right"><Button onClick={() => handleOpenInforBook(book)}>{book.title}</Button></TableCell>
+                          <TableCell align="right">{book.writter}</TableCell>
+                          <TableCell align="right">{book.type}</TableCell>
+                          <TableCell align="right">{book.year}</TableCell>
+                          <TableCell align="right">{book.solded}</TableCell>
+                          <TableCell align="right">{book.count}</TableCell>
+                          <TableCell align="right">{book.rating}</TableCell>
+                          <TableCell align="right">{book.lastUpdate}</TableCell>
+                        </TableRow>
+                      ))}
+                      {emptyRows > 0 && (
+                        <TableRow
+                          style={{
+                            height: (dense ? 33 : 53) * emptyRows,
+                          }}
+                        >
+                          <TableCell colSpan={6} />
+                        </TableRow>
+                      )}
+                    </TableBody> */}
+                  </Table>
+                </TableContainer>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={posts.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+
+              </div>
+            </div>
         </div>
         <Footer />
       </div>

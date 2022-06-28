@@ -4,11 +4,12 @@ import { useRef, useState, useEffect, useContext } from 'react';
 import clsx from 'clsx';
 import styles from './CSS/LoginFormCSS.module.scss';
 import logoImage from '../assets/logo-design.png';
-import AuthContext from './authProvider';
 import logo from '../assets/logo.png'
 import axios from '../config/axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Login_RegisterAPI from '../api/Login_RegisterAPI'
+import { AuthContext } from '../contextAPI/AuthContext';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -17,9 +18,9 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 function LoginForm(props) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { dispatch } = useContext(AuthContext);
 
   const LOGIN_URL = `/api/v1/login`;
-  const { setAuth } = useContext(AuthContext);
   const userRef = useRef();
   const errRef = useRef();
 
@@ -59,28 +60,22 @@ function LoginForm(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        LOGIN_URL,
-        JSON.stringify({ email: user, password: pwd }),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          // withCredentials: true,
-        }
-      );
+      const response = await Login_RegisterAPI.loginCall({phone: user, password: pwd})
+       
+        
       console.log(JSON.stringify(response?.data));
-      console.log(JSON.stringify(response));
-      if (response.data.status === 2) {
-        setErrMsg('Tên đăng nhập hoặc mật khẩu không đúng.');
-        setOpen(true);
-      } else {
-        const accessToken = response?.data?.token;
-        setAuth({ user, pwd, accessToken });
-        setUser('');
-        setPwd('');
-        setSuccess(true);
-      }
+
+      // if (response.data.status === 2) {
+      //   setErrMsg('Tên đăng nhập hoặc mật khẩu không đúng.');
+      //   setOpen(true);
+      // } else {
+      const data = response?.data;
+      dispatch({ type: "LOGIN_SUCCESS", payload: data});
+      window.location.replace("/");
+      setUser('');
+      setPwd('');
+      setSuccess(true);
+      
     } catch (err) {
       if (!err?.response) {
         setErrMsg('No Server Response');
@@ -129,7 +124,7 @@ function LoginForm(props) {
         </div>
         <span className={clsx(styles.logoTitle)}>
           <h1 className={styles.title}>
-            Thư viện hàng đầu Việt Trì.
+            Thư viện hàng đầu Việt Nam.
           </h1>
         </span>
       </div>
@@ -144,10 +139,10 @@ function LoginForm(props) {
               htmlFor="email"
               className={clsx(styles.formLabel, styles.row)}
             >
-              Email:
+              Phone:
             </label>
             <input
-              id="email"
+              id="phone"
               ref={userRef}
               autoComplete="off"
               onChange={(e) => setUser(e.target.value)}

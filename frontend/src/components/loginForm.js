@@ -9,6 +9,7 @@ import logo from '../assets/logo.png'
 import axios from '../config/axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Login_RegisterAPI from '../api/Login_RegisterAPI';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -59,28 +60,30 @@ function LoginForm(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        LOGIN_URL,
-        JSON.stringify({ email: user, password: pwd }),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          // withCredentials: true,
-        }
-      );
+
+      let response = Login_RegisterAPI.loginCall({phone: user, password: pwd})
+      // const response = await axios.post(
+      //   LOGIN_URL,
+      //   JSON.stringify({ email: user, password: pwd }),
+      //   {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //     // withCredentials: true,
+      //   }
+      // );
       console.log(JSON.stringify(response?.data));
       console.log(JSON.stringify(response));
-      if (response.data.status === 2) {
-        setErrMsg('Tên đăng nhập hoặc mật khẩu không đúng.');
-        setOpen(true);
-      } else {
+      // if (response.data.status === 2) {
+      //   setErrMsg('Tên đăng nhập hoặc mật khẩu không đúng.');
+      //   setOpen(true);
+      // } else {
         const accessToken = response?.data?.token;
         setAuth({ user, pwd, accessToken });
         setUser('');
         setPwd('');
         setSuccess(true);
-      }
+      // }
     } catch (err) {
       if (!err?.response) {
         setErrMsg('No Server Response');

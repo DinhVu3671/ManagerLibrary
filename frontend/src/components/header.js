@@ -31,9 +31,9 @@ function Header() {
   const dayCurr = dictDay[date.getDay()];
 
   const listTopic = [
-    ['TRANG CHỦ', '/'],
-    ['TÌM KIẾM', '/'],
-    ['GIỚI THIỆU', '/'],
+    ['TRANG CHỦ', ''],
+    ['TÌM KIẾM', ''],
+    ['GIỚI THIỆU', ''],
   ];
 
   const [username, setUsername] = useState('');

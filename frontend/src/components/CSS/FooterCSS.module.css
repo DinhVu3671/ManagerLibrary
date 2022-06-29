@@ -12,7 +12,7 @@
     align-items: center;
     padding: 10px 10%;
     display: flex;
-    background-color: rgb(222, 97, 97);
+    background-color: rgb(105 9 9);
 }
 .image{
     width: 20px;
@@ -23,6 +23,8 @@
 
 .link{
     margin-left: -50px;
+    display: flex;
+    
 }
 
 .image2{

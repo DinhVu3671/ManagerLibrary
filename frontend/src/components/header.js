@@ -64,13 +64,21 @@ function Header() {
   const handleClickProfile = (e) => {
     setAnchorEl(e.currentTarget);
   };
+  const handleCloseBookManager = () => {
+    setAnchorEl(null);
+    navigatePath('/bookManager');
+  };
   const handleCloseProfile = () => {
     setAnchorEl(null);
-    // navigatePath('/account');
-  };
+    navigatePath('/account');
+  }
+  const handleClose = () => {
+    setAnchorEl(null);
+  }
 
   const handleLogout = () => {
     setAnchorEl(null);
+    AuthDispatch({type: "LOGOUT"})
     navigatePath('/login');
   };
 
@@ -78,7 +86,13 @@ function Header() {
     setAnchorEl(null);
     navigatePath('/bookReaderManager');
   };
-  console.log(sessionStorage.getItem("token"))
+
+  const handleUser = () => {
+    setAnchorEl(null);
+    navigatePath('/bookReaderManager');
+  };
+
+
 
   return (
     <div className={styles.Header}>
@@ -97,9 +111,7 @@ function Header() {
         <div>
           <ul className={`${styles.textColor} ${styles.narMenu}`}>
             {listTopic.map((topic) => (
-              <li>
-                <Link className={styles.narItem} to={`/${topic[1]}`}>{topic[0]}</Link>
-              </li>
+              <Link className={styles.narItem} to={`/${topic[1]}`}>{topic[0]}</Link>
             ))}
           </ul>
         </div>
@@ -109,25 +121,21 @@ function Header() {
             className={`${styles.textColor} ${styles.textDate}`}
           >{`${dayCurr}, ${dateCurr}`}</label>
 
-          <div className={styles.divUser}>
+          <div className={styles.divUser}
+            onClick={() =>
+              token == null
+                ? navigatePath('/login')
+                : null
+            }>
             <img
               src={userImage}
               className={styles.userIcon}
               onClick={handleClickProfile}
               alt="Profile"
-            // onClick={() =>
-            //   Cookies.get('access_token') == null
-            //     ? navigatePath('/login')
-            //     : navigatePath('/user-information')
-            // }
             />
             <div
               className={styles.textColor}
-              onClick={() =>
-                token == null
-                  ? navigatePath('/login')
-                  : null
-              }
+
             >
               {token == null ? 'Đăng nhập' : fullName}
             </div>
@@ -139,20 +147,20 @@ function Header() {
                 id="basic-menu"
                 anchorEl={anchorEl}
                 open={open}
-                onClose={handleCloseProfile}
+                onClose={handleClose}
                 MenuListProps={{
                   'aria-labelledby': 'basic-button',
                 }}
               >
-                <MenuItem onClick={handleCloseProfile}> Quản lý mượn trả </MenuItem>
-                <MenuItem onClick={handleBookReaderManager}> Quản lý tài khoản </MenuItem>
+                <MenuItem onClick={handleCloseBookManager}> Quản lý mượn trả </MenuItem>
+                <MenuItem onClick={handleUser}> Quản lý tài khoản người dùng</MenuItem>
                 <MenuItem onClick={handleLogout}> Đăng xuất </MenuItem>
               </Menu> :
               <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
                 open={open}
-                onClose={handleCloseProfile}
+                onClose={handleClose}
                 MenuListProps={{
                   'aria-labelledby': 'basic-button',
                 }}

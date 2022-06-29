@@ -19,6 +19,10 @@ const Reducer = (state, action) => {
         case "LOGOUT" : {
             return {
                 token: null,
+                id: null,
+                phone: null,
+                role: null,
+                fullName: null,
                 error: null
             }
         }

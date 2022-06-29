@@ -17,6 +17,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 function LoginForm(props) {
   const [open, setOpen] = useState(false);
+  // const history = useHistory();
   const navigate = useNavigate();
   const { AuthDispatch } = useContext(AuthContext);
 
@@ -71,7 +72,7 @@ function LoginForm(props) {
       // } else {
       const data = response?.data;
       AuthDispatch({ type: "LOGIN_SUCCESS", payload: data});
-      window.location.replace("/");
+      navigatePath('/')
       setUser('');
       setPwd('');
       setSuccess(true);

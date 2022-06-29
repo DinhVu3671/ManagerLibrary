@@ -4,7 +4,7 @@ import userImage from '../assets/user1.png'
 import logo from '../assets/logo.png'
 import styles from './CSS/HeaderCSS.module.css'
 import Cookies from "js-cookie";
-import {useState, useContext} from 'react'
+import { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -16,12 +16,12 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import { AuthContext } from '../contextAPI/AuthContext';
 
-function Header() { 
+function Header() {
   const navigate = useNavigate();
   const {
     AuthDispatch,
     AuthState: { fullName, role, token }
-} = useContext(AuthContext);
+  } = useContext(AuthContext);
   const dictDay = {
     0: 'Chủ nhật',
     1: 'Thứ Hai',
@@ -66,7 +66,7 @@ function Header() {
   };
   const handleCloseProfile = () => {
     setAnchorEl(null);
-    navigatePath('/account');
+    // navigatePath('/account');
   };
 
   const handleLogout = () => {
@@ -83,31 +83,31 @@ function Header() {
   return (
     <div className={styles.Header}>
       <div className={styles.toolBar}>
-          <img
-            src={logo}
-            className={styles.logo}
-            alt="search"
-            onClick={() => navigatePath('/')}
-          />
-          <div className={styles.title}>
-            <h3> TRƯỜNG ĐẠI HỌC BÁCH KHOA HÀ NỘI </h3>
-            <h3> THƯ VIỆN ĐTV </h3>      
-          </div>
+        <img
+          src={logo}
+          className={styles.logo}
+          alt="search"
+          onClick={() => navigatePath('/')}
+        />
+        <div className={styles.title}>
+          <h3> TRƯỜNG ĐẠI HỌC BÁCH KHOA HÀ NỘI </h3>
+          <h3> THƯ VIỆN ĐTV </h3>
+        </div>
 
-          <div>
-            <ul className={`${styles.textColor} ${styles.narMenu}`}>
-              {listTopic.map((topic) => (
-                <li>
-                  <Link className={styles.narItem} to={`/${topic[1]}`}>{topic[0]}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div>
+          <ul className={`${styles.textColor} ${styles.narMenu}`}>
+            {listTopic.map((topic) => (
+              <li>
+                <Link className={styles.narItem} to={`/${topic[1]}`}>{topic[0]}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         <div>
           <label
-              className={`${styles.textColor} ${styles.textDate}`}
-            >{`${dayCurr}, ${dateCurr}`}</label>
+            className={`${styles.textColor} ${styles.textDate}`}
+          >{`${dayCurr}, ${dateCurr}`}</label>
 
           <div className={styles.divUser}>
             <img
@@ -115,42 +115,59 @@ function Header() {
               className={styles.userIcon}
               onClick={handleClickProfile}
               alt="Profile"
-              // onClick={() =>
-              //   Cookies.get('access_token') == null
-              //     ? navigatePath('/login')
-              //     : navigatePath('/user-information')
-              // }
+            // onClick={() =>
+            //   Cookies.get('access_token') == null
+            //     ? navigatePath('/login')
+            //     : navigatePath('/user-information')
+            // }
             />
-            <p
-              // className={styles.textColor}
-              // onClick={() =>
-              //   sessionStorage.getItem("token") == null
-              //     ? navigatePath('/login')
-              //     : navigatePath('/user-information')
-              // }
+            <div
+              className={styles.textColor}
+              onClick={() =>
+                token == null
+                  ? navigatePath('/login')
+                  : null
+              }
             >
-              { token == null ? 'Đăng nhập' : fullName }
-            </p>
+              {token == null ? 'Đăng nhập' : fullName}
+            </div>
           </div>
 
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleCloseProfile}
-            MenuListProps={{
-              'aria-labelledby': 'basic-button',
-            }}
-          >
-            <MenuItem onClick={handleCloseProfile}> Tài khoản của tôi </MenuItem>
-            <MenuItem onClick={handleBookReaderManager}> Quản lý mượn trả </MenuItem>
-            <MenuItem onClick={handleLogout}> Đăng xuất </MenuItem>
-          </Menu>
+          {
+            (token != null) ? ((role === "admin") ?
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleCloseProfile}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+              >
+                <MenuItem onClick={handleCloseProfile}> Quản lý mượn trả </MenuItem>
+                <MenuItem onClick={handleBookReaderManager}> Quản lý tài khoản </MenuItem>
+                <MenuItem onClick={handleLogout}> Đăng xuất </MenuItem>
+              </Menu> :
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleCloseProfile}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+              >
+                <MenuItem onClick={handleCloseProfile}> Tài khoản của tôi </MenuItem>
+                <MenuItem onClick={handleBookReaderManager}> Quản lý mượn trả </MenuItem>
+                <MenuItem onClick={handleLogout}> Đăng xuất </MenuItem>
+              </Menu>) : null
+          }
+
         </div>
       </div>
 
       <div className={styles.cmp_2}>
-        <Box sx={{ minWidth: 120 }}  className={styles.select}>
+        <Box sx={{ minWidth: 120 }} className={styles.select}>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Từ khoá</InputLabel>
             <Select
@@ -162,7 +179,7 @@ function Header() {
               className={styles.box}
             >
               {listKeyWord.map((keyword, index) => (
-                  <MenuItem value={`${index}`}>{`${keyword}`}</MenuItem>
+                <MenuItem value={`${index}`}>{`${keyword}`}</MenuItem>
               ))}
             </Select>
           </FormControl>

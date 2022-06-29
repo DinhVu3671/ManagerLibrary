@@ -4,15 +4,15 @@ const express = require("express");
 const categoriesRoutes = express.Router();
 const auth = require("../middleware/auth");
 
-// categoriesRoutes.post(
-//     "/create",
-//     asyncWrapper(categoriesController.create)
-// );
-// categoriesRoutes.get(
-//     "/show",
-//     auth,
-//     asyncWrapper(categoriesController.show),
-// );
+categoriesRoutes.post(
+    "/create",
+    asyncWrapper(categoriesController.create)
+);
+categoriesRoutes.get(
+    "/show",
+    auth,
+    asyncWrapper(categoriesController.show),
+);
 
 // categoriesRoutes.post(
 //     "/search", 

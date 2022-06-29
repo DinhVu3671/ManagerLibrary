@@ -15,7 +15,8 @@ import ReturnBook from '../components/ReturnBook';
 function RootRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/"  element={<Home />} />
+      {/* <Route path="/home" element={<Home />} /> */}
       <Route path="/book" element={<BookInformation />} />
       <Route path="/bookManager" element={<BookManager />} />
       <Route path="/login" element={<Login />} />

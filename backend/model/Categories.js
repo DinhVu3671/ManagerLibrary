@@ -5,6 +5,10 @@ const categoriesSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    total: {
+        type: String,
+        required: true
+    },
 });
 categoriesSchema.set('timestamps', true);
 module.exports = mongoose.model('Categories', categoriesSchema);

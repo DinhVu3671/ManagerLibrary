@@ -26,6 +26,11 @@ import { visuallyHidden } from '@mui/utils';
 import stylesTab from './CSS/orderBook.module.css';
 import InformationTab from './InfomationTab';
 import OrderBookItem from './OrderBookItem';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -116,6 +121,8 @@ function EnhancedTableHead(props) {
 }
 
 function BookManager(books) {
+    const types = ['Romance', 'Comody', 'Slice of life']
+
     const posts = [
       {id: "1", title: "Mo hinh 1", type: "Romance", writter: "DTV", solded: 3, count: 100, rating: 4.3, ratingCount: 123, description: "Mo hinh de thuong", year: 2012, lastUpdate: "15:30:00 15/5/2022"},
       {id: "2", title: "Mo hinh 2", type: "Romance", writter: "DTV", solded: 1, count: 130, rating: 4.7, ratingCount: 123, description: "Mo hinh best", year: 2018, lastUpdate: "15:30:00 15/5/2022"},
@@ -237,6 +244,12 @@ function BookManager(books) {
         );
       }
     };
+
+    // select tyoe
+    const handleChange = (e) => {
+      setType(e.target.value);
+    };
+
 
     //
     const handleCloseAvatar = (event, reason) => {
@@ -375,7 +388,7 @@ function BookManager(books) {
                     >
                       Thể loại:
                     </label>
-                    <input
+                    {/* <input
                       id="type"
                       name="type"
                       type="text"
@@ -383,7 +396,23 @@ function BookManager(books) {
                       onChange={(e) => setType(e.target.value)}
                       className={clsx(stylesBookManger.formInput, stylesBookManger.row)}
                       required
-                    />
+                    /> */}
+                  <FormControl className={clsx(stylesBookManger.formInput, stylesBookManger.row)}>
+                    <InputLabel id="demo-simple-select-label">Thể loại </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={type}
+                      label="Thể loại"
+                      onChange={handleChange}
+                    >
+                      {types.map((item, index) => {
+                        return(
+                          <MenuItem value={item}>{item}</MenuItem>
+                        )
+                      })}
+                    </Select>
+                  </FormControl>
                   </div>
 
                   <div className={clsx(stylesBookManger.formRow)}>

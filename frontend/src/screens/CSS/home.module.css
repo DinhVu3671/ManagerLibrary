@@ -1,5 +1,6 @@
 .Home{
     background-color: rgb(245, 242, 242);
+    cursor: pointer;
 }
 .content{
     margin-right: 15%;

@@ -34,7 +34,7 @@ export default function InformationTab() {
         to="/bookManager"
         style={{ textDecoration: "none", color: "black" }}
       >
-        <ListItemButton onClick={handleClick}>
+        <ListItemButton>
           <ListItemIcon>
             <DraftsIcon />
           </ListItemIcon>

@@ -24,7 +24,7 @@ function UsersAPI() {
 
     //[POST] - search
     this.searchUsers = (data) => {
-        return callAPI.delete('users/search', data);
+        return callAPI.post('users/search', data);
     }
 }
 

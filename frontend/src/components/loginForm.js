@@ -18,7 +18,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 function LoginForm(props) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const { dispatch } = useContext(AuthContext);
+  const { AuthDispatch } = useContext(AuthContext);
 
   const LOGIN_URL = `/api/v1/login`;
   const userRef = useRef();
@@ -63,14 +63,14 @@ function LoginForm(props) {
       const response = await Login_RegisterAPI.loginCall({phone: user, password: pwd})
        
         
-      console.log(JSON.stringify(response?.data));
+      console.log(response?.data);
 
       // if (response.data.status === 2) {
       //   setErrMsg('Tên đăng nhập hoặc mật khẩu không đúng.');
       //   setOpen(true);
       // } else {
       const data = response?.data;
-      dispatch({ type: "LOGIN_SUCCESS", payload: data});
+      AuthDispatch({ type: "LOGIN_SUCCESS", payload: data});
       window.location.replace("/");
       setUser('');
       setPwd('');

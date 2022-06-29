@@ -4,7 +4,7 @@ import userImage from '../assets/user1.png'
 import logo from '../assets/logo.png'
 import styles from './CSS/HeaderCSS.module.css'
 import Cookies from "js-cookie";
-import {useState} from 'react'
+import {useState, useContext} from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -14,9 +14,14 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
+import { AuthContext } from '../contextAPI/AuthContext';
 
 function Header() { 
   const navigate = useNavigate();
+  const {
+    AuthDispatch,
+    AuthState: { fullName, role, token }
+} = useContext(AuthContext);
   const dictDay = {
     0: 'Chủ nhật',
     1: 'Thứ Hai',
@@ -73,6 +78,7 @@ function Header() {
     setAnchorEl(null);
     navigatePath('/bookReaderManager');
   };
+  console.log(sessionStorage.getItem("token"))
 
   return (
     <div className={styles.Header}>
@@ -116,14 +122,14 @@ function Header() {
               // }
             />
             <p
-              className={styles.textColor}
-              onClick={() =>
-                Cookies.get('access_token') == null
-                  ? navigatePath('/login')
-                  : navigatePath('/user-information')
-              }
+              // className={styles.textColor}
+              // onClick={() =>
+              //   sessionStorage.getItem("token") == null
+              //     ? navigatePath('/login')
+              //     : navigatePath('/user-information')
+              // }
             >
-              {Cookies.get('access_token') == null ? 'Đăng nhập' : username}
+              { token == null ? 'Đăng nhập' : fullName }
             </p>
           </div>
 

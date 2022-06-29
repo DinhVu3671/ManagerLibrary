@@ -4,9 +4,9 @@ const Reducer = (state, action) => {
             return {
                 token: action.payload.token,
                 id: action.payload.data.id,
-                username: action.payload.data.username,
                 phone: action.payload.data.phone,
                 role: action.payload.data.role,
+                fullName: action.payload.data.fullName,
                 error: null
             }
         }

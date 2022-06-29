@@ -9,7 +9,7 @@ import axios from '../config/axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Login_RegisterAPI from '../api/Login_RegisterAPI'
-import { AuthContext } from '../contextAPI/AuthContext';
+// import { AuthContext } from '../contextAPI/AuthContext';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -19,7 +19,7 @@ function LoginForm(props) {
   const [open, setOpen] = useState(false);
   // const history = useHistory();
   const navigate = useNavigate();
-  const { AuthDispatch } = useContext(AuthContext);
+  // const { AuthDispatch } = useContext(AuthContext);
 
   const LOGIN_URL = `/api/v1/login`;
   const userRef = useRef();
@@ -71,7 +71,12 @@ function LoginForm(props) {
       //   setOpen(true);
       // } else {
       const data = response?.data;
-      AuthDispatch({ type: "LOGIN_SUCCESS", payload: data});
+      // AuthDispatch({ type: "LOGIN_SUCCESS", payload: data});
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('fullName', data.data.fullName);
+      localStorage.setItem('role', data.data.role);
+      localStorage.setItem('id', data.data.id);
+      localStorage.setItem('phone', data.data.phone);
       navigatePath('/')
       setUser('');
       setPwd('');

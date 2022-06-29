@@ -1,5 +1,5 @@
 .Header{
-    background-color: rgb(140, 142, 253);
+    background-color: rgb(255, 255, 255);
     position: -webkit-sticky; /* Safari & IE */
     position: sticky;
     top: 0;
@@ -12,7 +12,7 @@
     align-items: center;
     padding: 10px 10%;
     display: flex;
-    background-color: rgb(222, 97, 97);
+    background-color: rgb(105 9 9);
 }
 .image{
     width: 20px;
@@ -22,7 +22,7 @@
 }
 
 .title{
-    width: 500px;
+    width: 450px;
     color: #d6ff06;
 }
 
@@ -74,7 +74,8 @@
 .divUser{
     align-items: center;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
+    
     cursor: pointer;
     
 }
@@ -106,7 +107,8 @@
 }
 
 .narItem{
-    margin-right: 50px;
+    margin-right: 40px;
+    color: white;
 }
 
 .Header ul {
@@ -138,7 +140,7 @@
     
     z-index: 9999;
 
-    background: linear-gradient(to right, #7fa2d1, #06ff4b);
+    background: linear-gradient(to right, #ffffff, #06ff4b);
 
   }
 

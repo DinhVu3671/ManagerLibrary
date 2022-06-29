@@ -14,14 +14,14 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
-import { AuthContext } from '../contextAPI/AuthContext';
+// import { AuthContext } from '../contextAPI/AuthContext';
 
 function Header() {
   const navigate = useNavigate();
-  const {
-    AuthDispatch,
-    AuthState: { fullName, role, token }
-  } = useContext(AuthContext);
+  // const {
+  //   AuthDispatch,
+  //   AuthState: { fullName, role, token }
+  // } = useContext(AuthContext);
   const dictDay = {
     0: 'Chủ nhật',
     1: 'Thứ Hai',
@@ -78,7 +78,7 @@ function Header() {
 
   const handleLogout = () => {
     setAnchorEl(null);
-    AuthDispatch({type: "LOGOUT"})
+    // AuthDispatch({type: "LOGOUT"})
     navigatePath('/login');
   };
 
@@ -123,7 +123,7 @@ function Header() {
 
           <div className={styles.divUser}
             onClick={() =>
-              token == null
+              (localStorage.getItem('token')) == null
                 ? navigatePath('/login')
                 : null
             }>
@@ -133,16 +133,13 @@ function Header() {
               onClick={handleClickProfile}
               alt="Profile"
             />
-            <div
-              className={styles.textColor}
-
-            >
-              {token == null ? 'Đăng nhập' : fullName}
+            <div className={styles.textColor}>
+              {(localStorage.getItem('token')) == null ? 'Đăng nhập' : (localStorage.getItem('fullName'))}
             </div>
           </div>
 
           {
-            (token != null) ? ((role === "admin") ?
+            ((localStorage.getItem('token')) != null) ? (((localStorage.getItem('role')) === "admin") ?
               <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}

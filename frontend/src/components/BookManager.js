@@ -332,7 +332,6 @@ function BookManager(books) {
       }
     }, [errMsg]);
 
-    console.log("abv", categories);
     return (
       <div className={styles.Home}>
         <Header />
@@ -688,9 +687,15 @@ function BookManager(books) {
                             </TableCell>
                             <TableCell align="right"><Button onClick={() => handleOpenInforBook(book)}>{book.title}</Button></TableCell>
                             <TableCell align="right">{book.author}</TableCell>
-                            <TableCell align="right">{book.author}</TableCell>
+                            <TableCell align="right">
+                              {book.categories?.map(item => {
+                                return(
+                                  <div>{item.name}</div>
+                                )
+                              })}
+                            </TableCell>
                             <TableCell align="right">{book.publishYear}</TableCell>
-                            <TableCell align="right">{book.solded}</TableCell>
+                            <TableCell align="right">{book.total - book.availableNumber}</TableCell>
                             <TableCell align="right">{book.total}</TableCell>
                             <TableCell align="right">{book.rating}</TableCell>
                             <TableCell align="right">{book.lastUpdate}</TableCell>

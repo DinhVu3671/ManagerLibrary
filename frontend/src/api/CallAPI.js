@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-const getToken = JSON.parse(localStorage.getItem('token'));
+const getToken = localStorage.getItem('token');
 console.log(getToken);
 // console.log(JSON.parse(localStorage.getItem("token")))
 const callAPI = axios.create({

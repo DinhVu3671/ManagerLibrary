@@ -15,12 +15,12 @@ export const AuthContext = createContext(INITIAL_STATE);
 export const ContextProvider = ({ children }) => {
     const [AuthState, AuthDispatch] = useReducer(Reducer, INITIAL_STATE);
     useEffect(() => {
-        sessionStorage.setItem("token", JSON.stringify(AuthState.token));
-        sessionStorage.setItem("id", JSON.stringify(AuthState.id));
-        sessionStorage.setItem("phone", JSON.stringify(AuthState.phone));
-        sessionStorage.setItem("fullName", JSON.stringify(AuthState.fullName));
-        sessionStorage.setItem("role", JSON.stringify(AuthState.role));
-    }, [AuthState.token]);
+        localStorage.setItem('token', JSON.stringify(AuthState.token));
+        localStorage.setItem('id', JSON.stringify(AuthState.id));
+        localStorage.setItem('phone', JSON.stringify(AuthState.phone));
+        localStorage.setItem('fullName', JSON.stringify(AuthState.fullName));
+        localStorage.setItem('role', JSON.stringify(AuthState.role));
+    }, [JSON.parse(localStorage.getItem('token'))]);
 
     return (
         <AuthContext.Provider value={{

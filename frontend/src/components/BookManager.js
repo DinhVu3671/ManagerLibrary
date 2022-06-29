@@ -30,6 +30,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import CategoriesAPI from '../api/CategoriesAPI';
+import BookAPI from '../api/BookAPI';
 
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -121,7 +123,8 @@ function EnhancedTableHead(props) {
 }
 
 function BookManager(books) {
-    const types = ['Romance', 'Comody', 'Slice of life']
+    const [categories, setCategories] = useState([]);
+    const [bookList, setBooks] = useState([]);
 
     const posts = [
       {id: "1", title: "Mo hinh 1", type: "Romance", writter: "DTV", solded: 3, count: 100, rating: 4.3, ratingCount: 123, description: "Mo hinh de thuong", year: 2012, lastUpdate: "15:30:00 15/5/2022"},
@@ -134,7 +137,15 @@ function BookManager(books) {
     ];
 
     const [open, setOpen] = useState(false);
-    const handleOpen = () => {
+    const handleOpen = async () => {
+      let categoriesRes = await CategoriesAPI.getCategories().then(res => {
+        return res.data;
+      })
+
+      if(categoriesRes.data && categoriesRes.data.length > 0) {
+        console.log("categoriesRes")
+        setCategories(categoriesRes.data)
+      }
       setOpenInforBook(false);
       setOpen(true);
       setTitle('');
@@ -226,7 +237,7 @@ function BookManager(books) {
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - posts.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - bookList.length) : 0;
     const handleClick = (event, name) => {
       const selectedIndex = selected.indexOf(name);
       let newSelected = [];
@@ -267,31 +278,29 @@ function BookManager(books) {
     //submit product
     const handleSubmit = async (e) => {
       e.preventDefault();
-      const REGISTER_URL = `/api/v1/registerProduct`;
+      // const REGISTER_URL = `/api/v1/registerProduct`;
   
       if (errMsg === '') {
         //console.log(avatarImg);
         let data = {};
+        let img = []
+        img.push(avatarImg);
         data = {
           title: title,
-          writter: writter,
-          year: year,
+          author: writter,
+          publishYear: year,
           description: description,
-          count: count,
-          type: type,
-          avatar: avatarImg,
+          total: count,
+          categories: type,
+          // images: img,
         };
         console.log(data);
         try {
-          const response = await axios.post(REGISTER_URL, JSON.stringify(data), {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            // withCredentials: true,
-          });
+          const response = await BookAPI.createBook(data);
           console.log(JSON.stringify(response?.data));
-          console.log(JSON.stringify(response));
+          // console.log(JSON.stringify(response));
           setSuccess(true);
+          setOpen(false);
         } catch (err) {
           if (!err?.response) {
             setErrMsg('No Server Response');
@@ -304,13 +313,26 @@ function BookManager(books) {
         }
       }
     };
-
+    function getData(){
+      BookAPI.listBook().then((res) => {
+        let bookListRes = res.data;
+        console.log(bookListRes);
+        setBooks(bookListRes.data);
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+    useEffect(() => {
+        getData(); 
+    }, []);
     useEffect(() => {
       if (errMsg !== '') {
         setOpen(true);
       }
     }, [errMsg]);
 
+    console.log("abv", categories);
     return (
       <div className={styles.Home}>
         <Header />
@@ -406,9 +428,9 @@ function BookManager(books) {
                       label="Thể loại"
                       onChange={handleChange}
                     >
-                      {types.map((item, index) => {
+                      {categories?.map((item, index) => {
                         return(
-                          <MenuItem value={item}>{item}</MenuItem>
+                          <MenuItem value={item._id}>{item.name}</MenuItem>
                         )
                       })}
                     </Select>
@@ -629,7 +651,7 @@ function BookManager(books) {
                       order={order}
                       orderBy={orderBy}
                       onRequestSort={handleRequestSort}
-                      rowCount={posts.length}
+                      rowCount={bookList.length}
                     />
                     {/* <TableHead>
                       <TableRow>
@@ -645,7 +667,7 @@ function BookManager(books) {
                       </TableRow>
                     </TableHead> */}
                     <TableBody>
-                      {posts.slice().sort(getComparator(order, orderBy))
+                      {bookList.slice().sort(getComparator(order, orderBy))
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((book, index) => {
                           const isItemSelected = isSelected(book.id);
@@ -665,11 +687,11 @@ function BookManager(books) {
                               {book.id}
                             </TableCell>
                             <TableCell align="right"><Button onClick={() => handleOpenInforBook(book)}>{book.title}</Button></TableCell>
-                            <TableCell align="right">{book.writter}</TableCell>
-                            <TableCell align="right">{book.type}</TableCell>
-                            <TableCell align="right">{book.year}</TableCell>
+                            <TableCell align="right">{book.author}</TableCell>
+                            <TableCell align="right">{book.author}</TableCell>
+                            <TableCell align="right">{book.publishYear}</TableCell>
                             <TableCell align="right">{book.solded}</TableCell>
-                            <TableCell align="right">{book.count}</TableCell>
+                            <TableCell align="right">{book.total}</TableCell>
                             <TableCell align="right">{book.rating}</TableCell>
                             <TableCell align="right">{book.lastUpdate}</TableCell>
                             </TableRow>
@@ -716,7 +738,7 @@ function BookManager(books) {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   component="div"
-                  count={posts.length}
+                  count={bookList.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   onPageChange={handleChangePage}

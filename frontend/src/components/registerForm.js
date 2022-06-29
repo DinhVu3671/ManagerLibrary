@@ -7,6 +7,7 @@ import axios from '../config/axios';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import ImageUploader from '../components/imageUploader';
+import Login_RegisterAPI from '../api/Login_RegisterAPI';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -69,12 +70,7 @@ function RegisterForm(props) {
       };
       console.log(data);
       try {
-        const response = await axios.post(REGISTER_URL, JSON.stringify(data), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          // withCredentials: true,
-        });
+        const response = await Login_RegisterAPI.registerCall(data)
         console.log(JSON.stringify(response?.data));
         console.log(JSON.stringify(response));
         setSuccess(true);

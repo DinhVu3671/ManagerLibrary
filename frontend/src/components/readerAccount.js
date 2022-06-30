@@ -17,7 +17,7 @@ import UsersAPI from '../api/UsersAPI';
 
 function TabInfor(props) {
   const { children, value, account, ...other } = props;
-  const [firstName, setFirstName] = useState('Đinh Tiến Vũ');
+  const [firstName, setFirstName] = useState('Chuyen De');
   const [email, setEmail] = useState('dtv@gmail.com');
   const [phone, setPhone] = useState('0123456798');
   const [gender, setGender] = useState('male');

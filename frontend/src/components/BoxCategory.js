@@ -7,6 +7,7 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import { Grid } from '@mui/material';
+import categoryImg from '../assets/categoryImg.png';
 
 function BoxCategory(){
     return (
@@ -18,12 +19,12 @@ function BoxCategory(){
                       <CardMedia
                         component="img"
                         height="60"
-                        image="/static/images/cards/contemplative-reptile.jpg"
+                        image={categoryImg}
                         alt="green iguana"
                       />
                       <CardContent>
                         <Typography gutterBottom variant="h5" component="div" fontSize={15}>
-                          <p>Sach giao duc gioi tinh</p>
+                          <p>Sach giao khoa học</p>
                           <p>Năm: 2022</p>
                         </Typography>
                       </CardContent>

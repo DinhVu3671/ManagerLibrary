@@ -22,10 +22,10 @@ function BorrowBookAPI() {
         return callAPI.get(`borrowbooks/list/${id}`);
     }
 
-    // //[GET] - list user
-    // this.listBook = () => {
-    //     return callAPI.get('books/list')
-    // }
+    // [GET] - search theo admin
+    this.searchAdmin = (data) => {
+        return callAPI.post('borrowbooks/search', data);
+    }
 
     // //[POST] - search
     // this.searchBook = (data) => {

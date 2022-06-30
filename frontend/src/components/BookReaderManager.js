@@ -96,7 +96,7 @@ function BookReaderManager({navigation}){
             <Header navigation={navigation}/>
             <div className={styles.content} >
                 <div className={styles.wraper}>
-                    <p className={styles.tdisplay}> Quản lý sách </p>
+                    <p className={styles.tdisplay}> Quản lý mượn trả </p>
                     <Box
                     sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex' }}
                     >

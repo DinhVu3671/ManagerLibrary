@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import { Grid } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import bookimg from '../assets/book.jpg';
 function RecommendBook(){
   const navigate = useNavigate();
 
@@ -25,7 +26,7 @@ function RecommendBook(){
                       <CardMedia
                         component="img"
                         height="60"
-                        image="/static/images/cards/contemplative-reptile.jpg"
+                        image={bookimg}
                         alt="green iguana"
                         onClick={() => {navigatePath("/book")}}
                       />

@@ -214,14 +214,14 @@ export default function OrderHistoryItem({returnee, book}) {
         <div className={styles.wraper}>
               <div className={styles.tdisplay2}>  
                   <div style={{display: 'flex'}}>          
-                    <p>Họ tên: {book.user? book.user[0].fullName: null}</p>
-                    <p style={{marginLeft : '100px'}}>SĐT: {book.user? book.user[0].phone: null}</p>
-                    {/* <div style={{marginLeft : '100px'}}>
-                      <p>Ngày mượn: {book.borrowDate}</p>
-                      {returnee && (
+                    <p>Họ tên: Đinh Tiến Vũ</p>
+                    <p style={{marginLeft : '100px'}}>SĐT: 0923450791</p>
+                    <div style={{marginLeft : '100px'}}>
+                      <p>Ngày mượn: 10:20:00 17/6/2022</p>
+                      {/* {returnee && (
                         <p>Ngày hẹn trả: 10:20:00 17/6/2022</p>
-                      )}                            
-                    </div> */}
+                      )}                             */}
+                    </div>
 
                   </div>
 

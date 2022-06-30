@@ -34,7 +34,7 @@ function Footer() {
         </div>
 
         <div>
-          <h3> Mạng xã hội </h3>
+          <h3> Liên hệ </h3>
           <div  className={styles.link}>
             <img
               src={face}

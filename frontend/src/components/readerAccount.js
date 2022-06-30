@@ -13,6 +13,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import { Tabs, AppBar } from '@mui/material';
+import UsersAPI from '../api/UsersAPI';
 
 function TabInfor(props) {
   const { children, value, account, ...other } = props;
@@ -523,9 +524,23 @@ const defautlAvatar =
 function ReaderAccount({navigation, account}) {
     const [value, setValue] = React.useState(0);
 
+    function getData(){
+      UsersAPI.getUserById(localStorage.getItem('id')).then((res) => {
+        console.log(res.data)
+        let bookListRes = res.data;
+        
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+    useEffect(() => {
+        getData(); 
+    }, []);
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };
+
     return (
         <div className="account">
             <Header navigation={navigation} />

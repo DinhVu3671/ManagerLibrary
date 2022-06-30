@@ -102,7 +102,7 @@ function BookReaderItem({book, idShow}){
             <div className={styleBookReader.content} >
                 <div className={styleBookReader.wraper}>
                     <div className={styleBookReader.tdisplay}>  
-                        { (idShow === 0 && <h3 className={styleBookReader.statusTitle}> {book.status} </h3> ) ||                         
+                        { (idShow === 0 && <h3 className={styleBookReader.statusTitle}> {book.status == "borrowing" ? "Đang mượn" : (book.status == "refurn") ? "Đã Trả": "Đang chờ duyệt"} </h3> ) ||                         
                             <p>  </p>
                         }
                     </div>
@@ -122,12 +122,12 @@ function BookReaderItem({book, idShow}){
     
                         
                         <div className={styleBookReader.productTitle}>
-                            <p> Tên sách: {book.title} </p>
-                            <p className={styleBookReader.item}> Thể loại: {book.type} </p>
-                            <p className={styleBookReader.item}> Tác giả: {book.writter} </p>
-                            <p className={styleBookReader.item}> Năm: {book.year} </p>
-                            <p className={styleBookReader.item}> Ngày mượn: {book.date} </p>
-                            <p className={styleBookReader.item}> Ngày trả: {book.dateValid} </p>
+                            <p> Tên sách: {book.book.title} </p>
+                            <p className={styleBookReader.item}> Thể loại: {book.book.categories? book.book.categories[0].name : null} </p>
+                            <p className={styleBookReader.item}> Tác giả: {book.book.author} </p>
+                            {/* <p className={styleBookReader.item}> Năm: {book.year} </p> */}
+                            <p className={styleBookReader.item}> Ngày mượn: {book.borrowDate} </p>
+                            <p className={styleBookReader.item}> Ngày trả: {book.refundDate} </p>
                         </div>
                         <div className={styleBookReader.footFake}>
                             <p>  </p>

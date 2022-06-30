@@ -152,7 +152,7 @@ function EnhancedTableHead(props) {
 }
 
 
-export default function OrderHistoryItem({returnee}) {
+export default function OrderHistoryItem({returnee, book}) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected, setSelected] = useState([]);
@@ -214,14 +214,14 @@ export default function OrderHistoryItem({returnee}) {
         <div className={styles.wraper}>
               <div className={styles.tdisplay2}>  
                   <div style={{display: 'flex'}}>          
-                    <p>Họ tên: Đinh Tiến Vũ</p>
-                    <p style={{marginLeft : '100px'}}>SĐT: 0352544366</p>
-                    <div style={{marginLeft : '100px'}}>
-                      <p>Ngày mượn: 10:20:00 17/6/2022</p>
+                    <p>Họ tên: {book.user? book.user[0].fullName: null}</p>
+                    <p style={{marginLeft : '100px'}}>SĐT: {book.user? book.user[0].phone: null}</p>
+                    {/* <div style={{marginLeft : '100px'}}>
+                      <p>Ngày mượn: {book.borrowDate}</p>
                       {returnee && (
-                        <p>Ngày trả: 10:20:00 17/6/2022</p>
+                        <p>Ngày hẹn trả: 10:20:00 17/6/2022</p>
                       )}                            
-                    </div>
+                    </div> */}
 
                   </div>
 

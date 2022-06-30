@@ -9,30 +9,27 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
-import logo from '../assets/logo.png'
-import face from '../assets/facebook.png'
-import instagram from '../assets/instagram.png'
+import logo from '../assets/booktitle.png'
+import face from '../assets/imgLibrary2.png'
+import instagram from '../assets/imgLibrary3.png'
 import twitter from '../assets/twitter.png'
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const images = [
   {
-    label: 'San Francisco – Oakland Bay Bridge, United States',
+    label: 'Có rất nhiều các loại sách',
     imgPath: logo,
   },
   {
-    label: 'Bird',
+    label: 'Môi trường thân thiện',
     imgPath: face,
   },
   {
-    label: 'Bali, Indonesia',
+    label: 'Không gian yên tĩnh',
     imgPath: instagram,
   },
-  {
-    label: 'Goč, Serbia',
-    imgPath: twitter,
-  },
+
 ];
 
 function Introduce() {
@@ -81,7 +78,7 @@ function Introduce() {
                 sx={{
                   height: 200,
                   display: 'block',
-                  width: 690,
+                  width: 600,
                   overflow: 'hidden',
                   width: '100%',
                 }}

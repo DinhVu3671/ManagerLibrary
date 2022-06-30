@@ -31,9 +31,9 @@ function Home({navigation}) {
               <div className={clsx(styles.wraper, styles.note)}>
                 <p className={styles.tdisplay}> Lưu ý </p>
                 <p className={styles.notetext}> Giờ mở cửa: 8h - 21h </p>
-                <p className={styles.notetext}> Giờ mượn trả: 10h - 18h </p>
-                <p className={styles.notetext}> Giờ mở cửa: 8h - 12h </p>
-                <p className={styles.notetext}> Giờ mở cửa: 8h - 12h </p>
+                <p className={styles.notetext}> Không phục vụ cuối tuần </p>
+                <p className={styles.notetext}> Có thể đăng ký mượn online </p>
+                <p className={styles.notetext}> Thời gian mượn tối đa 1 tháng </p>
               </div>
             </div>      
    

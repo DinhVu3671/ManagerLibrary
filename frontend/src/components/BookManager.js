@@ -62,7 +62,6 @@ function getComparator(order, orderBy){
 }
 
 const headCells = [
-  { id: 'ID', numeric: false, disablePadding: true, label: 'ID'},
   { id: 'title', numeric: false, disablePadding: false, label: 'Tên sách'},
   { id: 'writter', numeric: false, disablePadding: false, label: 'Tác giả'},
   { id: 'type', numeric: false, disablePadding: false, label: 'Thể loại'},
@@ -70,7 +69,6 @@ const headCells = [
   { id: 'solded', numeric: true, disablePadding: false, label: 'Đã mượn'},
   { id: 'count', numeric: true, disablePadding: false, label: 'Tổng'},
   { id: 'rating', numeric: true, disablePadding: false, label: 'Đánh giá'},
-  { id: 'lastUpdate', numeric: false, disablePadding: false, label: 'Cập nhật lần cuối'},
 ]
 
 function stableSort(array, compare) {
@@ -99,7 +97,7 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align='right'
+            align='left'
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -652,19 +650,6 @@ function BookManager(books) {
                       onRequestSort={handleRequestSort}
                       rowCount={bookList.length}
                     />
-                    {/* <TableHead>
-                      <TableRow>
-                        <TableCell> ID </TableCell>
-                        <TableCell align="right"> Tên sách </TableCell>
-                        <TableCell align="right"> Tác giả </TableCell>
-                        <TableCell align="right"> Thể loại </TableCell>
-                        <TableCell align="right"> Năm </TableCell>
-                        <TableCell align="right"> Đã mượn </TableCell>
-                        <TableCell align="right"> Tổng </TableCell>
-                        <TableCell align="right"> Đánh giá </TableCell>
-                        <TableCell align="right"> Cập nhật lần cuối </TableCell>
-                      </TableRow>
-                    </TableHead> */}
                     <TableBody>
                       {bookList.slice().sort(getComparator(order, orderBy))
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -682,23 +667,19 @@ function BookManager(books) {
                               key={book.id}
                               selected={isItemSelected}
                             >
-                            <TableCell component="th" scope="row">
-                              {book.id}
-                            </TableCell>
-                            <TableCell align="right"><Button onClick={() => handleOpenInforBook(book)}>{book.title}</Button></TableCell>
-                            <TableCell align="right">{book.author}</TableCell>
-                            <TableCell align="right">
+                            <TableCell align="left" component="th" scope="row"><Button onClick={() => handleOpenInforBook(book)}>{book.title}</Button></TableCell>
+                            <TableCell align="left">{book.author}</TableCell>
+                            <TableCell align="left">
                               {book.categories?.map(item => {
                                 return(
                                   <div>{item.name}</div>
                                 )
                               })}
                             </TableCell>
-                            <TableCell align="right">{book.publishYear}</TableCell>
-                            <TableCell align="right">{book.total - book.availableNumber}</TableCell>
-                            <TableCell align="right">{book.total}</TableCell>
-                            <TableCell align="right">{book.rating}</TableCell>
-                            <TableCell align="right">{book.lastUpdate}</TableCell>
+                            <TableCell align="left">{book.publishYear}</TableCell>
+                            <TableCell align="left">{book.total - book.availableNumber}</TableCell>
+                            <TableCell align="left">{book.total}</TableCell>
+                            <TableCell align="left">{book.rating}</TableCell>
                             </TableRow>
                           );
                         })}

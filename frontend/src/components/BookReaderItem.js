@@ -28,7 +28,7 @@ function ButtonOrder({post, st}){
     console.log(st)
     return (
         <div >
-            {st === "Đã trả" && (
+            {st === "refurn" && (
                 <div>
                     <Modal
                         open={openRating}
@@ -94,8 +94,8 @@ function BookReaderItem({book, idShow}){
       }
     };
     const posts = [
-        {status: "Đang mượn", button1: "", button2: ""},
-        {status: "Đã trả", button1: "Mượn lại", button2: "Đánh giá sách"},
+        {status: "borrowing", button1: "", button2: ""},
+        {status: "refurn", button1: "Mượn lại", button2: "Đánh giá sách"},
       ];
     return(
         <div className={styleBookReader.Home}>

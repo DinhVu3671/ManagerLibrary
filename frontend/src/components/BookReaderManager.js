@@ -1,7 +1,7 @@
 import Header from './header';
 import Footer from './footer';
 import styles from '../screens/CSS/home.module.css';
-import * as React from 'react';
+import React, { useEffect, useState, useRef, memo } from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import { Tabs, AppBar } from '@mui/material';
@@ -13,6 +13,7 @@ import BookReaderItem from './BookReaderItem';
 import styleBookReader from '../components/CSS/BookReaderItem.module.css'
 import noImage from '../assets/noItem.png'
 import { CardContent } from '@mui/material';
+import BorrowBookAPI from '../api/BookAPI';
 
 function TabPanel(props) {
     const { children, value, index, books, ...other } = props;
@@ -21,7 +22,7 @@ function TabPanel(props) {
       {id: 1, status:"Đang mượn"},
       {id: 2, status:"Đã trả"},
     ]
-    var bookValid = books.filter((book) => (value === book.id || value === 0))
+    var bookValid = books?.filter((book) => (value === book.id || value === 0))
     return (
       <div>
         {value === index && (
@@ -63,7 +64,23 @@ function BookReaderManager({navigation}){
     {id: 1, status: "Đang mượn", title: "Hige wo soru", writter: "ĐTV", year: 2019, date: "15:30:00 15/5/2022", dateValid: "15:30:00 15/5/2022"}
   ];
   
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [bookBorrows, setBookBorrows] = useState([]);
+
+
+  function getData(){
+    BorrowBookAPI.listByUser(localStorage.getItem('id')).then((res) => {
+      let bookListRes = res.data;
+      setBookBorrows(bookListRes.data);
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+  useEffect(() => {
+      getData(); 
+  }, []);
+
 
     const handleChange = (event, newValue) => {
       setValue(newValue);
@@ -90,11 +107,11 @@ function BookReaderManager({navigation}){
                             <Tab value={1} label="Đang mượn" />
                             <Tab value={2} label="Đã trả"/>
                         </Tabs>
-                        <TabPanel value={value} index={0} books={books}>        
+                        <TabPanel value={value} index={0} bookBorrows={bookBorrows}>        
                         </TabPanel>
-                        <TabPanel value={value} index={1} books={books}>
+                        <TabPanel value={value} index={1} bookBorrows={bookBorrows}>
                         </TabPanel>
-                        <TabPanel value={value} index={2} books={books}>
+                        <TabPanel value={value} index={2} bookBorrows={bookBorrows}>
                         </TabPanel>
                 </Box> 
                 </div>

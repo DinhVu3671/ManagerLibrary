@@ -4,7 +4,7 @@ import userImage from '../assets/user1.png'
 import logo from '../assets/logo.png'
 import styles from './CSS/HeaderCSS.module.css'
 import Cookies from "js-cookie";
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -14,6 +14,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
+import BookAPI from "../api/BookAPI";
 // import { AuthContext } from '../contextAPI/AuthContext';
 
 function Header() {
@@ -42,6 +43,20 @@ function Header() {
   ];
 
   const [username, setUsername] = useState('');
+  const [bookList, setBooks] = useState([]);
+
+  function getData(){
+    BookAPI.listBook().then((res) => {
+      let bookListRes = res.data;
+      setBooks(bookListRes.data);
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+  useEffect(() => {
+    getData(); 
+}, []);
 
   const navigatePath = function (path) {
     if (window.location.pathname !== path) {
@@ -78,7 +93,7 @@ function Header() {
 
   const handleLogout = () => {
     setAnchorEl(null);
-    // AuthDispatch({type: "LOGOUT"})
+    localStorage.clear();
     navigatePath('/login');
   };
 
@@ -171,7 +186,7 @@ function Header() {
         </div>
       </div>
 
-      <div className={styles.cmp_2}>
+      {/* <div className={styles.cmp_2}>
         <Box sx={{ minWidth: 120 }} className={styles.select}>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Từ khoá</InputLabel>
@@ -202,7 +217,7 @@ function Header() {
             onClick={() => navigatePath('/tim-kiem')}
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -22,25 +22,35 @@ borrowBookRoutes.post(
     auth,
     asyncWrapper(borrowBookController.refurn),
 );
-// xoá
-// booksRoutes.get(
-//     "/delete/:id",
-//     auth,
-//     asyncWrapper(booksController.delete),
-// );
+// search đang mượn, đã trả theo id
+borrowBookRoutes.get(
+    "/search/:idUser",
+    auth,
+    asyncWrapper(borrowBookController.searchByIdUser),
+);
+// search đang mượn, đã trả của admin
+borrowBookRoutes.get(
+    "/search",
+    auth,
+    asyncWrapper(borrowBookController.searchAdmin),
+);
 
 
-
-// lấy ra list
-// borrowBookRoutes.get(
-//     "/list",
-//     auth,
-//     asyncWrapper(borrowBookController.list),
-// );
+// lấy ra list theo user
+borrowBookRoutes.get(
+    "/list/:idUser",
+    auth,
+    asyncWrapper(borrowBookController.list),
+);
+// chờ mượn sách
+borrowBookRoutes.post(
+    "/awaitBorrowBook",
+    auth,
+    borrowBookController.awaitBorrowBook);
+// // duyet sách chờ
 // borrowBookRoutes.post(
-//     "/search",
+//     "/acceptBorrowBook",
 //     auth,
-//     borrowBookController.search);
-
+//     borrowBookController.accreptBorrowBook);
 
 module.exports = borrowBookRoutes;

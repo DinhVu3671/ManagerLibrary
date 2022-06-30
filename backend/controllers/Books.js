@@ -1,4 +1,5 @@
 const BookModel = require("../model/Books");
+const RatingModel = require("../model/Rating");
 const httpStatus = require("../utils/httpStatus");
 
 const booksController = {};
@@ -30,7 +31,18 @@ booksController.create = async (req, res, next) => {
             description: description,
             publishYear: publishYear
         });
+
         let bookSaved = (await book.save()).populate('images');
+        const rating = new RatingModel({
+            book: bookSaved._id,
+            numberStar: 0,
+            numberRate: 0
+        })
+        let ratingSaved = await rating.save().populate({
+            path: 'book',
+            select: '_id title categories author',
+            model: 'Books',
+        })
         bookSaved = await BookModel.findById(bookSaved._id).populate('images', ['fileName'])
         .populate({
             path: 'categories',

@@ -11,8 +11,8 @@ const booksSchema = new mongoose.Schema({
     },
     images: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Documents"
+            type: String,
+            required: false
         }
     ],
     total: {
@@ -24,7 +24,7 @@ const booksSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    categoryId: [
+    categories: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Categories"

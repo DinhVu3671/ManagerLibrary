@@ -13,7 +13,7 @@ borrowBookController.create = async (req, res, next) => {
         let responsive = [];
         if(idBooks.length > 0) {
             idBooks.map(async (item) => {
-                let checkDuplicate = await BorrowBookModel.find({book: item}).exec();
+                let checkDuplicate = await BorrowBookModel.find({book: item, user: idUser}).exec();
                 if (checkDuplicate.length > 0) {
                     console.log(checkDuplicate);
                     return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Tồn tại quyển sách đã mượn", id: item});
@@ -28,7 +28,7 @@ borrowBookController.create = async (req, res, next) => {
                 });
                 let borrowBookSaved = (await borrowBook.save());
             })
-            const brrowBooks = await BorrowBookModel.find({book: {$in: idBooks}}).populate({
+            responsive = await BorrowBookModel.find({book: {$in: idBooks}}).populate({
                 path: 'book',
                 select: '_id title categories author',
                 model: 'Books',
@@ -39,9 +39,9 @@ borrowBookController.create = async (req, res, next) => {
             });
             // responsive = brrowBooks
         }
-// { field: { $in: [<value1>, <value2>, ... <valueN> ] } }
+
         return res.status(httpStatus.OK).json({
-            data: brrowBooks
+            data: responsive
         });
     } catch (e) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
@@ -82,21 +82,182 @@ borrowBookController.refurn = async (req, res, next) => {
         let responsive = [];
         if(idBooks.length > 0) {
             idBooks.map(async (item) => {
-                let bookBorrow = await BorrowBookModel.findById(item);
+                let bookBorrow = await BorrowBookModel.findOne({book: item, user: idUser, status: 'borrowing'});
                 if (bookBorrow.length === 0) {
-                    console.log(checkDuplicate);
-                    return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Không tồn tại quyển sách này đã mượn", id: item});
+                    return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Không tồn tại quyển sách này đã mượn", idBook: item});
                 }
-                let borrowBookRefurn = await BookModel.findByIdAndUpdate(item, {
+                console.log(bookBorrow)
+                let borrowBookRefurn = await BorrowBookModel.findByIdAndUpdate(bookBorrow._id, {
                     book: bookBorrow.book,
-                    user: bookBorrow.idUser,
+                    user: bookBorrow.user,
                     status: "refurn",
                     borrowDate: bookBorrow.borrowDate,
                     refundDate: new Date(),
                     refundAppointmentDate: bookBorrow.refundAppointmentDate
                 });
             })
-            const brrowBooksRes = await BorrowBookModel.find({_id: {$in: idBooks}}).populate({
+            responsive = await BorrowBookModel.find({book: {$in: idBooks}}).populate({
+                path: 'book',
+                select: '_id title categories author',
+                model: 'Books',
+            }).populate({
+                path: 'idUser',
+                select: '_id fullName phone',
+                model: 'Users',
+            });
+
+        }
+        return res.status(httpStatus.OK).json({
+            data: responsive
+        });
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
+borrowBookController.searchByIdUser = async (req, res, next) => {
+    try {
+        const {
+            typeBorrowBook,
+        } = req.body;
+        let userId = req.params.idUser
+        let bookBorrow = await BorrowBookModel.find({user: userId, status: typeBorrowBook}).populate({
+                        path: 'book',
+                        select: '_id title categories author',
+                        model: 'Books',
+                    }).populate({
+                        path: 'idUser',
+                        select: '_id fullName phone gmail',
+                        model: 'Users',
+                    });
+        if (bookBorrow.length === 0) {
+            return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Không tồn tại quyển sách nào"});
+        }
+              
+        return res.status(httpStatus.OK).json({
+            data: bookBorrow
+        });
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
+borrowBookController.list = async (req, res, next) => {
+    try {
+        let userId = req.params.idUser;
+        console.log(userId)
+        let bookBorrow = await BorrowBookModel.find({user: userId}).populate({
+                        path: 'book',
+                        // select: '_id title categories author',
+                        model: 'Books',
+                    }).populate({
+                        path: 'idUser',
+                        select: '_id fullName phone gmail',
+                        model: 'Users',
+                    }).populate({
+                        path: 'categories',
+                        select: '_id name',
+                        model: 'Categories',
+                    });
+        if (bookBorrow.length === 0) {
+            return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Không tồn tại quyển sách nào"});
+        }
+              
+        return res.status(httpStatus.OK).json({
+            data: bookBorrow
+        });
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
+borrowBookController.searchAdmin = async (req, res, next) => {
+    try {
+        const {
+            typeBorrowBook,
+        } = req.body;
+        let bookBorrow = await BorrowBookModel.aggregate([
+            { "$match": {status: typeBorrowBook } },
+            {
+              $group: {
+                "_id": "$user",
+                "book": { "$first": "$book" },
+                "status": { "$first": "$status" },
+                "borrowDate": { "$first": "$borrowDate" },
+                "refundDate": { "$first": "$refundDate" },
+                "refundAppointmentDate": { "$first": "$refundAppointmentDate" }
+              }
+            },
+        { "$lookup": {
+                "from": "users",
+                "localField": "_id",
+                "foreignField": "_id",
+                "as": "user"
+           }},
+            { "$lookup": {
+                "from": "books",
+                "localField": "book",
+                "foreignField": "_id",
+                "as": "book"
+           }},
+        //    { "$unwind": { "path" : "$user" } },
+        //    { "$unwind": { "path" : "$book" } }
+          ])
+        // .populate({
+        //                 path: 'book',
+        //                 select: '_id title categories author',
+        //                 model: 'Books',
+        //             }).populate({
+        //                 path: 'user',
+        //                 select: '_id fullName phone',
+        //                 model: 'Users',
+        //             })
+        if (bookBorrow.length === 0) {
+            return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Không tồn tại quyển sách nào"});
+        }
+              
+        return res.status(httpStatus.OK).json({
+            data: bookBorrow
+        });
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
+borrowBookController.awaitBorrowBook = async (req, res, next) => {
+    try {
+        const {
+            idBooks,
+            idUser
+        } = req.body;
+        let result = [];
+        if(idBooks.length > 0) {
+            let responsive = [];
+            idBooks.map(async (item) => {
+                let checkDuplicate = await BorrowBookModel.find({book: item, user: idUser, status: "borrowing"}).exec();
+                if (checkDuplicate.length > 0) {
+                    console.log(checkDuplicate);
+                    return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Tồn tại quyển sách đã mượn", id: item});
+                }
+                const borrowBook = new BorrowBookModel({
+                    book: item,
+                    user: idUser,
+                    status: "await",
+                    // borrowDate: new Date(),
+                    // refundDate: null,
+                    // refundAppointmentDate: new Date(new Date().getTime() + 3600000*24*30)
+                });
+                responsive.push(borrowBook._id);
+            })
+            result = await BorrowBookModel.findById({$in: responsive}).populate({
                 path: 'book',
                 select: '_id title categories author',
                 model: 'Books',
@@ -105,16 +266,16 @@ borrowBookController.refurn = async (req, res, next) => {
                 select: '_id fullName phone gmail',
                 model: 'Users',
             });
-
+            // responsive = brrowBooks
         }
-// { field: { $in: [<value1>, <value2>, ... <valueN> ] } }
+
         return res.status(httpStatus.OK).json({
-            data: brrowBooksRes
+            data: result
         });
     } catch (e) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             message: e.message
         });
     }
-}
+} 
 module.exports = borrowBookController;

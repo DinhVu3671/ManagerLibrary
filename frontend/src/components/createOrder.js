@@ -1,0 +1,490 @@
+import * as React from 'react';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import Header from './header';
+import Footer from './footer';
+import stylesOrderBook from './CSS/orderBook.module.css';
+import InformationTab from './InfomationTab';
+import OrderBookItem from './OrderBookItem';
+import styles from '../screens/CSS/home.module.css';
+import stylesRegister from './CSS/RegisterFormCSS.module.scss';
+import clsx from 'clsx';
+import { useState } from 'react';
+import { alpha } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Checkbox from '@mui/material/Checkbox';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import { visuallyHidden } from '@mui/utils';
+import { Button } from '@mui/material';
+import stylesBook from '../components/CSS/BookInformation.module.css';
+import { Link, useNavigate } from 'react-router-dom';
+//
+
+
+function createData(
+  name,
+  calories,
+  writter,
+  count,
+  lastUpdate,
+) {
+  return {
+    name,
+    calories,
+    writter,
+    count,
+    lastUpdate,
+  };
+}
+
+const rows = [
+  createData('KIMI NI TSUMUGU BOUHAKU', "Romance - Shoujo ai", "Yasaka Shuu", 15,"Jun-26-2022 17:23"),
+  createData('NEGA-KUN AND POSI-CHAN', "Comedy - Romance", "Shunpei Morita", 30,"May-25-2022 01:25"),
+  createData('STORY OF A SMALL SENIOR IN MY COMPANY', "Comedy - Romance", "Saisou", 15,"Jun-24-2022 22:38"),
+  createData('2 SAISA NO OSANANAJIMI', "Romance - School life", "Mi Kasuke", 18,"Jun-26-2022 09:06"),
+  createData('KIMI NI TSUMUGU BOUHAKU 2', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 21,"Jun-26-2022 17:23"),
+  createData('KIMI NI TSUMUGU BOUHAKU 3', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 20,"Jun-26-2022 17:23"),
+];
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+let Order = 'asc' | 'desc';
+
+function getComparator(order, orderBy) {
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+// This method is created for cross-browser compatibility, if you don't
+// need to support IE11, you can use Array.prototype.sort() directly
+function stableSort(array, comparator) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+}
+
+const headCells = [
+  {
+    id: 'name',
+    numeric: false,
+    disablePadding: true,
+    label: 'Tên sách',
+  },
+  {
+    id: 'calories',
+    numeric: false,
+    disablePadding: false,
+    label: 'Thể loại',
+  },
+  {
+    id: 'writter',
+    numeric: false,
+    disablePadding: false,
+    label: 'Tác giả',
+  },
+  {
+    id: 'count',
+    numeric: true,
+    disablePadding: false,
+    label: 'Kho',
+  },
+  {
+    id: 'lastUpdate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Cập nhật lần cuối',
+  },
+];
+
+
+function EnhancedTableHead(props) {
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const createSortHandler =
+    (property) => (event) => {
+      onRequestSort(event, property);
+    };
+
+  return (
+    <TableHead>
+      <TableRow>
+        <TableCell padding="checkbox">
+          <Checkbox
+            color="primary"
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{
+              'aria-label': 'select all desserts',
+            }}
+          />
+        </TableCell>
+        {headCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align='center'
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+}
+
+const EnhancedTableToolbar = (props) => {
+  const { numSelected } = props;
+
+  return (
+    <Toolbar
+      sx={{
+        pl: { sm: 2 },
+        pr: { xs: 1, sm: 1 },
+        ...(numSelected > 0 && {
+          bgcolor: (theme) =>
+            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+        }),
+      }}
+    >
+      {numSelected > 0 ? (
+        <Typography
+          sx={{ flex: '1 1 100%' }}
+          color="inherit"
+          variant="subtitle1"
+          component="div"
+        >
+          Đã chọn {numSelected} sách
+        </Typography>
+      ) : (
+        <Typography
+          sx={{ flex: '1 1 100%' }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Chưa chọn sách nào
+        </Typography>
+      )}
+        <Tooltip title="Filter list">
+          <IconButton>
+            <FilterListIcon />
+          </IconButton>
+        </Tooltip>
+    </Toolbar>
+  );
+};
+//
+function TapSeach() {
+  return (
+    <Autocomplete
+      disablePortal
+      id="combo-box-demo"
+      options={userName}
+      sx={{ width: 300 }}
+      renderInput={(params) => <TextField {...params} label="Tên người dùng" />}
+    />
+  );
+}
+
+const userName = [
+  { label: 'Bùi Minh Tuấn'},
+  { label: 'Đinh Tiến Vũ'},
+  { label: 'Nino Nanako'},
+  { label: 'Hatsune Miku'},
+  { label: 'Miku Nanako'},
+  { label: 'Chitanda Eru'},
+  { label: 'Ayai Miru'},
+  { label: 'Origawa Sayu'},
+  { label: 'Himeruko'},
+  { label: 'Rachel Gardner'},
+  { label: 'Ayano Uenohara'},
+  { label: 'Horikita Surune'},
+  { label: 'Minamoto Ruri'},
+  { label: 'Nguyễn Thế Kiệt'},
+];
+
+//
+
+//
+function CreateOrderBook() {
+    let date = new Date();
+    const dateCurr = date.toLocaleDateString();
+    const [dateValid, setDateValid] = useState('');
+    let str = ""
+    if(date.getMonth() >= 9)
+      if(date.getDate() > 9)
+        str = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+      else
+        str = `${date.getFullYear()}-${date.getMonth() + 1}-0${date.getDate()}`  
+    else 
+      if(date.getDate() > 9)
+        str = `${date.getFullYear()}-0${date.getMonth() + 1}-${date.getDate()}`
+      else
+        str = `${date.getFullYear()}-0${date.getMonth() + 1}-0${date.getDate()}`  
+
+
+//
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('calories');
+    const [selected, setSelected] = useState([]);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const navigate = useNavigate();
+
+    const navigatePath = function (path) {
+      if (window.location.pathname !== path) {
+        navigate(path);
+      }
+    };
+    const handleRequestSort = (
+      event,
+      property,
+    ) => {
+      const isAsc = orderBy === property && order === 'asc';
+      setOrder(isAsc ? 'desc' : 'asc');
+      setOrderBy(property);
+    };
+
+    const handleSelectAllClick = (event) => {
+      if (event.target.checked) {
+        const newSelecteds = rows.map((n) => n.name);
+        setSelected(newSelecteds);
+        return;
+      }
+      setSelected([]);
+    };
+
+    const handleClick = (event, name) => {
+      const selectedIndex = selected.indexOf(name);
+      let newSelected = [];
+
+      if (selectedIndex === -1) {
+        newSelected = newSelected.concat(selected, name);
+      } else if (selectedIndex === 0) {
+        newSelected = newSelected.concat(selected.slice(1));
+      } else if (selectedIndex === selected.length - 1) {
+        newSelected = newSelected.concat(selected.slice(0, -1));
+      } else if (selectedIndex > 0) {
+        newSelected = newSelected.concat(
+          selected.slice(0, selectedIndex),
+          selected.slice(selectedIndex + 1),
+        );
+      }
+
+      setSelected(newSelected);
+    };
+
+    const handleChangePage = (event, newPage) => {
+      setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    };
+
+    const isSelected = (name) => selected.indexOf(name) !== -1;
+
+    // Avoid a layout jump when reaching the last page with empty rows.
+    const emptyRows =
+      page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+//
+
+    return (
+        <div className={stylesOrderBook.Home}>
+        <Header/>
+        <div className={stylesOrderBook.content} >
+            <div className={stylesOrderBook.tab1} >
+                <InformationTab/>
+            </div>
+
+            <div className={stylesOrderBook.tab2} >
+              
+            <div className={styles.Home}>
+        <div className={styles.wraper}>
+          <div className={styles.tdisplay2}>  
+            <div style={{display: 'flex'}}>          
+              <TapSeach />
+              <div style={{display: 'flex', marginLeft: '100px'}}>
+                <label
+                  htmlFor="date"
+                  className={clsx(stylesRegister.formLabel, stylesRegister.row)}
+                >
+                  Ngày Mượn:
+                </label>
+                <input
+                  id="date"
+                  name="date"
+                  type="text"
+                  value={dateCurr}
+                  className={clsx(stylesRegister.formInput, stylesRegister.row)}
+                  style={{marginLeft: '-50px'}}
+                  readOnly
+                />
+              </div>
+
+              <div style={{display: 'flex', marginLeft: '80px'}}>
+                <label
+                  htmlFor="dateValid"
+                  className={clsx(stylesRegister.formLabel, stylesRegister.row)}
+                >
+                  Ngày trả
+                </label>
+                <input
+                  id="dateValid"
+                  name="dateValid"
+                  min= {str}
+                  type= "date"
+                  value={dateValid}
+                  onChange={(e) => setDateValid(e.target.value)}
+                  className={clsx(stylesRegister.formInput, stylesRegister.row)}
+                  style={{marginLeft: '-120px', width: '400px'}}
+                  required
+                />
+              </div>
+            </div>
+
+            <div style={{marginTop: '10px'}}>
+              <Box sx={{ width: '100%' }}>
+                    <Paper sx={{ width: '100%', mb: 2 }}>
+                        <EnhancedTableToolbar numSelected={selected.length} />
+                        <TableContainer>
+                        <Table
+                            sx={{ minWidth: 750 }}
+                            aria-labelledby="tableTitle"
+                            size={'medium'}
+                        >
+                            <EnhancedTableHead
+                            numSelected={selected.length}
+                            order={order}
+                            orderBy={orderBy}
+                            onSelectAllClick={handleSelectAllClick}
+                            onRequestSort={handleRequestSort}
+                            rowCount={rows.length}
+                            />
+                            <TableBody>
+                            {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+                            rows.slice().sort(getComparator(order, orderBy)) */}
+                            {rows.slice().sort(getComparator(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row, index) => {
+                                const isItemSelected = isSelected(row.name);
+                                const labelId = `enhanced-table-checkbox-${index}`;
+
+                                return (
+                                    <TableRow
+                                    hover
+                                    onClick={(event) => handleClick(event, row.name)}
+                                    role="checkbox"
+                                    aria-checked={isItemSelected}
+                                    tabIndex={-1}
+                                    key={row.name}
+                                    selected={isItemSelected}
+                                    >
+                                    <TableCell padding="checkbox">
+                                        <Checkbox
+                                        color="primary"
+                                        checked={isItemSelected}
+                                        inputProps={{
+                                            'aria-labelledby': labelId,
+                                        }}
+                                        />
+                                    </TableCell>
+                                    <TableCell
+                                        component="th"
+                                        id={labelId}
+                                        scope="row"
+                                        padding="none"
+                                        onClick={()=>{navigatePath("/book")}}
+                                    >
+                                        {row.name}
+                                    </TableCell>
+                                    <TableCell align="right">{row.calories}</TableCell>
+                                    <TableCell align="right">{row.writter}</TableCell>
+                                    <TableCell align="right">{row.count}</TableCell>
+                                    <TableCell align="right">{row.lastUpdate}</TableCell>
+                                    </TableRow>
+                                );
+                                })}
+                                {emptyRows > 0 && (
+                                    <TableRow
+                                    >
+
+                                    </TableRow>
+                                    )}
+                            </TableBody>
+                        </Table>
+                        </TableContainer>
+                        <TablePagination
+                        rowsPerPageOptions={[5, 10, 15]}
+                        component="div"
+                        count={rows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    </Paper>
+                    <div className={stylesBook.buttonM}>
+                        <Button color="success"> Tạo phiếu mượn </Button>                            
+                        <Button color="error"> Huỷ </Button>                            
+                    </div>
+
+              </Box>
+            </div>
+
+          </div>
+        </div>
+    </div>
+            </div>
+        </div>
+        <Footer/>
+        
+        </div>
+    );
+}
+
+export default CreateOrderBook;

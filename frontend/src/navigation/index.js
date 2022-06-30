@@ -11,6 +11,7 @@ import CartBook from '../components/bookCart';
 import OrderBook from '../components/OrderBook';
 import OrderHistory from '../components/OrderHistory';
 import ReturnBook from '../components/ReturnBook';
+import CreateOrderBook from '../components/createOrder';
 
 function RootRoutes() {
   return (
@@ -28,6 +29,7 @@ function RootRoutes() {
       <Route path="/orderBookManager" element={<OrderBook />} />
       <Route path="/orderHistoryManager" element={<OrderHistory />} />
       <Route path="/returnBookManager" element={<ReturnBook />} />
+      <Route path="/createOrderBook" element={<CreateOrderBook />} />
     </Routes>
   );
 }

@@ -15,6 +15,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
+import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
 import { Link } from 'react-router-dom';
 
 export default function InformationTab() {
@@ -89,6 +90,19 @@ export default function InformationTab() {
           </Link>
         </List>
       </Collapse>
+
+      <Link
+        to="/createOrderBook"
+        style={{ textDecoration: "none", color: "black" }}
+      >
+        <ListItemButton>
+          <ListItemIcon>
+            <BookmarkAddIcon />
+          </ListItemIcon>
+          <ListItemText primary="Tạo đơn mượn mới" />
+        </ListItemButton>
+      </Link>
+
     </List>
   );
 }

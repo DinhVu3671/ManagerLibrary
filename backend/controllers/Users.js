@@ -11,7 +11,6 @@ usersController.register = async (req, res, next) => {
     try {
         const {
             fullName,
-            username,
             phone,
             gmail,
             password
@@ -34,7 +33,7 @@ usersController.register = async (req, res, next) => {
         user = new UserModel({
             fullName: fullName,
             phone: phone,
-            username: username,
+            role: "user",
             password: hashedPassword,
             gmail: gmail
 
@@ -56,7 +55,7 @@ usersController.register = async (req, res, next) => {
                     id: savedUser._id,
                     fullName: savedUser.fullName,
                     phone: savedUser.phonenumber,
-                    username: savedUser.username,
+                    role: savedUser.role,
                     gmail: savedUser.gmail
                 },
                 token: token
@@ -159,7 +158,7 @@ usersController.edit = async (req, res, next) => {
         if (!user) {
             return res.status(httpStatus.NOT_FOUND).json({message: "Can not find user"});
         }
-        user = await UserModel.findById(userId).select('fullName phone username gmail');
+        user = await UserModel.findById(userId).select('fullName phone gmail');
         return res.status(httpStatus.OK).json({
             data: user
         });
@@ -211,7 +210,7 @@ usersController.changePassword = async (req, res, next) => {
             {username: user.username, firstName: user.firstName, lastName: user.lastName, id: user._id},
             JWT_SECRET
         );
-        user = await UserModel.findById(userId).select('phonenumber username gender birthday avatar cover_image blocked_inbox blocked_diary').populate('avatar').populate('cover_image');
+        user = await UserModel.findById(userId).select('phonenumber gender birthday avatar cover_image blocked_inbox blocked_diary').populate('avatar').populate('cover_image');
         return res.status(httpStatus.OK).json({
             data: user,
             token: token
@@ -231,7 +230,7 @@ usersController.show = async (req, res, next) => {
             userId = req.userId;
         }
 
-        let user = await UserModel.findById(userId).select('fullName phone username gmail');
+        let user = await UserModel.findById(userId).select('fullName phone gmail');
         if (user == null) {
             return res.status(httpStatus.NOT_FOUND).json({message: "Can not find user"});
         }

@@ -29,7 +29,7 @@ borrowBookRoutes.get(
     asyncWrapper(borrowBookController.searchByIdUser),
 );
 // search đang mượn, đã trả của admin
-borrowBookRoutes.get(
+borrowBookRoutes.post(
     "/search",
     auth,
     asyncWrapper(borrowBookController.searchAdmin),

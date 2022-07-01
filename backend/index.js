@@ -8,7 +8,6 @@ const {MONGO_URI} = require("./constants/constants");
 const bodyParser = require('body-parser');
 const io = require('socket.io')(3000)
 // const MessageModel = require("../models/Messages");
-
 // connect to mongodb
 
 const ZALO_URI = 'mongodb+srv://ML-Data:AnhvuBK@cluster0.ldkqjui.mongodb.net/ChuyenDe?retryWrites=true&w=majority';
@@ -16,6 +15,7 @@ const ZALO_URI = 'mongodb+srv://ML-Data:AnhvuBK@cluster0.ldkqjui.mongodb.net/Chu
 mongoose.connect(ZALO_URI, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
+    useCreateIndex: true
 })
     .then(res => {
     console.log("connected to mongodb");

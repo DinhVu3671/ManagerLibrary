@@ -9,10 +9,11 @@ import Paper from '@mui/material/Paper';
 import { Grid } from '@mui/material';
 import categoryImg from '../assets/categoryImg.png';
 
-function BoxCategory(){
+function BoxCategory({categories}){
+  console.log(categories)
     return (
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 8 }}  style={{padding:'5px'}}>
-              {Array.from(Array(8)).map((_, index) => (
+              {categories?.map((category, index) => (
                 <Grid item xs={2} sm={1} md={1} key={index}>
                   <Card sx={{ maxWidth: 345,height:200 }}>
                     <CardActionArea>
@@ -24,8 +25,8 @@ function BoxCategory(){
                       />
                       <CardContent>
                         <Typography gutterBottom variant="h5" component="div" fontSize={15}>
-                          <p>Sach giao khoa học</p>
-                          <p>Năm: 2022</p>
+                          <p>{category.name}</p>
+                          <p>Tổng: {category.total} quyển</p>
                         </Typography>
                       </CardContent>
                     </CardActionArea>

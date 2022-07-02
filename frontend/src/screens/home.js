@@ -2,6 +2,7 @@ import Header from '../components/header';
 import Footer from '../components/footer';
 import styles from './CSS/home.module.css';
 import BoxCategory from '../components/BoxCategory';
+import React, { useEffect, useState, useRef, memo } from 'react';
 import MuiImageSlider from 'mui-image-slider';
 import logo from '../assets/logo.png'
 import face from '../assets/facebook.png'
@@ -12,11 +13,38 @@ import ImageListItem from '@mui/material/ImageListItem';
 import Introduce from './introduce';
 import RecommendBook from '../components/RecommendBook';
 import clsx from 'clsx';
+import CategoriesAPI from '../api/CategoriesAPI';
 
 function Home({navigation}) {
+
+  const [featuredBook, setFeatureBook] = useState([]);
+  const [categories, setCategory] = useState([]);
+
+  function getData(){
+    CategoriesAPI.getCategories().then((res) => {
+      setCategory(res.data.data)
+    })
+    .catch(err => {
+      console.log(err)
+    });
+    // BorrowBookAPI.listByUser(localStorage.getItem('id')).then((res) => {
+    //   console.log(res.data)
+    //   let bookListRes = res.data;
+    //   setBookBorrows(bookListRes.data);
+    //   setBookBorrowing(bookListRes.data?.filter(item => item.status == "borrowing"))
+    //   setBookRefurn(bookListRes.data?.filter(item => item.status == "refurn"))
+    // })
+    // .catch(err => {
+    //   console.log(err)
+    // })
+  }
+  useEffect(() => {
+      getData(); 
+  }, []);
   const images = [
     logo, instagram, logo, face
   ];
+
     return (
       <div className={styles.Home}>
         <Header navigation={navigation}/>
@@ -50,7 +78,7 @@ function Home({navigation}) {
         <div className={styles.content} >
           <div className={styles.wraper}>
             <p className={styles.tdisplay}>Danh mục</p>
-            <BoxCategory/>
+            <BoxCategory categories={categories} />
           </div>
         </div>
         <Footer navigation={navigation}/>

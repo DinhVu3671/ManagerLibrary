@@ -39,7 +39,7 @@ function BookInformation({navigation}) {
                     Tên sách:
                   </div>
                   <div>
-                    Em gái mẹ kế là người yêu cũ
+                   Sống là để yêu thương
                   </div>
                 </div>
 

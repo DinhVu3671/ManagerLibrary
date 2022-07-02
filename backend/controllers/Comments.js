@@ -1,5 +1,6 @@
 const CommentModel = require("../model/Comments");
 const BorrowBookModel = require("../model/BorrowBooks");
+const RatingModel = require("../model/Rating");
 const BookModel = require("../model/Books");
 const httpStatus = require("../utils/httpStatus");
 
@@ -9,13 +10,14 @@ commentsController.create = async (req, res, next) => {
         let userId = req.userId;
         let borrowBook;
         try {
-            borrowBook = await BorrowBookModel.find({book: req.params.borrowBookId});
+            borrowBook = await BorrowBookModel.find({book: req.params.borrowBookId, status: 'refurn', user: userId});
             if (borrowBook == null) {
                 return res.status(httpStatus.NOT_FOUND).json({message: "Can not rating this Book"});
             }
         } catch (error) {
             return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({message: error.message});
-        }const {
+        }
+        const {
             content,
             numberStart
         } = req.body;
@@ -28,17 +30,17 @@ commentsController.create = async (req, res, next) => {
         });
         let borrowBookCommentSaved = await borrowBookComment.save();
         //câp nhat start book
-        const rating = await RatingModel.find({
+        const rating = await RatingModel.findOne({
             book: req.params.borrowBookId,
         });
-        let ratingSaved = await rating.save().populate({
-            path: 'book',
-            select: '_id title categories author',
-            model: 'Books',
-        })
-        user = await UserModel.findOneAndUpdate({_id: userId}, {
-            numberStart: (rating.numberStart * rating.numberRate + 1)/(rating.numberRate + 1),
-            numberRate: rating.numberRate + 1
+        // let ratingSaved = await rating.save().populate({
+        //     path: 'book',
+        //     select: '_id title categories author',
+        //     model: 'Books',
+        // })
+        user = await RatingModel.findOneAndUpdate({book: rating.book}, {
+            numberStar: (Number(rating.numberStar)*Number(rating.numberRate) + numberStart) / ((rating.numberRate) + 1),
+            numberRate: Number(rating.numberRate) + 1
         }, {
             new: true,
             runValidators: true

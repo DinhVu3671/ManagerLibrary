@@ -10,7 +10,6 @@ categoriesRoutes.post(
 );
 categoriesRoutes.get(
     "/show",
-    auth,
     asyncWrapper(categoriesController.show),
 );
 

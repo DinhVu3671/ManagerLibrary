@@ -1,4 +1,4 @@
-const { Timestamp } = require("mongodb");
+const { Timestamp, Double, Decimal128 } = require("mongodb");
 const mongoose = require("mongoose");
 
 const ratingSchema = new mongoose.Schema({
@@ -7,11 +7,11 @@ const ratingSchema = new mongoose.Schema({
         ref: "Books"
     },
     numberStar: {
-        type: String,
+        type: Number ,
         required: false
     },
     numberRate: {
-        type: String,
+        type: Number ,
         required: false
     },
 

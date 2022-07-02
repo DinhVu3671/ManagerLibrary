@@ -5,7 +5,6 @@ import Header from './header';
 import Footer from './footer';
 import stylesOrderBook from './CSS/orderBook.module.css';
 import InformationTab from './InfomationTab';
-import OrderBookItem from './OrderBookItem';
 import styles from '../screens/CSS/home.module.css';
 import stylesRegister from './CSS/RegisterFormCSS.module.scss';
 import clsx from 'clsx';
@@ -26,14 +25,14 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import { Button } from '@mui/material';
 import stylesBook from '../components/CSS/BookInformation.module.css';
 import { Link, useNavigate } from 'react-router-dom';
+import { makeStyles } from "@material-ui/core/styles";
+import SearchBar from "material-ui-search-bar";
+
 //
 
 
@@ -52,6 +51,12 @@ function createData(
     lastUpdate,
   };
 }
+
+const useStyles = makeStyles({
+  table: {
+    minWidth: 650
+  }
+});
 
 const rows = [
   createData('KIMI NI TSUMUGU BOUHAKU', "Romance - Shoujo ai", "Yasaka Shuu", 15,"Jun-26-2022 17:23"),
@@ -274,6 +279,22 @@ function CreateOrderBook() {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const navigate = useNavigate();
 
+    const [data, setData] = useState(rows);
+    const [searched, setSearched] = useState("");
+    const classes = useStyles();
+
+    const requestSearch = (searchedVal) => {
+      const filteredRows = rows.filter((row) => {
+        return row.name.toLowerCase().includes(searchedVal.toLowerCase());
+      });
+      setData(filteredRows);
+    };
+
+    const cancelSearch = () => {
+      setSearched("");
+      requestSearch(searched);
+    };
+
     const navigatePath = function (path) {
       if (window.location.pathname !== path) {
         navigate(path);
@@ -391,6 +412,13 @@ function CreateOrderBook() {
               <Box sx={{ width: '100%' }}>
                     <Paper sx={{ width: '100%', mb: 2 }}>
                         <EnhancedTableToolbar numSelected={selected.length} />
+                        <Paper>
+                          <SearchBar
+                          value={searched}
+                          onChange={(searchVal) => requestSearch(searchVal)}
+                          onCancelSearch={() => cancelSearch()}
+                          placeholder="Tìm tên sách . . ."
+                        /></Paper>
                         <TableContainer>
                         <Table
                             sx={{ minWidth: 750 }}
@@ -408,7 +436,7 @@ function CreateOrderBook() {
                             <TableBody>
                             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                             rows.slice().sort(getComparator(order, orderBy)) */}
-                            {rows.slice().sort(getComparator(order, orderBy))
+                            {data.slice().sort(getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
                                 const isItemSelected = isSelected(row.name);

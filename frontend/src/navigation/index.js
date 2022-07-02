@@ -18,7 +18,7 @@ function RootRoutes() {
     <Routes>
       <Route path="/"  element={<Home />} />
       {/* <Route path="/home" element={<Home />} /> */}
-      <Route path="/book" element={<BookInformation />} />
+      <Route path="/book/:idBook" element={<BookInformation />} />
       <Route path="/bookManager" element={<BookManager />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />

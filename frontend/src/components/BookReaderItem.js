@@ -14,6 +14,7 @@ import { useState } from 'react';
 import stylesBookManger from '../components/CSS/bookManager.module.css';
 import Modal from '@mui/material/Modal';
 import { Link, useNavigate } from 'react-router-dom';
+import CommentAPI from '../api/CommentAPI';
 
 function ButtonOrder({post, st}){
     const [value, setValue] = React.useState(0);
@@ -25,7 +26,20 @@ function ButtonOrder({post, st}){
         setComment('');
     };
     const handleClose = () =>  setRating(false);
-    console.log(st)
+    const handleSubmit = async () => {
+        let data = {
+            content: comment,
+            numberStart: value,
+        }
+        try {
+            let comnetRes = await CommentAPI.createComment(post, data);
+            setRating(false)
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+    // console.log(st)
     return (
         <div >
             {st === "refurn" && (
@@ -65,7 +79,7 @@ function ButtonOrder({post, st}){
                             </div>
                             <div className={stylesBookManger.button}>
                                 <Button onClick={handleClose}> Huỷ </Button>
-                                <Button onClick={handleClose}>Xác nhận</Button>
+                                <Button onClick={handleSubmit}>Xác nhận</Button>
                             </div>
                         </Box>
                     </Modal>
@@ -97,6 +111,7 @@ function BookReaderItem({book, idShow}){
         {status: "borrowing", button1: "", button2: ""},
         {status: "refurn", button1: "Mượn lại", button2: "Đánh giá sách"},
       ];
+      console.log(book)
     return(
         <div className={styleBookReader.Home}>
             <div className={styleBookReader.content} >
@@ -123,7 +138,7 @@ function BookReaderItem({book, idShow}){
                         
                         <div className={styleBookReader.productTitle}>
                             <p> Tên sách: {book.book.title} </p>
-                            <p className={styleBookReader.item}> Thể loại: {book.book.categories? book.book.categories[0].name : null} </p>
+                            <p className={styleBookReader.item}> Thể loại: {book.book.categories? (book.book.categories)[0].name : null} </p>
                             <p className={styleBookReader.item}> Tác giả: {book.book.author} </p>
                             {/* <p className={styleBookReader.item}> Năm: {book.year} </p> */}
                             <p className={styleBookReader.item}> Ngày mượn: {book.borrowDate} </p>
@@ -134,7 +149,7 @@ function BookReaderItem({book, idShow}){
                         </div>
                     </div>
                     <div className={styleBookReader.button}>
-                        <ButtonOrder post = {posts} st = {book.status} />                
+                        <ButtonOrder post = {book.book._id} st = {book.status} />                
                     </div>
                     <div className={styles.footFake}>
                             <p>  </p>

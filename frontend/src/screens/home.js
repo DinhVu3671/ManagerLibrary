@@ -3,7 +3,6 @@ import Footer from '../components/footer';
 import styles from './CSS/home.module.css';
 import BoxCategory from '../components/BoxCategory';
 import React, { useEffect, useState, useRef, memo } from 'react';
-import MuiImageSlider from 'mui-image-slider';
 import logo from '../assets/logo.png'
 import face from '../assets/facebook.png'
 import instagram from '../assets/instagram.png'

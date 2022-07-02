@@ -14,15 +14,32 @@ import instagram from '../assets/instagram.png'
 import twitter from '../assets/twitter.png'
 import BookImages from './bookImages';
 import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef, memo } from 'react';
+import BookAPI from '../api/BookAPI';
 
 function BookInformation({navigation}) {
     const navigate = useNavigate();
+    const [bookInfo, setBookInfo] = useState([])
 
     const navigatePath = function (path) {
       if (window.location.pathname !== path) {
         navigate(path);
       }
     };
+    function getData(){
+      BookAPI.getBookById().then((res) => {
+        console.log(res.data)
+        let bookInfoRes = res.data;
+        setBookInfo(bookInfoRes.data)
+      
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    }
+    useEffect(() => {
+        getData(); 
+    }, []);
     return (
       <div className={styles.Home}>
         <Header navigation={navigation}/>

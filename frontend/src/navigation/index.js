@@ -5,7 +5,7 @@ import BookManager from '../components/BookManager';
 import Login from '../components/login';
 import Register from '../components/register';
 import BookReaderManager from '../components/BookReaderManager';
-import BasicTable from '../components/BookManager1';
+import Search from '../components/BookManager1';
 import ReaderAccount from '../components/readerAccount';
 import CartBook from '../components/bookCart';
 import OrderBook from '../components/OrderBook';
@@ -24,7 +24,7 @@ function RootRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/bookReaderManager" element={<BookReaderManager />} />
       <Route path="/account" element={<ReaderAccount />} />
-      <Route path="/t" element={<BasicTable />} />
+      <Route path="/t" element={<Search />} />
       <Route path="/cartBook" element={<CartBook />} />
       <Route path="/orderBookManager" element={<OrderBook />} />
       <Route path="/orderHistoryManager" element={<OrderHistory />} />

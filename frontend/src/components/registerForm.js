@@ -190,7 +190,7 @@ function RegisterForm(props) {
                   </div>
                 </div>
 
-                <div className={clsx(styles.formRow, styles.row)}>
+                {/* <div className={clsx(styles.formRow, styles.row)}>
 
                   <div className={clsx(styles.formField, styles.col3)}>
                     <label
@@ -300,7 +300,7 @@ function RegisterForm(props) {
                       required
                     />
                   </div>
-                </div>
+                </div> */}
 
                 <div className={clsx(styles.formRow, styles.row)}>
 

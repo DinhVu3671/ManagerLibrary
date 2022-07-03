@@ -175,5 +175,23 @@ booksController.search = async (req, res, next) => {
         });
     }
 }
+booksController.outstandingBook = async (req, res, next) => {
+    try {
+        let result = await RatingModel.find({}).sort({numberStar: -1}).limit(6).exec();
+        let bookIds = [];
+        result?.map((item) => {
+            bookIds.push(item.book)
+        })
+        let bookList = await BookModel.find({_id: {$in: bookIds}}).exec();
+        res.status(200).json({
+            data: bookList
+        });
+
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
 
 module.exports = booksController;

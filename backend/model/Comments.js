@@ -11,7 +11,7 @@ const commentSchema = new mongoose.Schema({
         ref: "Users"
     },
     numberStar: {
-        type: String,
+        type: Number,
         required: false
     },
     description: {

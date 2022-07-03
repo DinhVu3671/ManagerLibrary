@@ -69,12 +69,12 @@ commentsController.create = async (req, res, next) => {
 
 commentsController.list = async (req, res, next) => {
     try {
-        console.log(req.params.borrowBookId);
+        // console.log(req.params.borrowBookId);
         let bookComment = await CommentModel.find({book: req.params.borrowBookId}).populate('user', [
             '_id', 'fullName'
         ]);
         return res.status(httpStatus.OK).json({
-            data: postComments
+            data: bookComment
         });
     } catch (error) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({message: error.message});

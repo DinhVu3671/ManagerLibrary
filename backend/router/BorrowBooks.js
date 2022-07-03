@@ -36,7 +36,7 @@ borrowBookRoutes.post(
 );
 
 
-// lấy ra list theo user
+// lấy ra list theo user của admin
 borrowBookRoutes.get(
     "/list/:idUser",
     auth,
@@ -46,7 +46,8 @@ borrowBookRoutes.get(
 borrowBookRoutes.post(
     "/awaitBorrowBook",
     auth,
-    borrowBookController.awaitBorrowBook);
+    asyncWrapper(borrowBookController.awaitBorrowBook),
+);
 // // duyet sách chờ
 // borrowBookRoutes.post(
 //     "/acceptBorrowBook",

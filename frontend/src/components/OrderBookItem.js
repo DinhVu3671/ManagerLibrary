@@ -209,7 +209,7 @@ const EnhancedTableToolbar = (props) => {
   );
 };
 
-export default function OrderBookItem() {
+export default function OrderBookItem({books}) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected, setSelected] = useState([]);
@@ -274,15 +274,14 @@ export default function OrderBookItem() {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
+  console.log(books);
   return (
     <div className={styles.Home}>
           <div className={styles.wraper}>
               <div className={styles.tdisplay2}>  
                   <div style={{display: 'flex'}}>          
-                    <p>Họ tên: Đinh Tiến Vũ</p>
-                    <p style={{marginLeft : '100px'}}>SĐT: 0352544366</p>
-                    <p style={{marginLeft : '100px'}}>Đăng ký: 10:20:00 17/6/2022</p>
+                    <p>Họ tên: {books?.user?.fullName}</p>
+                    <p style={{marginLeft : '100px'}}>SĐT: {books.user.phone}</p>
                   </div>
 
                   <Box sx={{ width: '100%' }}>
@@ -300,25 +299,25 @@ export default function OrderBookItem() {
                           orderBy={orderBy}
                           onSelectAllClick={handleSelectAllClick}
                           onRequestSort={handleRequestSort}
-                          rowCount={rows.length}
+                          rowCount={books.book.length}
                           />
                           <TableBody>
                           {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                           rows.slice().sort(getComparator(order, orderBy)) */}
-                          {rows.slice().sort(getComparator(order, orderBy))
+                          {books.book.slice().sort(getComparator(order, orderBy))
                               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                               .map((row, index) => {
-                              const isItemSelected = isSelected(row.name);
+                              const isItemSelected = isSelected(row._id);
                               const labelId = `enhanced-table-checkbox-${index}`;
 
                               return (
                                   <TableRow
                                   hover
-                                  onClick={(event) => handleClick(event, row.name)}
+                                  onClick={(event) => handleClick(event, row._id)}
                                   role="checkbox"
                                   aria-checked={isItemSelected}
                                   tabIndex={-1}
-                                  key={row.name}
+                                  key={row._id}
                                   selected={isItemSelected}
                                   >
                                   <TableCell padding="checkbox">
@@ -335,14 +334,14 @@ export default function OrderBookItem() {
                                       id={labelId}
                                       scope="row"
                                       padding="none"
-                                      onClick={()=>{navigatePath("/book")}}
+                                      onClick={()=>{navigatePath(`/book/${row._id}`)}}
                                   >
-                                      {row.name}
+                                      {row.title}
                                   </TableCell>
-                                  <TableCell align="right">{row.calories}</TableCell>
-                                  <TableCell align="right">{row.writter}</TableCell>
-                                  <TableCell align="right">{row.count}</TableCell>
-                                  <TableCell align="right">{row.lastUpdate}</TableCell>
+                                  <TableCell align="right">{row.categories ? (row.categories)[0].name : null}</TableCell>
+                                  <TableCell align="right">{row.author}</TableCell>
+                                  <TableCell align="right">{row.availableNumber}</TableCell>
+                                  <TableCell align="right">{row.updatedAt}</TableCell>
                                   </TableRow>
                               );
                               })}
@@ -358,7 +357,7 @@ export default function OrderBookItem() {
                       <TablePagination
                       rowsPerPageOptions={[5, 10, 15]}
                       component="div"
-                      count={rows.length}
+                      count={books.book.length}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       onPageChange={handleChangePage}

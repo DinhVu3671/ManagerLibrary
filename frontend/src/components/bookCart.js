@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState, useRef, memo } from 'react';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -20,13 +20,14 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-import { useState } from 'react';
 import { Button } from '@mui/material';
 import Header from './header';
 import Footer from './footer';
 import styles from '../screens/CSS/home.module.css';
 import stylesBook from '../components/CSS/BookInformation.module.css';
 import { Link, useNavigate } from 'react-router-dom';
+import BookAPI from '../api/BookAPI';
+import BorrowBookAPI from '../api/BorrowBookAPI';
 
 
 function createData(
@@ -46,12 +47,12 @@ function createData(
 }
 
 const rows = [
-  createData('KIMI NI TSUMUGU BOUHAKU', "Romance - Shoujo ai", "Yasaka Shuu", "Có thể mượn","Jun-26-2022 17:23"),
-  createData('NEGA-KUN AND POSI-CHAN', "Comedy - Romance", "Shunpei Morita", "Có thể mượn","May-25-2022 01:25"),
-  createData('STORY OF A SMALL SENIOR IN MY COMPANY', "Comedy - Romance", "Saisou", "Có thể mượn","Jun-24-2022 22:38"),
-  createData('2 SAISA NO OSANANAJIMI', "Romance - School life", "Mi Kasuke", "Có thể mượn","Jun-26-2022 09:06"),
-  createData('KIMI NI TSUMUGU BOUHAKU 2', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", "Có thể mượn","Jun-26-2022 17:23"),
-  createData('KIMI NI TSUMUGU BOUHAKU 3', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", "Có thể mượn","Jun-26-2022 17:23"),
+  createData('KIMI NI TSUMUGU BOUHAKU', "Romance - Shoujo ai", "Yasaka Shuu", "Có thể mượn", "Jun-26-2022 17:23"),
+  createData('NEGA-KUN AND POSI-CHAN', "Comedy - Romance", "Shunpei Morita", "Có thể mượn", "May-25-2022 01:25"),
+  createData('STORY OF A SMALL SENIOR IN MY COMPANY', "Comedy - Romance", "Saisou", "Có thể mượn", "Jun-24-2022 22:38"),
+  createData('2 SAISA NO OSANANAJIMI', "Romance - School life", "Mi Kasuke", "Có thể mượn", "Jun-26-2022 09:06"),
+  createData('KIMI NI TSUMUGU BOUHAKU 2', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", "Có thể mượn", "Jun-26-2022 17:23"),
+  createData('KIMI NI TSUMUGU BOUHAKU 3', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", "Có thể mượn", "Jun-26-2022 17:23"),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -200,11 +201,11 @@ const EnhancedTableToolbar = (props) => {
           Chưa chọn sách nào
         </Typography>
       )}
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+      <Tooltip title="Filter list">
+        <IconButton>
+          <FilterListIcon />
+        </IconButton>
+      </Tooltip>
     </Toolbar>
   );
 };
@@ -216,12 +217,25 @@ export default function CartBook() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
+  const [bookList, setBookList] = useState([]);
 
   const navigatePath = function (path) {
     if (window.location.pathname !== path) {
       navigate(path);
     }
   };
+  function getData() {
+    BookAPI.listBook().then((res) => {
+      console.log(res.data.data);
+      setBookList(res.data.data)
+    })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+  useEffect(() => {
+    getData();
+  }, []);
   const handleRequestSort = (
     event,
     property,
@@ -269,108 +283,122 @@ export default function CartBook() {
     setPage(0);
   };
 
+  const handleSubmit = async () => {
+    try {
+      console.log(selected);
+      let idBooks = selected;
+      const response = await BorrowBookAPI.awaitBorrowBook({idBooks});
+      // console.log(JSON.stringify(response?.data));
+
+    } catch (err) {
+        console.log(err);
+      } 
+    }
+  
+
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
+  console.log(selected)
   return (
     <div className={styles.Home}>
-        <Header />
-    <       div className={styles.content} >
-                <div className={styles.wraper}>
-                    <div className={styles.tdisplay}>  
-                        <p>Mượn sách</p>
-                        <Box sx={{ width: '100%' }}>
-                        <Paper sx={{ width: '100%', mb: 2 }}>
-                            <EnhancedTableToolbar numSelected={selected.length} />
-                            <TableContainer>
-                            <Table
-                                sx={{ minWidth: 750 }}
-                                aria-labelledby="tableTitle"
-                                size={'medium'}
-                            >
-                                <EnhancedTableHead
-                                numSelected={selected.length}
-                                order={order}
-                                orderBy={orderBy}
-                                onSelectAllClick={handleSelectAllClick}
-                                onRequestSort={handleRequestSort}
-                                rowCount={rows.length}
-                                />
-                                <TableBody>
-                                {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+      <Header />
+      <       div className={styles.content} >
+        <div className={styles.wraper}>
+          <div className={styles.tdisplay}>
+            <p>Mượn sách</p>
+            <Box sx={{ width: '100%' }}>
+              <Paper sx={{ width: '100%', mb: 2 }}>
+                <EnhancedTableToolbar numSelected={selected.length} />
+                <TableContainer>
+                  <Table
+                    sx={{ minWidth: 750 }}
+                    aria-labelledby="tableTitle"
+                    size={'medium'}
+                  >
+                    <EnhancedTableHead
+                      numSelected={selected.length}
+                      order={order}
+                      orderBy={orderBy}
+                      onSelectAllClick={handleSelectAllClick}
+                      onRequestSort={handleRequestSort}
+                      rowCount={bookList.length}
+                    />
+                    <TableBody>
+                      {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                                 rows.slice().sort(getComparator(order, orderBy)) */}
-                                {rows.slice().sort(getComparator(order, orderBy))
-                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row, index) => {
-                                    const isItemSelected = isSelected(row.name);
-                                    const labelId = `enhanced-table-checkbox-${index}`;
+                      {bookList.slice().sort(getComparator(order, orderBy))
+                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        .map((row, index) => {
+                          const isItemSelected = isSelected(row._id);
+                          const labelId = `enhanced-table-checkbox-${index}`;
 
-                                    return (
-                                        <TableRow
-                                        hover
-                                        onClick={(event) => handleClick(event, row.name)}
-                                        role="checkbox"
-                                        aria-checked={isItemSelected}
-                                        tabIndex={-1}
-                                        key={row.name}
-                                        selected={isItemSelected}
-                                        >
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                            color="primary"
-                                            checked={isItemSelected}
-                                            inputProps={{
-                                                'aria-labelledby': labelId,
-                                            }}
-                                            />
-                                        </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            id={labelId}
-                                            scope="row"
-                                            padding="none"
-                                            onClick={()=>{navigatePath("/book")}}
-                                        >
-                                            {row.name}
-                                        </TableCell>
-                                        <TableCell align="right">{row.calories}</TableCell>
-                                        <TableCell align="right">{row.writter}</TableCell>
-                                        <TableCell align="right">{row.status}</TableCell>
-                                        <TableCell align="right">{row.lastUpdate}</TableCell>
-                                        </TableRow>
-                                    );
-                                    })}
-                                    {emptyRows > 0 && (
-                                        <TableRow
-                                        >
+                          return (
+                            <TableRow
+                              hover
+                              onClick={(event) => handleClick(event, row._id)}
+                              role="checkbox"
+                              aria-checked={isItemSelected}
+                              tabIndex={-1}
+                              key={row._id}
+                              selected={isItemSelected}
+                            >
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  color="primary"
+                                  checked={isItemSelected}
+                                  inputProps={{
+                                    'aria-labelledby': labelId,
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell
+                                component="th"
+                                id={labelId}
+                                scope="row"
+                                padding="none"
+                                onClick={() => { navigatePath("/book") }}
+                              >
+                                {row.title}
+                              </TableCell>
+                              <TableCell align="right">{row?.categories ? (row.categories)[0].name : null}</TableCell>
+                              <TableCell align="right">{row.author}</TableCell>
+                              <TableCell align="right">{row.status == "Available" ? "Có thể mượn" : "Đã mượn hết"}</TableCell>
+                              <TableCell align="right">{row.updatedAt}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      {emptyRows > 0 && (
+                        <TableRow
+                        >
 
-                                        </TableRow>
-                                        )}
-                                </TableBody>
-                            </Table>
-                            </TableContainer>
-                            <TablePagination
-                            rowsPerPageOptions={[5, 10, 15]}
-                            component="div"
-                            count={rows.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                            />
-                        </Paper>
-                        <div className={stylesBook.buttonM}>
-                            <Button> Đăng ký mượn </Button>                            
-                        </div>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 15]}
+                  component="div"
+                  count={bookList.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </Paper>
+              <div className={stylesBook.buttonM}>
+                <Button onClick={handleSubmit}> Đăng ký mượn </Button>
+              </div>
 
-                        </Box>
-                    </div>
-                </div>
-            </div>
-        <Footer />
+            </Box>
+          </div>
+        </div>
+      </div>
+      <Footer />
     </div>
   );
 }

@@ -27,10 +27,10 @@ function BorrowBookAPI() {
         return callAPI.post('borrowbooks/search', data);
     }
 
-    // //[POST] - search
-    // this.searchBook = (data) => {
-    //     return callAPI.post('books/search', data);
-    // }
+    //[POST] - Tạo đơn sách chờ duyệt
+    this.awaitBorrowBook = (data) => {
+        return callAPI.post('borrowbooks/awaitBorrowBook', data);
+    }
 }
 
 export default new BorrowBookAPI()

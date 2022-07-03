@@ -31,6 +31,10 @@ function BookAPI() {
     this.searchBook = (data) => {
         return callAPI.post('books/search', data);
     }
+
+    this.outstandingBook = () => {
+        return callAPI.get('books/outstandingBook');
+    }
 }
 
 export default new BookAPI()

@@ -13,13 +13,18 @@ import face from '../assets/facebook.png'
 import instagram from '../assets/instagram.png'
 import twitter from '../assets/twitter.png'
 import BookImages from './bookImages';
-import { Link, useNavigate } from 'react-router-dom';
-import React, { useEffect, useState, useRef, memo } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState, useRef, memo} from 'react';
 import BookAPI from '../api/BookAPI';
+import RatingAPI from '../api/RatingAPI';
+import CommentAPI from '../api/CommentAPI';
 
 function BookInformation({navigation}) {
     const navigate = useNavigate();
-    const [bookInfo, setBookInfo] = useState([])
+    const [bookInfo, setBookInfo] = useState([]);
+    const [rating, setRating] = useState();
+    const [comment, setComment] = useState([]);
+    let { idBook } = useParams();
 
     const navigatePath = function (path) {
       if (window.location.pathname !== path) {
@@ -27,11 +32,23 @@ function BookInformation({navigation}) {
       }
     };
     function getData(){
-      BookAPI.getBookById().then((res) => {
-        console.log(res.data)
-        let bookInfoRes = res.data;
-        setBookInfo(bookInfoRes.data)
-      
+      BookAPI.getBookById(idBook).then((res) => {
+        setBookInfo(res.data.data)
+      })
+      .catch(err => {
+        console.log(err)
+      });
+
+      RatingAPI.getRatingForBook(idBook).then((res) => {
+        setRating(res.data.data)
+      })
+      .catch(err => {
+        console.log(err)
+      });
+
+      CommentAPI.getComment(idBook).then((res) => {
+        console.log(res.data.data);
+        setComment(res.data.data)
       })
       .catch(err => {
         console.log(err)
@@ -55,75 +72,47 @@ function BookInformation({navigation}) {
                   <div className={stylesBook.content}>
                     Tên sách:
                   </div>
-                  <div>
-                   Sống là để yêu thương
-                  </div>
+                  <div>{bookInfo.title}</div>
                 </div>
 
                 <div className={stylesBook.title}>
-                  <div className={stylesBook.content}>
-                    Thể loại:
-                  </div>
-                  <div>
-                    Rom-Com
-                  </div>
+                  <div className={stylesBook.content}>Thể loại:</div>
+                  <div>{bookInfo.categories? (bookInfo.categories)[0].name : null}</div>
                 </div>
 
                 <div className={stylesBook.title}>
-                  <div className={stylesBook.content}>
-                    Đánh giá:
-                  </div>
+                  <div className={stylesBook.content}>Đánh giá:</div>
                   <div  className={stylesBook.rating}>               
-                    <p>3</p>
+                    <p>{rating?.numberStar}</p>
                     <div className={stylesBook.star}>                  
-                      <Rating name="half-rating-read" defaultValue={3} readOnly />     
+                      <Rating name="half-rating-read" defaultValue={rating?.numberStar} readOnly />     
                     </div>      
                   </div>
                 </div>
 
                 <div className={stylesBook.title}>
-                  <div className={stylesBook.content}>
-                    Lượt đánh giá:
-                  </div>
-                  <div>
-                    123 Đánh giá
-                  </div>
+                  <div className={stylesBook.content}>Lượt đánh giá:</div>
+                  <div>{rating?.numberRate} Đánh giá</div>
                 </div>
 
                 <div className={stylesBook.title}>
-                  <div className={stylesBook.content}>
-                    Tên tác giả:
-                  </div>
-                  <div>
-                    Bạn Vũ giấu tên
-                  </div>
+                  <div className={stylesBook.content}>Tên tác giả:</div>
+                  <div>{bookInfo?.author}</div>
                 </div>
 
                 <div className={stylesBook.title}>
-                  <div className={stylesBook.content}>
-                    Năm xuất bản:
-                  </div>
-                  <div>
-                    2022
-                  </div>
+                  <div className={stylesBook.content}>Năm xuất bản:</div>
+                  <div>{bookInfo?.publishYear}</div>
                 </div>
 
                 <div className={stylesBook.title}>
-                  <div className={stylesBook.content}>
-                    Tình trạng:
-                  </div>
-                  <div>
-                    Có thể mượn
-                  </div>
+                  <div className={stylesBook.content}>Tình trạng:</div>
+                  <div>{bookInfo?.status == 'Available' ? "Có thể mượn" : "Đã cho mượn hết"}</div>
                 </div>
 
                 <div className={stylesBook.title}>
-                  <div className={stylesBook.content}>
-                    Cập nhật lần cuối:
-                  </div>
-                  <div>
-                    15:30:00 15/06/2022
-                  </div>
+                  <div className={stylesBook.content}>Cập nhật lần cuối:</div>
+                  <div>{bookInfo?.updatedAt}</div>
                 </div>
                 <p className={styles.tdisplay}> </p>
 
@@ -144,8 +133,7 @@ function BookInformation({navigation}) {
           <div className={styles.wraper}>
             <p className={styles.tdisplay}> Nội dung </p>
             <div className={stylesBook.information}>
-              Tên khác: My stepmom's daughter was my ex-girlfriend; La hija de mi madrastra es mi ex-novia,Mamahaha no tsurego ga moto kanodatta,Mamakano
-              Cái tên nói lên tất cả.
+              {bookInfo?.description}
             </div>
             <div className={stylesBook.footFake}>
               <p>  </p>
@@ -155,40 +143,28 @@ function BookInformation({navigation}) {
             <p className={styles.tdisplay}> Đánh giá sách </p>
             <div className={stylesBook.colInformation}> 
               <div>    
-                <h3 className={stylesBook.ratingScore}> 3 / 5 </h3>
+                <h3 className={stylesBook.ratingScore}> {rating?.numberStar} / 5 </h3>
                 <div className={stylesBook.ratingInfo}>                  
-                  <Rating name="half-rating-read" defaultValue={3} readOnly />
+                  <Rating name="half-rating-read" defaultValue={rating?.numberStar} readOnly />
                 </div>
               </div>  
               <div>
-                <h3  className={stylesBook.ratingScore}> 123 Đánh giá  </h3>  
+                <h3  className={stylesBook.ratingScore}> {rating?.numberRate} Đánh giá  </h3>  
               </div>      
             </div>
-            
-            <UserRating
-              imageTest={imageTest}
-              userName="Kito"
-              ratingScore={5}
-              timeRate="14:30:00 29/05/2022"
-              comment="Sách khá hay"
-            />
-
-            <UserRating
-              imageTest={imageTest}
-              userName="Ayano"
-              ratingScore={4}
-              timeRate="14:30:00 29/04/2022"
-              comment="Sách không tệ lắm"
-            />
-
-            <UserRating
-              imageTest={imageTest}
-              userName="Mitsuha"
-              ratingScore={4}
-              timeRate="14:30:00 05/05/2022"
-              comment="Bao giờ có tập mới vậy?"
-            />
-
+            {
+              comment?.map((item) => {
+                return(
+                  <UserRating
+                  imageTest={imageTest}
+                  userName={item.user.fullName}
+                  ratingScore={item.numberStart}
+                  timeRate={item.updatedAt}
+                  comment={item.description}
+                />
+                )
+              })
+            }
           </div>
         </div>
         <Footer navigation={navigation}/>

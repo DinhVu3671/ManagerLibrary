@@ -31,7 +31,6 @@ commentsRoutes.post(
 // lấy ra list theo sách
 commentsRoutes.get(
     "/list/:borrowBookId",
-    auth,
     asyncWrapper(commentController.list),
 );
 

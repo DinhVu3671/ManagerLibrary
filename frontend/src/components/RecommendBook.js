@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import { Grid } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import bookimg from '../assets/book.jpg';
-function RecommendBook(){
+function RecommendBook({featuredBook}){
   const navigate = useNavigate();
 
   const navigatePath = function (path) {
@@ -19,7 +19,7 @@ function RecommendBook(){
   };
     return (
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 8 }}  style={{padding:'5px'}}>
-              {Array.from(Array(8)).map((_, index) => (
+              {featuredBook?.map((book, index) => (
                 <Grid item xs={2} sm={1} md={1} key={index}>
                   <Card sx={{ maxWidth: 345,height:200 }}>
                     <CardActionArea>
@@ -28,10 +28,12 @@ function RecommendBook(){
                         height="60"
                         image={bookimg}
                         alt="green iguana"
-                        onClick={() => {navigatePath("/book")}}
+                        onClick={() => {navigatePath(`/book/${book._id}`)}}
                       />
                       <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
+                          <p>{book.title}</p>
+                          <p>{book.publishYear}</p>
                         </Typography>
                       </CardContent>
                     </CardActionArea>

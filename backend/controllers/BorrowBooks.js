@@ -154,14 +154,15 @@ borrowBookController.list = async (req, res, next) => {
                         path: 'book',
                         // select: '_id title categories author',
                         model: 'Books',
+                        populate: {
+                            path: 'categories',
+                            select: '_id name',
+                            model: 'Categories',
+                        }
                     }).populate({
-                        path: 'idUser',
+                        path: 'user',
                         select: '_id fullName phone gmail',
                         model: 'Users',
-                    }).populate({
-                        path: 'categories',
-                        select: '_id name',
-                        model: 'Categories',
                     });
         if (bookBorrow.length === 0) {
             return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Không tồn tại quyển sách nào"});
@@ -187,18 +188,16 @@ borrowBookController.searchAdmin = async (req, res, next) => {
             {
               $group: {
                 "_id": "$user",
-                "book": { "$first": "$book" },
                 "status": { "$first": "$status" },
-                "borrowDate": { "$first": "$borrowDate" },
-                "refundDate": { "$first": "$refundDate" },
-                "refundAppointmentDate": { "$first": "$refundAppointmentDate" }
+                "book": { "$addToSet": "$book"}
               }
             },
         { "$lookup": {
                 "from": "users",
                 "localField": "_id",
                 "foreignField": "_id",
-                "as": "user"
+                "as": "user",
+                
            }},
             { "$lookup": {
                 "from": "books",
@@ -206,17 +205,19 @@ borrowBookController.searchAdmin = async (req, res, next) => {
                 "foreignField": "_id",
                 "as": "book"
            }},
-        //    { "$unwind": { "path" : "$user" } },
+    //        {"$lookup": {
+    //         "from": "categories",
+    //         "localField": "categories",
+    //         "foreignField": "_id",
+    //         "as": "categories"
+    //    }},
+           { "$unwind": { "path" : "$user" } },
         //    { "$unwind": { "path" : "$book" } }
-          ])
+          ]);
         // .populate({
-        //                 path: 'book',
-        //                 select: '_id title categories author',
-        //                 model: 'Books',
-        //             }).populate({
-        //                 path: 'user',
-        //                 select: '_id fullName phone',
-        //                 model: 'Users',
+        //                 path: 'categories',
+        //                 select: '_id name',
+        //                 model: 'Categories',
         //             })
         if (bookBorrow.length === 0) {
             return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Không tồn tại quyển sách nào"});
@@ -235,9 +236,9 @@ borrowBookController.searchAdmin = async (req, res, next) => {
 borrowBookController.awaitBorrowBook = async (req, res, next) => {
     try {
         const {
-            idBooks,
-            idUser
+            idBooks
         } = req.body;
+        let idUser = req.userId;
         let result = [];
         if(idBooks.length > 0) {
             let responsive = [];
@@ -251,11 +252,12 @@ borrowBookController.awaitBorrowBook = async (req, res, next) => {
                     book: item,
                     user: idUser,
                     status: "await",
-                    // borrowDate: new Date(),
+                    borrowDate: new Date(),
                     // refundDate: null,
-                    // refundAppointmentDate: new Date(new Date().getTime() + 3600000*24*30)
+                    refundAppointmentDate: new Date(new Date().getTime() + 3600000*24*30)
                 });
-                responsive.push(borrowBook._id);
+                let borrowBookSaved = await borrowBook.save();
+                responsive.push(borrowBookSaved._id);
             })
             result = await BorrowBookModel.findById({$in: responsive}).populate({
                 path: 'book',

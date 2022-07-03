@@ -19,7 +19,6 @@ booksRoutes.post(
 // lấy ra 1
 booksRoutes.get(
     "/show/:id",
-    auth,
     asyncWrapper(booksController.show),
 );
 // xoá
@@ -31,13 +30,16 @@ booksRoutes.get(
 // lấy ra list
 booksRoutes.get(
     "/list",
-    auth,
     asyncWrapper(booksController.list),
 );
 booksRoutes.post(
     "/search",
     auth,
     booksController.search);
+
+booksRoutes.get(
+    "/outstandingBook",
+    booksController.outstandingBook);
 
 
 module.exports = booksRoutes;

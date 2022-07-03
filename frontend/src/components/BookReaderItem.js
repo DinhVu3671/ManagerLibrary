@@ -111,7 +111,6 @@ function BookReaderItem({book, idShow}){
         {status: "borrowing", button1: "", button2: ""},
         {status: "refurn", button1: "Mượn lại", button2: "Đánh giá sách"},
       ];
-      console.log(book)
     return(
         <div className={styleBookReader.Home}>
             <div className={styleBookReader.content} >
@@ -129,7 +128,7 @@ function BookReaderItem({book, idShow}){
                                     component="img"
                                     image={imageTest}
                                     alt="green iguana"
-                                    onClick={() => {navigatePath("/book")}}
+                                    onClick={() => {navigatePath(`/book/${book.book._id}`)}}
                                     />
                                 </CardActionArea>
                             </Card>

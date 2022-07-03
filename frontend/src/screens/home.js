@@ -13,6 +13,7 @@ import Introduce from './introduce';
 import RecommendBook from '../components/RecommendBook';
 import clsx from 'clsx';
 import CategoriesAPI from '../api/CategoriesAPI';
+import BookAPI from '../api/BookAPI';
 
 function Home({navigation}) {
 
@@ -26,16 +27,12 @@ function Home({navigation}) {
     .catch(err => {
       console.log(err)
     });
-    // BorrowBookAPI.listByUser(localStorage.getItem('id')).then((res) => {
-    //   console.log(res.data)
-    //   let bookListRes = res.data;
-    //   setBookBorrows(bookListRes.data);
-    //   setBookBorrowing(bookListRes.data?.filter(item => item.status == "borrowing"))
-    //   setBookRefurn(bookListRes.data?.filter(item => item.status == "refurn"))
-    // })
-    // .catch(err => {
-    //   console.log(err)
-    // })
+    BookAPI.outstandingBook().then((res) => {
+      setFeatureBook(res.data.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })
   }
   useEffect(() => {
       getData(); 
@@ -70,7 +67,7 @@ function Home({navigation}) {
         <div className={styles.content} >
           <div className={styles.wraper}>
             <p className={styles.tdisplay}> Sách nổi bật </p>
-            <RecommendBook/>
+            <RecommendBook featuredBook={featuredBook}/>
           </div>
         </div>
 

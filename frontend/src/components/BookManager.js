@@ -292,7 +292,6 @@ function BookManager(books) {
           categories: type,
           // images: img,
         };
-        console.log(data);
         try {
           const response = await BookAPI.createBook(data);
           console.log(JSON.stringify(response?.data));

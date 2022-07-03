@@ -68,15 +68,15 @@ function BookReaderManager({navigation}){
   const [bookBorrows, setBookBorrows] = useState([]);
   const [bookBorrowing, setBookBorrowing] = useState([]);
   const [bookRefurn, setBookRefurn] = useState([]);
-
+  const [bookAwait, setBookAwait] = useState([]);
 
   function getData(){
     BorrowBookAPI.listByUser(localStorage.getItem('id')).then((res) => {
-      console.log(res.data)
       let bookListRes = res.data;
       setBookBorrows(bookListRes.data);
-      setBookBorrowing(bookListRes.data?.filter(item => item.status == "borrowing"))
-      setBookRefurn(bookListRes.data?.filter(item => item.status == "refurn"))
+      setBookBorrowing(bookListRes.data?.filter(item => item.status == "borrowing"));
+      setBookRefurn(bookListRes.data?.filter(item => item.status == "refurn"));
+      setBookAwait(bookListRes.data?.filter(item => item.status == "await"))
     })
     .catch(err => {
       console.log(err)
@@ -111,12 +111,15 @@ function BookReaderManager({navigation}){
                             <Tab value={0} label="Tất cả"/>
                             <Tab value={1} label="Đang mượn" />
                             <Tab value={2} label="Đã trả"/>
+                            <Tab value={3} label="Đang chờ duyệt"/>
                         </Tabs>
                         <TabPanel value={value} index={0} books={bookBorrows}>        
                         </TabPanel>
                         <TabPanel value={value} index={1} books={bookBorrowing}>
                         </TabPanel>
                         <TabPanel value={value} index={2} books={bookRefurn}>
+                        </TabPanel>
+                        <TabPanel value={value} index={3} books={bookAwait}>
                         </TabPanel>
                 </Box> 
                 </div>

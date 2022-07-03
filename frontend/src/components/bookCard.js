@@ -9,15 +9,14 @@ import StoreIcon from '@mui/icons-material/Store';
 import CardMedia from '@mui/material/CardMedia';
 import Rating from '@mui/material/Rating';
 
-function BookCard(props) {
-  const [productInfo, setProductInfo] = useState({
-    name: 'Em gái mẹ kế là người yêu cũ của tôi',
-    rate: 4.6,
-    count: 100,
-    image:
-      'https://res.cloudinary.com/trinhvanthoai/image/upload/v1655489389/thoaiUploads/defaultAvatar_jxx3b9.png',
-  });
-
+function BookCard({book}) {
+  // const [productInfo, setProductInfo] = useState({
+  //   name: book.name,
+  //   rate: book.re,
+  //   count: 100,
+  //   image:
+  //     'https://res.cloudinary.com/trinhvanthoai/image/upload/v1655489389/thoaiUploads/defaultAvatar_jxx3b9.png',
+  // });
   return (
     <Link
       className={clsx(styles.cardContainer)}
@@ -25,18 +24,19 @@ function BookCard(props) {
         '/book'
       }
     >
-      <Card className={clsx(styles.cardBody)}>
+      <Card className={clsx(styles.cardBody)} sx={{ maxWidth: 200, minWidth: 200 }}>
         <div className={clsx(styles.productImage)}>
           <CardMedia
             // className={clsx(styles.productImage)}
             component="img"
-            image={productInfo.image}
-            alt={productInfo.name}
+            height="60"
+            image={book.image}
+            alt={book.name}
           />
         </div>
         <div className={clsx(styles.cardContent)}>
           <div className={clsx(styles.cardHeader)}>
-            <p className={clsx(styles.cardTitle)}>{productInfo.name}</p>
+            <p className={clsx(styles.cardTitle)}>{book.name}</p>
             {/* <strong
               className={clsx(styles.cardPrice)}
             >{`${productInfo.price} đ`}</strong> */}
@@ -45,18 +45,19 @@ function BookCard(props) {
           <div className={clsx(styles.productContent)}>
             <div className={clsx(styles.productRating)}>
               <Rating
+                name="half-rating-read"
                 className={clsx(styles.rating)}
-                value={props.productId}
+                value={book.rate}
                 precision={0.1}
                 readOnly
               />
-              {/* <span className={clsx(styles.selledNumber)}>
-                Đã bán: {productInfo.selled}
-              </span> */}
+              <span className={clsx(styles.selledNumber)}>
+                Năm: {book.year}
+              </span>
             </div>
             <span className={clsx(styles.location)}>
               <StoreIcon className={clsx(styles.locationIcon)} />
-              {'còn ' + productInfo.count + ' sách'}
+              {'còn ' + book.count + ' sách'}
             </span>
           </div>
         </div>

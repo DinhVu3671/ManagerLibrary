@@ -26,7 +26,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 const defaultImage = 'https://res.cloudinary.com/trinhvanthoai/image/upload/v1655489389/thoaiUploads/defaultAvatar_jxx3b9.png'
 
-function Search1() {
+function Search() {
   let { search } = useParams();
   //request data with search term;
   const PRODUCT_SEARCH_URL = `/product/filter`;
@@ -334,4 +334,4 @@ function Search1() {
   );
 }
 
-export default Search1;
+export default Search;

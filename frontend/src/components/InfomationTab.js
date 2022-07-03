@@ -17,6 +17,7 @@ import FactCheckIcon from '@mui/icons-material/FactCheck';
 import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
 import { Link } from 'react-router-dom';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 export default function InformationTab() {
   const [open, setOpen] = React.useState(true);
@@ -27,7 +28,7 @@ export default function InformationTab() {
 
   return (
     <List
-      sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+      sx={{ width: "100%", maxWidth: 300, bgcolor: "background.paper" }}
       component="nav"
       aria-labelledby="nested-list-subheader"
     >
@@ -35,8 +36,8 @@ export default function InformationTab() {
         to="/bookManager"
         style={{ textDecoration: "none", color: "black" }}
       >
-        <ListItemButton>
-          <ListItemIcon>
+        <ListItemButton >
+          <ListItemIcon >
             <DraftsIcon />
           </ListItemIcon>
           <ListItemText primary="Quản lý Sách" />
@@ -48,7 +49,8 @@ export default function InformationTab() {
           <InboxIcon />
         </ListItemIcon>
         <ListItemText primary="Quản lý mượn trả" />
-        {open ? <ExpandLess /> : <ExpandMore />}
+        <ExpandMore />
+        {/* {open ? <ExpandLess /> : <ExpandMore />} */}
       </ListItemButton>
 
       <Collapse in={open} timeout="auto" unmountOnExit>
@@ -100,6 +102,18 @@ export default function InformationTab() {
             <BookmarkAddIcon />
           </ListItemIcon>
           <ListItemText primary="Tạo đơn mượn mới" />
+        </ListItemButton>
+      </Link>
+
+      <Link
+        to="/readerManager"
+        style={{ textDecoration: "none", color: "black" }}
+      >
+        <ListItemButton>
+          <ListItemIcon>
+            <AccountBoxIcon />
+          </ListItemIcon>
+          <ListItemText primary="Quản lý người dùng" />
         </ListItemButton>
       </Link>
 

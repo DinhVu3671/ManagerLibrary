@@ -15,6 +15,8 @@ import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import BookAPI from "../api/BookAPI";
+import BookIcon from '@mui/icons-material/Book';
+import ListItemIcon from '@mui/material/ListItemIcon';
 // import { AuthContext } from '../contextAPI/AuthContext';
 
 function Header() {
@@ -38,7 +40,7 @@ function Header() {
 
   const listTopic = [
     ['TRANG CHỦ', ''],
-    ['TÌM KIẾM', ''],
+    ['TÌM KIẾM', 'search'],
     ['GIỚI THIỆU', ''],
   ];
 
@@ -152,6 +154,7 @@ function Header() {
               {(localStorage.getItem('token')) == null ? 'Đăng nhập' : (localStorage.getItem('fullName'))}
             </div>
           </div>
+          
 
           {
             ((localStorage.getItem('token')) != null) ? (((localStorage.getItem('role')) === "admin") ?

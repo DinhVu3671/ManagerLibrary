@@ -1,4 +1,14 @@
 import * as React from 'react';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import Header from './header';
+import Footer from './footer';
+import stylesOrderBook from './CSS/orderBook.module.css';
+import InformationTab from './InfomationTab';
+import styles from '../screens/CSS/home.module.css';
+import stylesRegister from './CSS/RegisterFormCSS.module.scss';
+import clsx from 'clsx';
+import { useState } from 'react';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -15,43 +25,46 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-import { useState } from 'react';
+import { Button } from '@mui/material';
+import stylesBook from '../components/CSS/BookInformation.module.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { makeStyles } from "@material-ui/core/styles";
+import SearchBar from "material-ui-search-bar";
+
+//
+
 
 function createData(
   name,
   calories,
-  fat,
-  carbs,
-  protein,
+  writter,
+  count,
+  lastUpdate,
 ) {
   return {
     name,
     calories,
-    fat,
-    carbs,
-    protein,
+    writter,
+    count,
+    lastUpdate,
   };
 }
 
+const useStyles = makeStyles({
+  table: {
+    minWidth: 650
+  }
+});
+
 const rows = [
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Donut', 452, 25.0, 51, 4.9),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Honeycomb', 408, 3.2, 87, 6.5),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Jelly Bean', 375, 0.0, 94, 0.0),
-  createData('KitKat', 518, 26.0, 65, 7.0),
-  createData('Lollipop', 392, 0.2, 98, 0.0),
-  createData('Marshmallow', 318, 0, 81, 2.0),
-  createData('Nougat', 360, 19.0, 9, 37.0),
-  createData('Oreo', 437, 18.0, 63, 4.0),
+  createData('KIMI NI TSUMUGU BOUHAKU', "Romance - Shoujo ai", "Yasaka Shuu", 15,"Jun-26-2022 17:23"),
+  createData('NEGA-KUN AND POSI-CHAN', "Comedy - Romance", "Shunpei Morita", 30,"May-25-2022 01:25"),
+  createData('STORY OF A SMALL SENIOR IN MY COMPANY', "Comedy - Romance", "Saisou", 15,"Jun-24-2022 22:38"),
+  createData('2 SAISA NO OSANANAJIMI', "Romance - School life", "Mi Kasuke", 18,"Jun-26-2022 09:06"),
+  createData('KIMI NI TSUMUGU BOUHAKU 2', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 21,"Jun-26-2022 17:23"),
+  createData('KIMI NI TSUMUGU BOUHAKU 3', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 20,"Jun-26-2022 17:23"),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -64,8 +77,9 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
+let Order = 'asc' | 'desc';
 
-function getComparator(order, orderBy, a, b) {
+function getComparator(order, orderBy) {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
@@ -73,10 +87,10 @@ function getComparator(order, orderBy, a, b) {
 
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
-function stableSort(array, compare) {
+function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
-    const order = compare(a[0], b[0]);
+    const order = comparator(a[0], b[0]);
     if (order !== 0) {
       return order;
     }
@@ -90,49 +104,60 @@ const headCells = [
     id: 'name',
     numeric: false,
     disablePadding: true,
-    label: 'Dessert (100g serving)',
+    label: 'Tên sách',
   },
   {
     id: 'calories',
-    numeric: true,
+    numeric: false,
     disablePadding: false,
-    label: 'Calories',
+    label: 'Thể loại',
   },
   {
-    id: 'fat',
-    numeric: true,
+    id: 'writter',
+    numeric: false,
     disablePadding: false,
-    label: 'Fat (g)',
+    label: 'Tác giả',
   },
   {
-    id: 'carbs',
+    id: 'count',
     numeric: true,
     disablePadding: false,
-    label: 'Carbs (g)',
+    label: 'Kho',
   },
   {
-    id: 'protein',
-    numeric: true,
+    id: 'lastUpdate',
+    numeric: false,
     disablePadding: false,
-    label: 'Protein (g)',
+    label: 'Cập nhật lần cuối',
   },
 ];
 
 
 function EnhancedTableHead(props) {
-  const {order, orderBy, rowCount, onRequestSort } =
-    props;
-  const createSortHandler = (property) => (event) => {
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const createSortHandler =
+    (property) => (event) => {
       onRequestSort(event, property);
-  };
+    };
 
   return (
     <TableHead>
       <TableRow>
+        <TableCell padding="checkbox">
+          <Checkbox
+            color="primary"
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{
+              'aria-label': 'select all desserts',
+            }}
+          />
+        </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
+            align='center'
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -155,121 +180,427 @@ function EnhancedTableHead(props) {
   );
 }
 
-export default function EnhancedTable() {
-  const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('calories');
-  const [selected, setSelected] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleRequestSort = (
-    event,
-    property,
-  ) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+const EnhancedTableToolbar = (props) => {
+  const { numSelected } = props;
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {rows.slice().sort(getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.name)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.name}
-                      selected={isItemSelected}
-                    >
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
-                      >
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="right">{row.calories}</TableCell>
-                      <TableCell align="right">{row.fat}</TableCell>
-                      <TableCell align="right">{row.carbs}</TableCell>
-                      <TableCell align="right">{row.protein}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                >
-
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+    <Toolbar
+      sx={{
+        pl: { sm: 2 },
+        pr: { xs: 1, sm: 1 },
+        ...(numSelected > 0 && {
+          bgcolor: (theme) =>
+            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+        }),
+      }}
+    >
+      {numSelected > 0 ? (
+        <Typography
+          sx={{ flex: '1 1 100%' }}
+          color="inherit"
+          variant="subtitle1"
           component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </Box>
+        >
+          Đã chọn {numSelected} sách
+        </Typography>
+      ) : (
+        <Typography
+          sx={{ flex: '1 1 100%' }}
+          variant="h6"
+          id="tableTitle"
+          component="div"
+        >
+          Chưa chọn sách nào
+        </Typography>
+      )}
+        <Tooltip title="Filter list">
+          <IconButton>
+            <FilterListIcon />
+          </IconButton>
+        </Tooltip>
+    </Toolbar>
+  );
+};
+//
+function TapSeach() {
+  return (
+    <Autocomplete
+      disablePortal
+      id="combo-box-demo"
+      options={userName}
+      sx={{ width: 300 }}
+      renderInput={(params) => <TextField {...params} label="Tên người dùng" />}
+    />
   );
 }
+
+const userName = [
+  { label: 'Bùi Minh Tuấn'},
+  { label: 'Đinh Tiến Vũ'},
+  { label: 'Nino Nanako'},
+  { label: 'Hatsune Miku'},
+  { label: 'Miku Nanako'},
+  { label: 'Chitanda Eru'},
+  { label: 'Ayai Miru'},
+  { label: 'Origawa Sayu'},
+  { label: 'Himeruko'},
+  { label: 'Rachel Gardner'},
+  { label: 'Ayano Uenohara'},
+  { label: 'Horikita Surune'},
+  { label: 'Minamoto Ruri'},
+  { label: 'Nguyễn Thế Kiệt'},
+];
+
+//
+
+//
+function CreateOrderBook() {
+    let date = new Date();
+    const dateCurr = date.toLocaleDateString();
+    const [dateValid, setDateValid] = useState('');
+    let str = ""
+    if(date.getMonth() >= 9)
+      if(date.getDate() > 9)
+        str = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+      else
+        str = `${date.getFullYear()}-${date.getMonth() + 1}-0${date.getDate()}`  
+    else 
+      if(date.getDate() > 9)
+        str = `${date.getFullYear()}-0${date.getMonth() + 1}-${date.getDate()}`
+      else
+        str = `${date.getFullYear()}-0${date.getMonth() + 1}-0${date.getDate()}`  
+
+
+//
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('calories');
+    const [selected, setSelected] = useState([]);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const navigate = useNavigate();
+
+    const [data, setData] = useState(rows);
+    const [searched, setSearched] = useState("");
+    const classes = useStyles();
+
+    const requestSearch = (searchedVal) => {
+      const filteredRows = rows.filter((row) => {
+        return row.name.toLowerCase().includes(searchedVal.toLowerCase());
+      });
+      setData(filteredRows);
+    };
+
+    const cancelSearch = () => {
+      setSearched("");
+      requestSearch(searched);
+    };
+
+    const navigatePath = function (path) {
+      if (window.location.pathname !== path) {
+        navigate(path);
+      }
+    };
+    const handleRequestSort = (
+      event,
+      property,
+    ) => {
+      const isAsc = orderBy === property && order === 'asc';
+      setOrder(isAsc ? 'desc' : 'asc');
+      setOrderBy(property);
+    };
+
+    const handleSelectAllClick = (event) => {
+      if (event.target.checked) {
+        const newSelecteds = rows.map((n) => n.name);
+        setSelected(newSelecteds);
+        return;
+      }
+      setSelected([]);
+    };
+
+    const handleClick = (event, name) => {
+      const selectedIndex = selected.indexOf(name);
+      let newSelected = [];
+
+      if (selectedIndex === -1) {
+        newSelected = newSelected.concat(selected, name);
+      } else if (selectedIndex === 0) {
+        newSelected = newSelected.concat(selected.slice(1));
+      } else if (selectedIndex === selected.length - 1) {
+        newSelected = newSelected.concat(selected.slice(0, -1));
+      } else if (selectedIndex > 0) {
+        newSelected = newSelected.concat(
+          selected.slice(0, selectedIndex),
+          selected.slice(selectedIndex + 1),
+        );
+      }
+
+      setSelected(newSelected);
+    };
+
+    const handleChangePage = (event, newPage) => {
+      setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    };
+
+    const isSelected = (name) => selected.indexOf(name) !== -1;
+
+    // Avoid a layout jump when reaching the last page with empty rows.
+    const emptyRows =
+      page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+//
+
+    return (
+        <div className={stylesOrderBook.Home}>
+        <Header/>
+        <div className={stylesOrderBook.content} >
+            <div className={stylesOrderBook.tab1} >
+                <InformationTab/>
+            </div>
+
+            <div className={stylesOrderBook.tab2} >
+              
+            <div className={styles.Home}>
+        <div className={styles.wraper}>
+          <div className={styles.tdisplay2}>  
+            <div style={{display: 'flex'}}>          
+              <TapSeach />
+              <div style={{display: 'flex', marginLeft: '100px'}}>
+                <label
+                  htmlFor="date"
+                  className={clsx(stylesRegister.formLabel, stylesRegister.row)}
+                >
+                  Ngày Mượn:
+                </label>
+                <input
+                  id="date"
+                  name="date"
+                  type="text"
+                  value={dateCurr}
+                  className={clsx(stylesRegister.formInput, stylesRegister.row)}
+                  style={{marginLeft: '-50px'}}
+                  readOnly
+                />
+              </div>
+
+              <div style={{display: 'flex', marginLeft: '80px'}}>
+                <label
+                  htmlFor="dateValid"
+                  className={clsx(stylesRegister.formLabel, stylesRegister.row)}
+                >
+                  Ngày trả
+                </label>
+                <input
+                  id="dateValid"
+                  name="dateValid"
+                  min= {str}
+                  type= "date"
+                  value={dateValid}
+                  onChange={(e) => setDateValid(e.target.value)}
+                  className={clsx(stylesRegister.formInput, stylesRegister.row)}
+                  style={{marginLeft: '-120px', width: '400px'}}
+                  required
+                />
+              </div>
+            </div>
+
+            <div style={{marginTop: '10px'}}>
+              <Box sx={{ width: '100%' }}>
+                    <Paper sx={{ width: '100%', mb: 2 }}>
+                        <EnhancedTableToolbar numSelected={selected.length} />
+                        <Paper>
+                          <SearchBar
+                          value={searched}
+                          onChange={(searchVal) => requestSearch(searchVal)}
+                          onCancelSearch={() => cancelSearch()}
+                          placeholder="Tìm tên sách . . ."
+                        /></Paper>
+                        <TableContainer>
+                        <Table
+                            sx={{ minWidth: 750 }}
+                            aria-labelledby="tableTitle"
+                            size={'medium'}
+                        >
+                            <EnhancedTableHead
+                            numSelected={selected.length}
+                            order={order}
+                            orderBy={orderBy}
+                            onSelectAllClick={handleSelectAllClick}
+                            onRequestSort={handleRequestSort}
+                            rowCount={rows.length}
+                            />
+                            <TableBody>
+                            {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+                            rows.slice().sort(getComparator(order, orderBy)) */}
+                            {data.slice().sort(getComparator(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row, index) => {
+                                const isItemSelected = isSelected(row.name);
+                                const labelId = `enhanced-table-checkbox-${index}`;
+
+                                return (
+                                    <TableRow
+                                    hover
+                                    onClick={(event) => handleClick(event, row.name)}
+                                    role="checkbox"
+                                    aria-checked={isItemSelected}
+                                    tabIndex={-1}
+                                    key={row.name}
+                                    selected={isItemSelected}
+                                    >
+                                    <TableCell padding="checkbox">
+                                        <Checkbox
+                                        color="primary"
+                                        checked={isItemSelected}
+                                        inputProps={{
+                                            'aria-labelledby': labelId,
+                                        }}
+                                        />
+                                    </TableCell>
+                                    <TableCell
+                                        component="th"
+                                        id={labelId}
+                                        scope="row"
+                                        padding="none"
+                                        onClick={()=>{navigatePath("/book")}}
+                                    >
+                                        {row.name}
+                                    </TableCell>
+                                    <TableCell align="right">{row.calories}</TableCell>
+                                    <TableCell align="right">{row.writter}</TableCell>
+                                    <TableCell align="right">{row.count}</TableCell>
+                                    <TableCell align="right">{row.lastUpdate}</TableCell>
+                                    </TableRow>
+                                );
+                                })}
+                                {emptyRows > 0 && (
+                                    <TableRow
+                                    >
+
+                                    </TableRow>
+                                    )}
+                            </TableBody>
+                        </Table>
+                        </TableContainer>
+                        <TablePagination
+                        rowsPerPageOptions={[5, 10, 15]}
+                        component="div"
+                        count={rows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    </Paper>
+                    <div className={stylesBook.buttonM}>
+                        <Button color="success"> Tạo phiếu mượn </Button>                            
+                        <Button color="error"> Huỷ </Button>                            
+                    </div>
+
+              </Box>
+            </div>
+
+          </div>
+        </div>
+    </div>
+            </div>
+        </div>
+        <Footer/>
+        
+        </div>
+    );
+}
+
+export default CreateOrderBook;
+// import React, { useState } from "react";
+// import { makeStyles } from "@material-ui/core/styles";
+// import Table from "@material-ui/core/Table";
+// import TableBody from "@material-ui/core/TableBody";
+// import TableCell from "@material-ui/core/TableCell";
+// import TableContainer from "@material-ui/core/TableContainer";
+// import TableHead from "@material-ui/core/TableHead";
+// import TableRow from "@material-ui/core/TableRow";
+// import Paper from "@material-ui/core/Paper";
+// import SearchBar from "material-ui-search-bar";
+
+// const useStyles = makeStyles({
+//   table: {
+//     minWidth: 650
+//   }
+// });
+
+// const originalRows= [
+//   { name: "Pizza", calories: 200, fat: 6.0, carbs: 24, protein: 4.0 },
+//   { name: "Hot Dog", calories: 300, fat: 6.0, carbs: 24, protein: 4.0 },
+//   { name: "Burger", calories: 400, fat: 6.0, carbs: 24, protein: 4.0 },
+//   { name: "Hamburger", calories: 500, fat: 6.0, carbs: 24, protein: 4.0 },
+//   { name: "Fries", calories: 600, fat: 6.0, carbs: 24, protein: 4.0 },
+//   { name: "Ice Cream", calories: 700, fat: 6.0, carbs: 24, protein: 4.0 }
+// ];
+
+// export default function BasicTable() {
+//   const [rows, setRows] = useState(originalRows);
+//   const [searched, setSearched] = useState("");
+//   const classes = useStyles();
+
+//   const requestSearch = (searchedVal) => {
+//     const filteredRows = originalRows.filter((row) => {
+//       return row.name.toLowerCase().includes(searchedVal.toLowerCase());
+//     });
+//     setRows(filteredRows);
+//   };
+
+//   const cancelSearch = () => {
+//     setSearched("");
+//     requestSearch(searched);
+//   };
+
+//   return (
+//     <>
+//       <Paper>
+//         <SearchBar
+//           value={searched}
+//           onChange={(searchVal) => requestSearch(searchVal)}
+//           onCancelSearch={() => cancelSearch()}
+//         />
+//         <TableContainer>
+//           <Table className={classes.table} aria-label="simple table">
+//             <TableHead>
+//               <TableRow>
+//                 <TableCell>Food (100g serving)</TableCell>
+//                 <TableCell align="right">Calories</TableCell>
+//                 <TableCell align="right">Fat&nbsp;(g)</TableCell>
+//                 <TableCell align="right">Carbs&nbsp;(g)</TableCell>
+//                 <TableCell align="right">Protein&nbsp;(g)</TableCell>
+//               </TableRow>
+//             </TableHead>
+//             <TableBody>
+//               {rows.map((row) => (
+//                 <TableRow key={row.name}>
+//                   <TableCell component="th" scope="row">
+//                     {row.name}
+//                   </TableCell>
+//                   <TableCell align="right">{row.calories}</TableCell>
+//                   <TableCell align="right">{row.fat}</TableCell>
+//                   <TableCell align="right">{row.carbs}</TableCell>
+//                   <TableCell align="right">{row.protein}</TableCell>
+//                 </TableRow>
+//               ))}
+//             </TableBody>
+//           </Table>
+//         </TableContainer>
+//       </Paper>
+//       <br />
+//       <a
+//         target="_blank"
+//         href="https://smartdevpreneur.com/the-easiest-way-to-implement-material-ui-table-search/"
+//       >
+//         Learn how to add search and filter to Material-UI Table here.
+//       </a>
+//     </>
+//   );
+// }

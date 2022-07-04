@@ -264,7 +264,7 @@ function CreateReturnBook({ route, navigation }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = listBook.map((n) => n.name);
+      const newSelecteds = listBook.map((n) => n._id);
       setSelected(newSelecteds);
       return;
     }

@@ -1,12 +1,12 @@
-import Header from '../components/header';
-import Footer from '../components/footer';
+import Header from './header';
+import Footer from './footer';
 import styles from './CSS/orderBook.module.css';
 import InformationTab from './InfomationTab';
 import OrderHistoryItem from './OrderHistotyItem';
 import BorrowBookAPI from '../api/BorrowBookAPI';
 import { useState, useEffect } from 'react';
 
-function OrderHistory({navigation}) {
+function OrderValid({navigation}) {
   const [bookBorrowing, setBookBorrowing] = useState([]);
   function getData(){
     BorrowBookAPI.searchAdmin({typeBorrowBook: "borrowing"}).then((res) => {
@@ -35,7 +35,7 @@ function OrderHistory({navigation}) {
               {
                 bookBorrowing?.map(item => {
                   return(
-                    <OrderHistoryItem valid={false} book={item}/>
+                    <OrderHistoryItem valid={true} book={item}/>
                   )
                 })
               }       
@@ -47,4 +47,4 @@ function OrderHistory({navigation}) {
     );
   }
   
-  export default OrderHistory;
+  export default OrderValid;

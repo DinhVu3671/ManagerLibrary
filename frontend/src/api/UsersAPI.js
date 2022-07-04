@@ -9,7 +9,7 @@ function UsersAPI() {
 
     // [GET] - user by Id
     this.getUserById = (id) => {
-        return callAPI.get(`users/show/${id}`);
+        return callAPI.get(`users/showUser/${id}`);
     }
 
     //[POST] - edit user info

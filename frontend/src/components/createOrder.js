@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState, useRef, memo } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Header from './header';
@@ -8,7 +8,6 @@ import InformationTab from './InfomationTab';
 import styles from '../screens/CSS/home.module.css';
 import stylesRegister from './CSS/RegisterFormCSS.module.scss';
 import clsx from 'clsx';
-import { useState } from 'react';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -32,6 +31,9 @@ import stylesBook from '../components/CSS/BookInformation.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { makeStyles } from "@material-ui/core/styles";
 import SearchBar from "material-ui-search-bar";
+import BookAPI from '../api/BookAPI';
+import BorrowBookAPI from '../api/BorrowBookAPI';
+import UsersAPI from '../api/UsersAPI';
 
 //
 
@@ -59,12 +61,12 @@ const useStyles = makeStyles({
 });
 
 const rows = [
-  createData('KIMI NI TSUMUGU BOUHAKU', "Romance - Shoujo ai", "Yasaka Shuu", 15,"Jun-26-2022 17:23"),
-  createData('NEGA-KUN AND POSI-CHAN', "Comedy - Romance", "Shunpei Morita", 30,"May-25-2022 01:25"),
-  createData('STORY OF A SMALL SENIOR IN MY COMPANY', "Comedy - Romance", "Saisou", 15,"Jun-24-2022 22:38"),
-  createData('2 SAISA NO OSANANAJIMI', "Romance - School life", "Mi Kasuke", 18,"Jun-26-2022 09:06"),
-  createData('KIMI NI TSUMUGU BOUHAKU 2', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 21,"Jun-26-2022 17:23"),
-  createData('KIMI NI TSUMUGU BOUHAKU 3', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 20,"Jun-26-2022 17:23"),
+  createData('KIMI NI TSUMUGU BOUHAKU', "Romance - Shoujo ai", "Yasaka Shuu", 15, "Jun-26-2022 17:23"),
+  createData('NEGA-KUN AND POSI-CHAN', "Comedy - Romance", "Shunpei Morita", 30, "May-25-2022 01:25"),
+  createData('STORY OF A SMALL SENIOR IN MY COMPANY', "Comedy - Romance", "Saisou", 15, "Jun-24-2022 22:38"),
+  createData('2 SAISA NO OSANANAJIMI', "Romance - School life", "Mi Kasuke", 18, "Jun-26-2022 09:06"),
+  createData('KIMI NI TSUMUGU BOUHAKU 2', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 21, "Jun-26-2022 17:23"),
+  createData('KIMI NI TSUMUGU BOUHAKU 3', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 20, "Jun-26-2022 17:23"),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -213,306 +215,314 @@ const EnhancedTableToolbar = (props) => {
           Chưa chọn sách nào
         </Typography>
       )}
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+      <Tooltip title="Filter list">
+        <IconButton>
+          <FilterListIcon />
+        </IconButton>
+      </Tooltip>
     </Toolbar>
   );
 };
 //
-function TapSeach() {
+function TapSeach({users}) {
   return (
     <Autocomplete
       disablePortal
       id="combo-box-demo"
-      options={userName}
+      getOptionLabel={options => options.fullName}
+      options={users}
       sx={{ width: 300 }}
       renderInput={(params) => <TextField {...params} label="Tên người dùng" />}
     />
   );
 }
 
-const userName = [
-  { label: 'Bùi Minh Tuấn'},
-  { label: 'Đinh Tiến Vũ'},
-  { label: 'Nino Nanako'},
-  { label: 'Hatsune Miku'},
-  { label: 'Miku Nanako'},
-  { label: 'Chitanda Eru'},
-  { label: 'Ayai Miru'},
-  { label: 'Origawa Sayu'},
-  { label: 'Himeruko'},
-  { label: 'Rachel Gardner'},
-  { label: 'Ayano Uenohara'},
-  { label: 'Horikita Surune'},
-  { label: 'Minamoto Ruri'},
-  { label: 'Nguyễn Thế Kiệt'},
-];
-
-//
-
 //
 function CreateOrderBook() {
-    let date = new Date();
-    const dateCurr = date.toLocaleDateString();
-    const [dateValid, setDateValid] = useState('');
-    let str = ""
-    if(date.getMonth() >= 9)
-      if(date.getDate() > 9)
-        str = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-      else
-        str = `${date.getFullYear()}-${date.getMonth() + 1}-0${date.getDate()}`  
-    else 
-      if(date.getDate() > 9)
-        str = `${date.getFullYear()}-0${date.getMonth() + 1}-${date.getDate()}`
-      else
-        str = `${date.getFullYear()}-0${date.getMonth() + 1}-0${date.getDate()}`  
+  let date = new Date();
+  const dateCurr = date.toLocaleDateString();
+  const [dateValid, setDateValid] = useState('');
+  const [books, setBooks] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  let str = ""
+  if (date.getMonth() >= 9)
+    if (date.getDate() > 9)
+      str = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+    else
+      str = `${date.getFullYear()}-${date.getMonth() + 1}-0${date.getDate()}`
+  else
+    if (date.getDate() > 9)
+      str = `${date.getFullYear()}-0${date.getMonth() + 1}-${date.getDate()}`
+    else
+      str = `${date.getFullYear()}-0${date.getMonth() + 1}-0${date.getDate()}`
 
 
-//
-    const [order, setOrder] = useState('asc');
-    const [orderBy, setOrderBy] = useState('calories');
-    const [selected, setSelected] = useState([]);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const navigate = useNavigate();
+  //
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('calories');
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const navigate = useNavigate();
 
-    const [data, setData] = useState(rows);
-    const [searched, setSearched] = useState("");
-    const classes = useStyles();
+  const [data, setData] = useState([]);
+  const [searched, setSearched] = useState("");
+  const classes = useStyles();
 
-    const requestSearch = (searchedVal) => {
-      const filteredRows = rows.filter((row) => {
-        return row.name.toLowerCase().includes(searchedVal.toLowerCase());
+
+  function getData() {
+    BookAPI.listBook().then((res) => {
+      let bookListRes = res.data;
+      setBooks(bookListRes.data);
+      setData(bookListRes.data);
+    })
+      .catch(err => {
+        console.log(err)
       });
-      setData(filteredRows);
-    };
+    UsersAPI.getAllUsers().then((res) => {
+      let userList = res.data;
+      setUsers(userList.data);
+    })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+  useEffect(() => {
+    getData();
+  }, []);
 
-    const cancelSearch = () => {
-      setSearched("");
-      requestSearch(searched);
-    };
+  const requestSearch = (searchedVal) => {
+    const filteredRows = books.filter((row) => {
+      return row.title.toLowerCase().includes(searchedVal.toLowerCase());
+    });
+    setData(filteredRows);
+  };
 
-    const navigatePath = function (path) {
-      if (window.location.pathname !== path) {
-        navigate(path);
-      }
-    };
-    const handleRequestSort = (
-      event,
-      property,
-    ) => {
-      const isAsc = orderBy === property && order === 'asc';
-      setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(property);
-    };
+  const cancelSearch = () => {
+    setSearched("");
+    requestSearch(searched);
+  };
 
-    const handleSelectAllClick = (event) => {
-      if (event.target.checked) {
-        const newSelecteds = rows.map((n) => n.name);
-        setSelected(newSelecteds);
-        return;
-      }
-      setSelected([]);
-    };
+  const navigatePath = function (path) {
+    if (window.location.pathname !== path) {
+      navigate(path);
+    }
+  };
+  const handleRequestSort = (
+    event,
+    property,
+  ) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
 
-    const handleClick = (event, name) => {
-      const selectedIndex = selected.indexOf(name);
-      let newSelected = [];
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = rows.map((n) => n.name);
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
+  };
 
-      if (selectedIndex === -1) {
-        newSelected = newSelected.concat(selected, name);
-      } else if (selectedIndex === 0) {
-        newSelected = newSelected.concat(selected.slice(1));
-      } else if (selectedIndex === selected.length - 1) {
-        newSelected = newSelected.concat(selected.slice(0, -1));
-      } else if (selectedIndex > 0) {
-        newSelected = newSelected.concat(
-          selected.slice(0, selectedIndex),
-          selected.slice(selectedIndex + 1),
-        );
-      }
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected = [];
 
-      setSelected(newSelected);
-    };
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
 
-    const handleChangePage = (event, newPage) => {
-      setPage(newPage);
-    };
+    setSelected(newSelected);
+  };
 
-    const handleChangeRowsPerPage = (event) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      setPage(0);
-    };
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
-    const isSelected = (name) => selected.indexOf(name) !== -1;
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-      page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-//
+  const isSelected = (name) => selected.indexOf(name) !== -1;
 
-    return (
-        <div className={stylesOrderBook.Home}>
-        <Header/>
-        <div className={stylesOrderBook.content} >
-            <div className={stylesOrderBook.tab1} >
-                <InformationTab/>
-            </div>
+  // Avoid a layout jump when reaching the last page with empty rows.
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  //
 
-            <div className={stylesOrderBook.tab2} >
-              
-            <div className={styles.Home}>
-        <div className={styles.wraper}>
-          <div className={styles.tdisplay2}>  
-            <div style={{display: 'flex'}}>          
-              <TapSeach />
-              <div style={{display: 'flex', marginLeft: '100px'}}>
-                <label
-                  htmlFor="date"
-                  className={clsx(stylesRegister.formLabel, stylesRegister.row)}
-                >
-                  Ngày Mượn:
-                </label>
-                <input
-                  id="date"
-                  name="date"
-                  type="text"
-                  value={dateCurr}
-                  className={clsx(stylesRegister.formInput, stylesRegister.row)}
-                  style={{marginLeft: '-50px'}}
-                  readOnly
-                />
-              </div>
+  return (
+    <div className={stylesOrderBook.Home}>
+      <Header />
+      <div className={stylesOrderBook.content} >
+        <div className={stylesOrderBook.tab1} >
+          <InformationTab />
+        </div>
 
-              <div style={{display: 'flex', marginLeft: '80px'}}>
-                <label
-                  htmlFor="dateValid"
-                  className={clsx(stylesRegister.formLabel, stylesRegister.row)}
-                >
-                  Ngày trả
-                </label>
-                <input
-                  id="dateValid"
-                  name="dateValid"
-                  min= {str}
-                  type= "date"
-                  value={dateValid}
-                  onChange={(e) => setDateValid(e.target.value)}
-                  className={clsx(stylesRegister.formInput, stylesRegister.row)}
-                  style={{marginLeft: '-120px', width: '400px'}}
-                  required
-                />
-              </div>
-            </div>
+        <div className={stylesOrderBook.tab2} >
 
-            <div style={{marginTop: '10px'}}>
-              <Box sx={{ width: '100%' }}>
+          <div className={styles.Home}>
+            <div className={styles.wraper}>
+              <div className={styles.tdisplay2}>
+                <div style={{ display: 'flex' }}>
+                  <TapSeach users={users}/>
+                  <div style={{ display: 'flex', marginLeft: '100px' }}>
+                    <label
+                      htmlFor="date"
+                      className={clsx(stylesRegister.formLabel, stylesRegister.row)}
+                    >
+                      Ngày Mượn:
+                    </label>
+                    <input
+                      id="date"
+                      name="date"
+                      type="text"
+                      value={dateCurr}
+                      className={clsx(stylesRegister.formInput, stylesRegister.row)}
+                      style={{ marginLeft: '-50px' }}
+                      readOnly
+                    />
+                  </div>
+
+                  {/* <div style={{ display: 'flex', marginLeft: '80px' }}>
+                    <label
+                      htmlFor="dateValid"
+                      className={clsx(stylesRegister.formLabel, stylesRegister.row)}
+                    >
+                      Ngày trả
+                    </label>
+                    <input
+                      id="dateValid"
+                      name="dateValid"
+                      min={str}
+                      type="date"
+                      value={dateValid}
+                      onChange={(e) => setDateValid(e.target.value)}
+                      className={clsx(stylesRegister.formInput, stylesRegister.row)}
+                      style={{ marginLeft: '-120px', width: '400px' }}
+                      required
+                    />
+                  </div> */}
+                </div>
+
+                <div style={{ marginTop: '10px' }}>
+                  <Box sx={{ width: '100%' }}>
                     <Paper sx={{ width: '100%', mb: 2 }}>
-                        <EnhancedTableToolbar numSelected={selected.length} />
-                        <Paper>
-                          <SearchBar
+                      <EnhancedTableToolbar numSelected={selected.length} />
+                      <Paper>
+                        <SearchBar
                           value={searched}
                           onChange={(searchVal) => requestSearch(searchVal)}
                           onCancelSearch={() => cancelSearch()}
                           placeholder="Tìm tên sách . . ."
-                        /></Paper>
-                        <TableContainer>
+                        />
+                        </Paper>
+                      <TableContainer>
                         <Table
-                            sx={{ minWidth: 750 }}
-                            aria-labelledby="tableTitle"
-                            size={'medium'}
+                          sx={{ minWidth: 750 }}
+                          aria-labelledby="tableTitle"
+                          size={'medium'}
                         >
-                            <EnhancedTableHead
+                          <EnhancedTableHead
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
-                            />
-                            <TableBody>
+                            rowCount={books.length}
+                          />
+                          <TableBody>
                             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                             rows.slice().sort(getComparator(order, orderBy)) */}
                             {data.slice().sort(getComparator(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                const isItemSelected = isSelected(row.name);
+                              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                              .map((row, index) => {
+                                const isItemSelected = isSelected(row._id);
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
                                 return (
-                                    <TableRow
+                                  <TableRow
                                     hover
-                                    onClick={(event) => handleClick(event, row.name)}
+                                    onClick={(event) => handleClick(event, row._id)}
                                     role="checkbox"
                                     aria-checked={isItemSelected}
                                     tabIndex={-1}
-                                    key={row.name}
+                                    key={row._id}
                                     selected={isItemSelected}
-                                    >
+                                  >
                                     <TableCell padding="checkbox">
-                                        <Checkbox
+                                      <Checkbox
                                         color="primary"
                                         checked={isItemSelected}
                                         inputProps={{
-                                            'aria-labelledby': labelId,
+                                          'aria-labelledby': labelId,
                                         }}
-                                        />
+                                      />
                                     </TableCell>
                                     <TableCell
-                                        component="th"
-                                        id={labelId}
-                                        scope="row"
-                                        padding="none"
-                                        onClick={()=>{navigatePath("/book")}}
+                                      component="th"
+                                      id={labelId}
+                                      scope="row"
+                                      padding="none"
+                                      onClick={() => { navigatePath(`/book/${row._id}`) }}
                                     >
-                                        {row.name}
+                                      {row.title}
                                     </TableCell>
-                                    <TableCell align="right">{row.calories}</TableCell>
-                                    <TableCell align="right">{row.writter}</TableCell>
-                                    <TableCell align="right">{row.count}</TableCell>
-                                    <TableCell align="right">{row.lastUpdate}</TableCell>
-                                    </TableRow>
+                                    <TableCell align="left">{row.calories}</TableCell>
+                                    <TableCell align="left">{row.author}</TableCell>
+                                    <TableCell align="left">{row.availableNumber}</TableCell>
+                                    <TableCell align="left">{row.updatedAt}</TableCell>
+                                  </TableRow>
                                 );
-                                })}
-                                {emptyRows > 0 && (
-                                    <TableRow
-                                    >
+                              })}
+                            {emptyRows > 0 && (
+                              <TableRow
+                              >
 
-                                    </TableRow>
-                                    )}
-                            </TableBody>
+                              </TableRow>
+                            )}
+                          </TableBody>
                         </Table>
-                        </TableContainer>
-                        <TablePagination
+                      </TableContainer>
+                      <TablePagination
                         rowsPerPageOptions={[5, 10, 15]}
                         component="div"
-                        count={rows.length}
+                        count={books.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
+                      />
                     </Paper>
                     <div className={stylesBook.buttonM}>
-                        <Button color="success"> Tạo phiếu mượn </Button>                            
-                        <Button color="error"> Huỷ </Button>                            
+                      <Button color="success"> Tạo phiếu mượn </Button>
+                      <Button color="error"> Huỷ </Button>
                     </div>
 
-              </Box>
-            </div>
+                  </Box>
+                </div>
 
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+      <Footer />
+
     </div>
-            </div>
-        </div>
-        <Footer/>
-        
-        </div>
-    );
+  );
 }
 
 export default CreateOrderBook;

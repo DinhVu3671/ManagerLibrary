@@ -214,14 +214,14 @@ export default function OrderHistoryItem({returnee, book}) {
         <div className={styles.wraper}>
               <div className={styles.tdisplay2}>  
                   <div style={{display: 'flex'}}>          
-                    <p>Họ tên: Đinh Tiến Vũ</p>
-                    <p style={{marginLeft : '100px'}}>SĐT: 0923450791</p>
-                    <div style={{marginLeft : '100px'}}>
+                    <p>Họ tên: {book.user.fullName}</p>
+                    <p style={{marginLeft : '100px'}}>SĐT: {book.user.phone}</p>
+                    {/* <div style={{marginLeft : '100px'}}>
                       <p>Ngày mượn: 10:20:00 17/6/2022</p>
-                      {/* {returnee && (
+                       {returnee && (
                         <p>Ngày hẹn trả: 10:20:00 17/6/2022</p>
-                      )}                             */}
-                    </div>
+                      )}                             
+                    </div> */}
 
                   </div>
 
@@ -238,25 +238,25 @@ export default function OrderHistoryItem({returnee, book}) {
                           order={order}
                           orderBy={orderBy}
                           onRequestSort={handleRequestSort}
-                          rowCount={rows.length}
+                          rowCount={book.book.length}
                           />
                           <TableBody>
                           {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                           rows.slice().sort(getComparator(order, orderBy)) */}
-                          {rows.slice().sort(getComparator(order, orderBy))
+                          {book.book.slice().sort(getComparator(order, orderBy))
                               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                               .map((row, index) => {
-                              const isItemSelected = isSelected(row.name);
+                              const isItemSelected = isSelected(row._id);
                               const labelId = `enhanced-table-checkbox-${index}`;
 
                               return (
                                   <TableRow
                                   hover
-                                  onClick={(event) => handleClick(event, row.name)}
+                                  onClick={(event) => handleClick(event, row._id)}
                                   role="checkbox"
                                   aria-checked={isItemSelected}
                                   tabIndex={-1}
-                                  key={row.name}
+                                  key={row._id}
                                   selected={isItemSelected}
                                   >
                                   <TableCell
@@ -264,14 +264,14 @@ export default function OrderHistoryItem({returnee, book}) {
                                       id={labelId}
                                       scope="row"
                                       padding="none"
-                                      onClick={()=>{navigatePath("/book")}}
+                                      onClick={()=>{navigatePath(`/book/${row._id}`)}}
                                   >
-                                      {row.name}
+                                      {row.title}
                                   </TableCell>
                                   <TableCell align="right">{row.calories}</TableCell>
-                                  <TableCell align="right">{row.writter}</TableCell>
-                                  <TableCell align="right">{row.count}</TableCell>
-                                  <TableCell align="right">{row.lastUpdate}</TableCell>
+                                  <TableCell align="right">{row.author}</TableCell>
+                                  <TableCell align="right">{row.availableNumber}</TableCell>
+                                  <TableCell align="right">{row.updatedAt}</TableCell>
                                   </TableRow>
                               );
                               })}
@@ -287,7 +287,7 @@ export default function OrderHistoryItem({returnee, book}) {
                       <TablePagination
                       rowsPerPageOptions={[5, 10, 15]}
                       component="div"
-                      count={rows.length}
+                      count={book.book.length}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       onPageChange={handleChangePage}

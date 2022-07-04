@@ -106,7 +106,7 @@ function Header() {
 
   const handleUser = () => {
     setAnchorEl(null);
-    navigatePath('/bookReaderManager');
+    navigatePath('/readerManager');
   };
 
 
@@ -167,8 +167,8 @@ function Header() {
                   'aria-labelledby': 'basic-button',
                 }}
               >
-                <MenuItem onClick={handleCloseBookManager}> Quản lý mượn trả </MenuItem>
-                <MenuItem onClick={handleUser}> Quản lý tài khoản người dùng</MenuItem>
+                <MenuItem onClick={handleCloseBookManager}> Quản lý </MenuItem>
+                {/* <MenuItem onClick={handleUser}> Quản lý tài khoản người dùng</MenuItem> */}
                 <MenuItem onClick={handleLogout}> Đăng xuất </MenuItem>
               </Menu> :
               <Menu

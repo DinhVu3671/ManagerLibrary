@@ -20,11 +20,6 @@ function TabInfor(props) {
   const [firstName, setFirstName] = useState('Chuyen De');
   const [email, setEmail] = useState('dtv@gmail.com');
   const [phone, setPhone] = useState('0123456798');
-  const [gender, setGender] = useState('male');
-  const [birthday, setBirthday] = useState('2000-08-04');
-  const [address, setAddress] = useState('Ninh Bình');
-  const [password, setPassword] = useState('123456');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [avatarImg, setAvatarImg] = useState(imageTest);
   const [errMsg, setErrMsg] = useState('');
 
@@ -50,15 +45,10 @@ function TabInfor(props) {
       //console.log(avatarImg);
       let data = {};
       console.log('submit');
-      const bday = new Date(birthday);
       data = {
         email: email,
         firstName: firstName,
         phoneNumber: phone,
-        gender: gender,
-        birthDay: bday,
-        address: address,
-        password: password,
         avatar: avatarImg,
       };
       console.log(data);
@@ -91,6 +81,8 @@ function TabInfor(props) {
       setOpen(true);
     }
   }, [errMsg]);
+
+  console.log(account)
   return (
     <div>
       {value === 0 &&(
@@ -132,7 +124,7 @@ function TabInfor(props) {
                       <input
                         id="firstName"
                         name="firstName"
-                        value={firstName}
+                        value={account?.fullName}
                         onChange={(e) => setFirstName(e.target.value)}
                         type="text"
                         className={clsx(styles.formInput, styles.row)}
@@ -152,7 +144,7 @@ function TabInfor(props) {
                         id="email"
                         name="email"
                         type="email"
-                        value={email}
+                        value={account?.gmail}
                         onChange={(e) => setEmail(e.target.value)}
                         className={clsx(styles.formInput, styles.row)}
                         placeholder="Email..."
@@ -171,7 +163,7 @@ function TabInfor(props) {
                         id="phone"
                         name="phone"
                         type="text"
-                        value={phone}
+                        value={account?.phone}
                         onChange={(e) => setPhone(e.target.value)}
                         className={clsx(styles.formInput, styles.row)}
                         placeholder="Số điện thoại..."
@@ -523,12 +515,13 @@ const defautlAvatar =
 
 function ReaderAccount({navigation, account}) {
     const [value, setValue] = React.useState(0);
+    const [user, setUser] = React.useState();
 
     function getData(){
       UsersAPI.getUserById(localStorage.getItem('id')).then((res) => {
-        console.log(res.data)
+        console.log(res.data.data)
         let bookListRes = res.data;
-        
+        setUser(bookListRes.data)
       })
       .catch(err => {
         console.log(err)
@@ -562,9 +555,9 @@ function ReaderAccount({navigation, account}) {
                             <Tab value={0} label="Thông tin tài khoản"/>
                             <Tab value={1} label="Thay đổi mật khẩu" />
                         </Tabs>
-                        <TabInfor value={value} index={0} account={account}>        
+                        <TabInfor value={value} index={0} account={user}>        
                         </TabInfor>
-                        <TabPassword value={value} index={1} account={account}>
+                        <TabPassword value={value} index={1} account={user}>
                         </TabPassword>
                     </Box> 
                 </div>

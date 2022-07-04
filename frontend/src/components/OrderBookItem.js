@@ -321,7 +321,7 @@ export default function OrderBookItem({books}) {
                                   <TableCell align="right">{row.categories ? (row.categories)[0].name : null}</TableCell>
                                   <TableCell align="right">{row.author}</TableCell>
                                   <TableCell align="right">{row.availableNumber}</TableCell>
-                                  <TableCell align="right">{row.updatedAt}</TableCell>
+                                  <TableCell align="right">{(new Date(row.updatedAt)).toLocaleString()}</TableCell>
                                   </TableRow>
                               );
                               })}

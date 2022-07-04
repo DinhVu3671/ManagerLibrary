@@ -14,6 +14,7 @@ import ReturnBook from '../components/ReturnBook';
 import CreateOrderBook from '../components/createOrder';
 import Search from '../components/search';
 import ReaderManager from '../components/ReaderManager';
+import CreateReturnBook from '../components/createReturn';
 
 function RootRoutes() {
   return (
@@ -32,6 +33,8 @@ function RootRoutes() {
       <Route path="/orderHistoryManager" element={<OrderHistory />} />
       <Route path="/returnBookManager" element={<ReturnBook />} />
       <Route path="/createOrderBook" element={<CreateOrderBook />} />
+      <Route path="/createReturnBook" element={<CreateReturnBook />} />
+
       <Route path="/readerManager" element={<ReaderManager />} />
     </Routes>
   );

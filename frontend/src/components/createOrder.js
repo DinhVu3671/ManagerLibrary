@@ -483,7 +483,7 @@ function CreateOrderBook() {
                                     <TableCell align="left">{row.calories}</TableCell>
                                     <TableCell align="left">{row.author}</TableCell>
                                     <TableCell align="left">{row.availableNumber}</TableCell>
-                                    <TableCell align="left">{row.updatedAt}</TableCell>
+                                    <TableCell align="left">{(new Date(row.updatedAt)).toLocaleString()}</TableCell>
                                   </TableRow>
                                 );
                               })}

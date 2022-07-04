@@ -33,8 +33,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import SearchBar from "material-ui-search-bar";
 import BookAPI from '../api/BookAPI';
 import BorrowBookAPI from '../api/BorrowBookAPI';
-import UsersAPI from '../api/UsersAPI';
-
+import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 //
 
 
@@ -59,15 +59,6 @@ const useStyles = makeStyles({
     minWidth: 650
   }
 });
-
-const rows = [
-  createData('KIMI NI TSUMUGU BOUHAKU', "Romance - Shoujo ai", "Yasaka Shuu", 15, "Jun-26-2022 17:23"),
-  createData('NEGA-KUN AND POSI-CHAN', "Comedy - Romance", "Shunpei Morita", 30, "May-25-2022 01:25"),
-  createData('STORY OF A SMALL SENIOR IN MY COMPANY', "Comedy - Romance", "Saisou", 15, "Jun-24-2022 22:38"),
-  createData('2 SAISA NO OSANANAJIMI', "Romance - School life", "Mi Kasuke", 18, "Jun-26-2022 09:06"),
-  createData('KIMI NI TSUMUGU BOUHAKU 2', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 21, "Jun-26-2022 17:23"),
-  createData('KIMI NI TSUMUGU BOUHAKU 3', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 20, "Jun-26-2022 17:23"),
-];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -159,7 +150,7 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align='center'
+            align='left'
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -223,27 +214,11 @@ const EnhancedTableToolbar = (props) => {
     </Toolbar>
   );
 };
-//
-function TapSeach({users}) {
-  return (
-    <Autocomplete
-      disablePortal
-      id="combo-box-demo"
-      getOptionLabel={options => options.fullName}
-      options={users}
-      sx={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} label="Tên người dùng" />}
-    />
-  );
-}
 
 //
-function CreateReturnBook({user, dataBook}) {
+function CreateReturnBook({ route, navigation }) {
   let date = new Date();
   const dateCurr = date.toLocaleDateString();
-  const [books, setBooks] = useState([]);
-  const [users, setUsers] = useState([]);
-
   //
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
@@ -255,31 +230,14 @@ function CreateReturnBook({user, dataBook}) {
   const [data, setData] = useState([]);
   const [searched, setSearched] = useState("");
   const classes = useStyles();
-
-
-  function getData() {
-    BookAPI.listBook().then((res) => {
-      let bookListRes = res.data;
-      setBooks(bookListRes.data);
-      setData(bookListRes.data);
-    })
-      .catch(err => {
-        console.log(err)
-      });
-    UsersAPI.getAllUsers().then((res) => {
-      let userList = res.data;
-      setUsers(userList.data);
-    })
-      .catch(err => {
-        console.log(err)
-      })
-  }
+  const {state} = useLocation();
+  const { user, listBook } = state;
+  console.log(listBook);
   useEffect(() => {
-    getData();
+    setData(listBook); 
   }, []);
-
   const requestSearch = (searchedVal) => {
-    const filteredRows = books.filter((row) => {
+    const filteredRows = listBook.filter((row) => {
       return row.title.toLowerCase().includes(searchedVal.toLowerCase());
     });
     setData(filteredRows);
@@ -306,7 +264,7 @@ function CreateReturnBook({user, dataBook}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = listBook.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -346,7 +304,7 @@ function CreateReturnBook({user, dataBook}) {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listBook.length) : 0;
   //
 
   return (
@@ -363,7 +321,7 @@ function CreateReturnBook({user, dataBook}) {
             <div className={styles.wraper}>
               <div className={styles.tdisplay2}>
                 <div style={{ display: 'flex' }}>
-                  <TapSeach users={users}/>
+                <p>Họ tên: {user}</p>
                   <div style={{ display: 'flex', marginLeft: '100px' }}>
                     <label
                       htmlFor="date"
@@ -407,7 +365,7 @@ function CreateReturnBook({user, dataBook}) {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={books.length}
+                            rowCount={listBook.length}
                           />
                           <TableBody>
                             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
@@ -449,7 +407,7 @@ function CreateReturnBook({user, dataBook}) {
                                     <TableCell align="left">{row.calories}</TableCell>
                                     <TableCell align="left">{row.author}</TableCell>
                                     <TableCell align="left">{row.availableNumber}</TableCell>
-                                    <TableCell align="left">{row.updatedAt}</TableCell>
+                                    <TableCell align="left">{(new Date(row.updatedAt)).toLocaleString()}</TableCell>
                                   </TableRow>
                                 );
                               })}
@@ -465,7 +423,7 @@ function CreateReturnBook({user, dataBook}) {
                       <TablePagination
                         rowsPerPageOptions={[5, 10, 15]}
                         component="div"
-                        count={books.length}
+                        count={listBook.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -473,7 +431,7 @@ function CreateReturnBook({user, dataBook}) {
                       />
                     </Paper>
                     <div className={stylesBook.buttonM}>
-                      <Button color="success"> Tạo phiếu mượn </Button>
+                      <Button color="success"> Tạo phiếu trả </Button>
                       <Button color="error"> Huỷ </Button>
                     </div>
 

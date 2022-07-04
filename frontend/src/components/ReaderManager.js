@@ -330,7 +330,7 @@ function ReaderManager() {
                                     </TableCell>
                                     <TableCell align="left">{row.gmail}</TableCell>
                                     <TableCell align="left">{row.phone}</TableCell>
-                                    <TableCell align="left">{row.updatedAt}</TableCell>
+                                    <TableCell align="left">{(new Date(row.updatedAt)).toLocaleString()}</TableCell>
                                     </TableRow>
                                 );
                                 })}

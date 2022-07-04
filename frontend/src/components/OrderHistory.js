@@ -10,7 +10,7 @@ function OrderHistory({navigation}) {
   const [bookBorrowing, setBookBorrowing] = useState([]);
   function getData(){
     BorrowBookAPI.searchAdmin({typeBorrowBook: "borrowing"}).then((res) => {
-      console.log(res.data)
+      //console.log(res.data)
       let bookListRes = res.data;
       setBookBorrowing(bookListRes.data)
     
@@ -22,7 +22,7 @@ function OrderHistory({navigation}) {
   useEffect(() => {
       getData(); 
   }, []);
-  console.log(bookBorrowing)
+  //console.log(bookBorrowing)
     return (
       <div className={styles.Home}>
         <Header navigation={navigation}/>

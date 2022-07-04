@@ -48,10 +48,10 @@ borrowBookRoutes.post(
     auth,
     asyncWrapper(borrowBookController.awaitBorrowBook),
 );
-// // duyet sách chờ
-// borrowBookRoutes.post(
-//     "/acceptBorrowBook",
-//     auth,
-//     borrowBookController.accreptBorrowBook);
+// duyet sách chờ
+borrowBookRoutes.post(
+    "/acceptBorrowBook",
+    auth,
+    borrowBookController.accreptBorrowBook);
 
 module.exports = borrowBookRoutes;

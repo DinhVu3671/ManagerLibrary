@@ -27,32 +27,8 @@ import Footer from './footer';
 import styles from '../screens/CSS/home.module.css';
 import stylesBook from '../components/CSS/BookInformation.module.css';
 import { Link, useNavigate } from 'react-router-dom';
+import BorrowBookAPI from '../api/BorrowBookAPI';
 
-
-function createData(
-  name,
-  calories,
-  writter,
-  count,
-  lastUpdate,
-) {
-  return {
-    name,
-    calories,
-    writter,
-    count,
-    lastUpdate,
-  };
-}
-
-const rows = [
-  createData('KIMI NI TSUMUGU BOUHAKU', "Romance - Shoujo ai", "Yasaka Shuu", 15,"Jun-26-2022 17:23"),
-  createData('NEGA-KUN AND POSI-CHAN', "Comedy - Romance", "Shunpei Morita", 30,"May-25-2022 01:25"),
-  createData('STORY OF A SMALL SENIOR IN MY COMPANY', "Comedy - Romance", "Saisou", 15,"Jun-24-2022 22:38"),
-  createData('2 SAISA NO OSANANAJIMI', "Romance - School life", "Mi Kasuke", 18,"Jun-26-2022 09:06"),
-  createData('KIMI NI TSUMUGU BOUHAKU 2', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 21,"Jun-26-2022 17:23"),
-  createData('KIMI NI TSUMUGU BOUHAKU 3', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 20,"Jun-26-2022 17:23"),
-];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -233,19 +209,20 @@ export default function OrderBookItem({books}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      console.log(books)
+      const newSelecteds = books.book.map((n) => n._id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, _id) => {
+    const selectedIndex = selected.indexOf(_id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, _id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -271,10 +248,13 @@ export default function OrderBookItem({books}) {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  const handleAccept = async () => {
+    BorrowBookAPI.acceptBorrowBook({idBooks: selected, idUser: books.user._id})
+  }
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  console.log(books);
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - books.book.length) : 0;
+  console.log(selected);
   return (
     <div className={styles.Home}>
           <div className={styles.wraper}>
@@ -365,7 +345,7 @@ export default function OrderBookItem({books}) {
                       />
                   </Paper>
                   <div className={stylesBook.buttonM}>
-                      <Button color="success"> Đồng ý </Button>                            
+                      <Button color="success" onClick={handleAccept}> Đồng ý </Button>                            
                       <Button color="error"> Từ chối </Button>                            
                   </div>
 

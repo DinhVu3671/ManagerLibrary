@@ -39,5 +39,10 @@ usersRoutes.post(
     auth, 
     usersController.searchUser
 );
+usersRoutes.get(
+    "/showUser/:id", 
+    auth, 
+    usersController.showUser
+);
 
 module.exports = usersRoutes;

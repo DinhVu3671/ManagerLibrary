@@ -8,8 +8,10 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import StoreIcon from '@mui/icons-material/Store';
 import CardMedia from '@mui/material/CardMedia';
 import Rating from '@mui/material/Rating';
+import bookimg from '../assets/angle.jpg';
 
-function BookCard({book}) {
+
+function BookCardHome({book}) {
   // const [productInfo, setProductInfo] = useState({
   //   name: book.name,
   //   rate: book.re,
@@ -31,13 +33,13 @@ function BookCard({book}) {
             // className={clsx(styles.productImage)}
             component="img"
             height="60"
-            image={book.image}
-            alt={book.name}
+            image={bookimg}
+            alt={book.title}
           />
         </div>
         <div className={clsx(styles.cardContent)}>
           <div className={clsx(styles.cardHeader)}>
-            <p className={clsx(styles.cardTitle)}>{book.name}</p>
+            <p className={clsx(styles.cardTitle)}>{book.title}</p>
             {/* <strong
               className={clsx(styles.cardPrice)}
             >{`${productInfo.price} đ`}</strong> */}
@@ -53,12 +55,12 @@ function BookCard({book}) {
                 readOnly
               />
               <span className={clsx(styles.selledNumber)}>
-                Năm: {book.year}
+                Năm: {book.publishYear}
               </span>
             </div>
             <span className={clsx(styles.location)}>
               <StoreIcon className={clsx(styles.locationIcon)} />
-              {'còn ' + book.count + ' sách'}
+              {'còn ' + book.total + ' sách'}
             </span>
           </div>
         </div>
@@ -66,4 +68,4 @@ function BookCard({book}) {
     </Link>
   );
 }
-export default BookCard;
+export default BookCardHome;

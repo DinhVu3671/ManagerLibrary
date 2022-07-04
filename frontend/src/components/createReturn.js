@@ -33,8 +33,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import SearchBar from "material-ui-search-bar";
 import BookAPI from '../api/BookAPI';
 import BorrowBookAPI from '../api/BorrowBookAPI';
-import UsersAPI from '../api/UsersAPI';
-
+import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 //
 
 
@@ -59,15 +59,6 @@ const useStyles = makeStyles({
     minWidth: 650
   }
 });
-
-const rows = [
-  createData('KIMI NI TSUMUGU BOUHAKU', "Romance - Shoujo ai", "Yasaka Shuu", 15, "Jun-26-2022 17:23"),
-  createData('NEGA-KUN AND POSI-CHAN', "Comedy - Romance", "Shunpei Morita", 30, "May-25-2022 01:25"),
-  createData('STORY OF A SMALL SENIOR IN MY COMPANY', "Comedy - Romance", "Saisou", 15, "Jun-24-2022 22:38"),
-  createData('2 SAISA NO OSANANAJIMI', "Romance - School life", "Mi Kasuke", 18, "Jun-26-2022 09:06"),
-  createData('KIMI NI TSUMUGU BOUHAKU 2', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 21, "Jun-26-2022 17:23"),
-  createData('KIMI NI TSUMUGU BOUHAKU 3', "Romance - Shoujo ai - Yuri", "Yasaka Shuu", 20, "Jun-26-2022 17:23"),
-];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -159,7 +150,7 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align='center'
+            align='left'
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -223,41 +214,11 @@ const EnhancedTableToolbar = (props) => {
     </Toolbar>
   );
 };
-//
-function TapSeach({users}) {
-  return (
-    <Autocomplete
-      disablePortal
-      id="combo-box-demo"
-      getOptionLabel={options => options.fullName}
-      options={users}
-      sx={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} label="Tên người dùng" />}
-    />
-  );
-}
 
 //
-function CreateOrderBook() {
+function CreateReturnBook({ route, navigation }) {
   let date = new Date();
   const dateCurr = date.toLocaleDateString();
-  const [dateValid, setDateValid] = useState('');
-  const [books, setBooks] = useState([]);
-  const [users, setUsers] = useState([]);
-
-  let str = ""
-  if (date.getMonth() >= 9)
-    if (date.getDate() > 9)
-      str = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-    else
-      str = `${date.getFullYear()}-${date.getMonth() + 1}-0${date.getDate()}`
-  else
-    if (date.getDate() > 9)
-      str = `${date.getFullYear()}-0${date.getMonth() + 1}-${date.getDate()}`
-    else
-      str = `${date.getFullYear()}-0${date.getMonth() + 1}-0${date.getDate()}`
-
-
   //
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
@@ -269,31 +230,14 @@ function CreateOrderBook() {
   const [data, setData] = useState([]);
   const [searched, setSearched] = useState("");
   const classes = useStyles();
-
-
-  function getData() {
-    BookAPI.listBook().then((res) => {
-      let bookListRes = res.data;
-      setBooks(bookListRes.data);
-      setData(bookListRes.data);
-    })
-      .catch(err => {
-        console.log(err)
-      });
-    UsersAPI.getAllUsers().then((res) => {
-      let userList = res.data;
-      setUsers(userList.data);
-    })
-      .catch(err => {
-        console.log(err)
-      })
-  }
+  const {state} = useLocation();
+  const { user, listBook } = state;
+  console.log(listBook);
   useEffect(() => {
-    getData();
+    setData(listBook); 
   }, []);
-
   const requestSearch = (searchedVal) => {
-    const filteredRows = books.filter((row) => {
+    const filteredRows = listBook.filter((row) => {
       return row.title.toLowerCase().includes(searchedVal.toLowerCase());
     });
     setData(filteredRows);
@@ -320,19 +264,19 @@ function CreateOrderBook() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = books.map((n) => n._id);
+      const newSelecteds = listBook.map((n) => n._id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, _id) => {
-    const selectedIndex = selected.indexOf(_id);
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, _id);
+      newSelected = newSelected.concat(selected, name);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -360,9 +304,9 @@ function CreateOrderBook() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listBook.length) : 0;
   //
-  console.log(selected);
+
   return (
     <div className={stylesOrderBook.Home}>
       <Header />
@@ -377,13 +321,13 @@ function CreateOrderBook() {
             <div className={styles.wraper}>
               <div className={styles.tdisplay2}>
                 <div style={{ display: 'flex' }}>
-                  <TapSeach users={users}/>
+                <p>Họ tên: {user}</p>
                   <div style={{ display: 'flex', marginLeft: '100px' }}>
                     <label
                       htmlFor="date"
                       className={clsx(stylesRegister.formLabel, stylesRegister.row)}
                     >
-                      Ngày Mượn:
+                      Ngày Trả:
                     </label>
                     <input
                       id="date"
@@ -395,26 +339,6 @@ function CreateOrderBook() {
                       readOnly
                     />
                   </div>
-
-                  {/* <div style={{ display: 'flex', marginLeft: '80px' }}>
-                    <label
-                      htmlFor="dateValid"
-                      className={clsx(stylesRegister.formLabel, stylesRegister.row)}
-                    >
-                      Ngày trả
-                    </label>
-                    <input
-                      id="dateValid"
-                      name="dateValid"
-                      min={str}
-                      type="date"
-                      value={dateValid}
-                      onChange={(e) => setDateValid(e.target.value)}
-                      className={clsx(stylesRegister.formInput, stylesRegister.row)}
-                      style={{ marginLeft: '-120px', width: '400px' }}
-                      required
-                    />
-                  </div> */}
                 </div>
 
                 <div style={{ marginTop: '10px' }}>
@@ -441,7 +365,7 @@ function CreateOrderBook() {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={books.length}
+                            rowCount={listBook.length}
                           />
                           <TableBody>
                             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
@@ -499,7 +423,7 @@ function CreateOrderBook() {
                       <TablePagination
                         rowsPerPageOptions={[5, 10, 15]}
                         component="div"
-                        count={books.length}
+                        count={listBook.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -507,7 +431,7 @@ function CreateOrderBook() {
                       />
                     </Paper>
                     <div className={stylesBook.buttonM}>
-                      <Button color="success"> Tạo phiếu mượn </Button>
+                      <Button color="success"> Tạo phiếu trả </Button>
                       <Button color="error"> Huỷ </Button>
                     </div>
 
@@ -525,4 +449,4 @@ function CreateOrderBook() {
   );
 }
 
-export default CreateOrderBook;
+export default CreateReturnBook;

@@ -21,8 +21,9 @@ import { useState } from 'react';
 import Header from './header';
 import Footer from './footer';
 import styles from '../screens/CSS/home.module.css';
-import { Link, useNavigate } from 'react-router-dom';
-
+import stylesBook from '../components/CSS/BookInformation.module.css';
+import { Button } from '@mui/material';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 function createData(
   name,
@@ -128,7 +129,7 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align='center'
+            align='left'
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -152,7 +153,7 @@ function EnhancedTableHead(props) {
 }
 
 
-export default function OrderHistoryItem({returnee, book}) {
+export default function OrderHistoryItem({valid, book}) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected, setSelected] = useState([]);
@@ -203,6 +204,10 @@ export default function OrderHistoryItem({returnee, book}) {
     setPage(0);
   };
 
+  const handleCreateReturnBook = () => {
+    navigate("/createReturnBook", { state: { user: book.user.fullName, listBook: book.book } });
+  }
+
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -216,12 +221,12 @@ export default function OrderHistoryItem({returnee, book}) {
                   <div style={{display: 'flex'}}>          
                     <p>Họ tên: {book.user.fullName}</p>
                     <p style={{marginLeft : '100px'}}>SĐT: {book.user.phone}</p>
-                    {/* <div style={{marginLeft : '100px'}}>
-                      <p>Ngày mượn: 10:20:00 17/6/2022</p>
-                       {returnee && (
+                    <div style={{marginLeft : '100px'}}>
+                      {/* <p>Ngày mượn: 10:20:00 17/6/2022</p> */}
+                       {valid && (
                         <p>Ngày hẹn trả: 10:20:00 17/6/2022</p>
                       )}                             
-                    </div> */}
+                    </div>
 
                   </div>
 
@@ -268,10 +273,10 @@ export default function OrderHistoryItem({returnee, book}) {
                                   >
                                       {row.title}
                                   </TableCell>
-                                  <TableCell align="right">{row.calories}</TableCell>
-                                  <TableCell align="right">{row.author}</TableCell>
-                                  <TableCell align="right">{row.availableNumber}</TableCell>
-                                  <TableCell align="right">{row.updatedAt}</TableCell>
+                                  <TableCell align="left">{row.calories}</TableCell>
+                                  <TableCell align="left">{row.author}</TableCell>
+                                  <TableCell align="left">{row.availableNumber}</TableCell>
+                                  <TableCell align="left">{(new Date(row.updatedAt)).toLocaleString()}</TableCell>
                                   </TableRow>
                               );
                               })}
@@ -294,6 +299,9 @@ export default function OrderHistoryItem({returnee, book}) {
                       onRowsPerPageChange={handleChangeRowsPerPage}
                       />
                   </Paper>
+                  <div className={stylesBook.buttonM}>
+                      <Button color="success" onClick={handleCreateReturnBook}> Tạo phiếu trả </Button>                                                   
+                  </div>
                   </Box>
               </div>
         </div>

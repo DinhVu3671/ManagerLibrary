@@ -18,6 +18,8 @@ import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
 import { Link } from 'react-router-dom';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
+import BookIcon from '@mui/icons-material/Book';
 
 export default function InformationTab() {
   const [open, setOpen] = React.useState(true);
@@ -73,7 +75,7 @@ export default function InformationTab() {
           >
             <ListItemButton sx={{ pl: 4 }}>
               <ListItemIcon>
-                <AccessTimeIcon />
+                <BookIcon />
               </ListItemIcon>
               <ListItemText primary="Sách đang mượn" />
             </ListItemButton>
@@ -90,6 +92,18 @@ export default function InformationTab() {
               <ListItemText primary="Sách đã mượn" />
             </ListItemButton>
           </Link>
+
+          <Link
+            to="/orderValidManager"
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            <ListItemButton sx={{ pl: 4 }}>
+              <ListItemIcon>
+                <AccessTimeIcon />
+              </ListItemIcon>
+              <ListItemText primary="Sách quá hạn trả" />
+            </ListItemButton>
+          </Link>
         </List>
       </Collapse>
 
@@ -104,6 +118,18 @@ export default function InformationTab() {
           <ListItemText primary="Tạo đơn mượn mới" />
         </ListItemButton>
       </Link>
+
+      {/* <Link
+        to="/createReturnBook"
+        style={{ textDecoration: "none", color: "black" }}
+      >
+        <ListItemButton>
+          <ListItemIcon>
+            <BookmarkAddedIcon />
+          </ListItemIcon>
+          <ListItemText primary="Tạo đơn trả" />
+        </ListItemButton>
+      </Link> */}
 
       <Link
         to="/readerManager"

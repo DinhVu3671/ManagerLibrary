@@ -12,7 +12,7 @@
 
   .registerContainerPassWorld {
     display: flex;
-    min-width: 924px;
+    min-width: 825px;
     background-color: #2196f3;
     justify-content: center;
     align-items: center;

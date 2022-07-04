@@ -8,7 +8,7 @@ import InformationTab from './InfomationTab';
 import styles from '../screens/CSS/home.module.css';
 import stylesRegister from './CSS/RegisterFormCSS.module.scss';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -32,6 +32,7 @@ import stylesBook from '../components/CSS/BookInformation.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { makeStyles } from "@material-ui/core/styles";
 import SearchBar from "material-ui-search-bar";
+import UsersAPI from '../api/UsersAPI';
 
 //
 
@@ -167,15 +168,33 @@ function ReaderManager() {
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [users, setUsers] = useState([]);
+
     const navigate = useNavigate();
 
-    const [data, setData] = useState(rows);
+    const [data, setData] = useState();
     const [searched, setSearched] = useState("");
     const classes = useStyles();
 
+
+    function getData() {
+      UsersAPI.getAllUsers().then((res) => {
+        let userList = res.data;
+        console.log(userList.data);
+        setUsers(userList.data);
+        setData(userList.data);
+      })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+    useEffect(() => {
+      getData();
+    }, []);
+
     const requestSearch = (searchedVal) => {
-      const filteredRows = rows.filter((row) => {
-        return row.name.toLowerCase().includes(searchedVal.toLowerCase());
+      const filteredRows = users.filter((row) => {
+        return row.fullName.toLowerCase().includes(searchedVal.toLowerCase());
       });
       setData(filteredRows);
     };
@@ -279,25 +298,25 @@ function ReaderManager() {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
+                            rowCount={users.length}
                             />
                             <TableBody>
                             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                             rows.slice().sort(getComparator(order, orderBy)) */}
-                            {data.slice().sort(getComparator(order, orderBy))
+                            {data?.slice().sort(getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                const isItemSelected = isSelected(row.name);
+                                const isItemSelected = isSelected(row._id);
                                 const labelId = `enhanced-table-checkbox-${index}`;
 
                                 return (
                                     <TableRow
                                     hover
-                                    onClick={(event) => handleClick(event, row.name)}
+                                    onClick={(event) => handleClick(event, row._id)}
                                     role="checkbox"
                                     aria-checked={isItemSelected}
                                     tabIndex={-1}
-                                    key={row.name}
+                                    key={row._id}
                                     selected={isItemSelected}
                                     >
                                     <TableCell
@@ -305,13 +324,13 @@ function ReaderManager() {
                                         id={labelId}
                                         scope="row"
                                         padding="none"
-                                        onClick={()=>{navigatePath("/book")}}
+                                        onClick={()=>{navigatePath(`/book/${row._id}`)}}
                                     >
-                                        {row.name}
+                                        {row.fullName}
                                     </TableCell>
-                                    <TableCell align="left">{row.email}</TableCell>
+                                    <TableCell align="left">{row.gmail}</TableCell>
                                     <TableCell align="left">{row.phone}</TableCell>
-                                    <TableCell align="left">{row.lastUpdate}</TableCell>
+                                    <TableCell align="left">{row.updatedAt}</TableCell>
                                     </TableRow>
                                 );
                                 })}
@@ -327,7 +346,7 @@ function ReaderManager() {
                         <TablePagination
                         rowsPerPageOptions={[5, 10, 15]}
                         component="div"
-                        count={rows.length}
+                        count={users.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}

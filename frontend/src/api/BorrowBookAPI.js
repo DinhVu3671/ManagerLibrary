@@ -31,6 +31,11 @@ function BorrowBookAPI() {
     this.awaitBorrowBook = (data) => {
         return callAPI.post('borrowbooks/awaitBorrowBook', data);
     }
+
+    //[POST] - Duyệt đơn sách chờ duyệt
+    this.acceptBorrowBook = (data) => {
+        return callAPI.post('borrowbooks/acceptBorrowBook', data);
+    }
 }
 
 export default new BorrowBookAPI()

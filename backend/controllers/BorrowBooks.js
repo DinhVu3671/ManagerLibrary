@@ -253,7 +253,7 @@ borrowBookController.awaitBorrowBook = async (req, res, next) => {
                     user: idUser,
                     status: "await",
                     borrowDate: new Date(),
-                    // refundDate: null,
+                    refundDate: null,
                     refundAppointmentDate: new Date(new Date().getTime() + 3600000*24*30)
                 });
                 let borrowBookSaved = await borrowBook.save();
@@ -280,4 +280,49 @@ borrowBookController.awaitBorrowBook = async (req, res, next) => {
         });
     }
 } 
+
+borrowBookController.accreptBorrowBook = async ( req, res, next) => {
+    try {
+        const {
+            idBooks,
+            idUser
+        } = req.body;
+        let responsive = [];
+        if(idBooks.length > 0) {
+            idBooks.map(async (item) => {
+                let bookBorrow = await BorrowBookModel.findOneAndUpdate({book: item, user: idUser},
+                    {
+                        status: "borrowing",
+                        borrowDate: new Date(),
+                        refundAppointmentDate: new Date(new Date().getTime() + 3600000*24*30)
+                    }, {
+                    new: true,
+                    runValidators: true
+                });
+        
+                if (!bookBorrow) {
+                    return res.status(httpStatus.NOT_FOUND).json({message: "Can not find book", id: item});
+                }
+            })
+            responsive = await BorrowBookModel.find({book: {$in: idBooks}}).populate({
+                path: 'book',
+                select: '_id title categories author',
+                model: 'Books',
+            }).populate({
+                path: 'idUser',
+                select: '_id fullName phone gmail',
+                model: 'Users',
+            });
+            // responsive = brrowBooks
+        }
+
+        return res.status(httpStatus.OK).json({
+            data: responsive
+        });
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
 module.exports = borrowBookController;

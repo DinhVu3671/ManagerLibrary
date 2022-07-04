@@ -223,16 +223,9 @@ usersController.changePassword = async (req, res, next) => {
 }
 usersController.show = async (req, res, next) => {
     try {
-        let userId = null;
-        if (req.params.id) {
-            userId = req.params.id;
-        } else {
-            userId = req.userId;
-        }
-
-        let user = await UserModel.findById(userId).select('fullName phone gmail');
+        let user = await UserModel.find({role: "user"}).select('_id fullName phone gmail updatedAt');
         if (user == null) {
-            return res.status(httpStatus.NOT_FOUND).json({message: "Can not find user"});
+            return res.status(httpStatus.NOT_FOUND).json({message: "Can not user"});
         }
 
         return res.status(httpStatus.OK).json({
@@ -242,80 +235,6 @@ usersController.show = async (req, res, next) => {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({message: error.message});
     }
 }
-// usersController.setBlock = async (req, res, next) => {
-//     try {
-//         let targetId = req.body.user_id;
-//         let type = req.body.type;
-//         let user = await UserModel.findById(req.userId);
-//         blocked = []
-//         if (user.hasOwnProperty('blocked')) {
-//             blocked = user.blocked_inbox
-//         }
-    
-//         if(type) {
-     
-//             if(blocked.indexOf(targetId) === -1) {
-//                 blocked.push(targetId);
-//             }
-//         } else {
-//             const index = blocked.indexOf(targetId);
-//             if (index > -1) {
-//                 blocked.splice(index, 1);
-//             }
-//         }
-
-//         user.blocked_inbox = blocked;
-//         user.save();
-
-//         res.status(200).json({
-//             code: 200,
-//             message: "Thao tác thành công",
-//             data: user
-//         });
-
-//     } catch (e) {
-//         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-//             message: e.message
-//         });
-//     }
-// }
-// usersController.setBlockDiary = async (req, res, next) => {
-//     try {
-//         let targetId = req.body.user_id;
-//         let type = req.body.type;
-//         let user = await UserModel.findById(req.userId);
-//         blocked = []
-//         if (user.hasOwnProperty('blocked')) {
-//             blocked = user.blocked_diary
-//         }
-    
-//         if(type) {
-     
-//             if(blocked.indexOf(targetId) === -1) {
-//                 blocked.push(targetId);
-//             }
-//         } else {
-//             const index = blocked.indexOf(targetId);
-//             if (index > -1) {
-//                 blocked.splice(index, 1);
-//             }
-//         }
-
-//         user.blocked_diary = blocked;
-//         user.save();
-
-//         res.status(200).json({
-//             code: 200,
-//             message: "Thao tác thành công",
-//             data: user
-//         });
-
-//     } catch (e) {
-//         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-//             message: e.message
-//         });
-//     }
-// }
 usersController.searchUser = async (req, res, next) => {
     try {
         let searchKey = new RegExp(req.body.keyword, 'i')
@@ -331,6 +250,26 @@ usersController.searchUser = async (req, res, next) => {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             message: e.message
         });
+    }
+}
+usersController.showUser = async (req, res, next) => {
+    try {
+        let userId = null;
+        if (req.params.id) {
+            userId = req.params.id;
+        } else {
+            userId = req.userId;
+        }
+        let user = await UserModel.findById(userId).select('_id fullName phone gmail updatedAt');
+        if (user == null) {
+            return res.status(httpStatus.NOT_FOUND).json({message: "Can not user"});
+        }
+
+        return res.status(httpStatus.OK).json({
+            data: user
+        });
+    } catch (error) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({message: error.message});
     }
 }
 

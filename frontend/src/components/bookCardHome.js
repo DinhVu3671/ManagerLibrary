@@ -24,7 +24,7 @@ function BookCardHome({book}) {
     <Link
       className={clsx(styles.cardContainer)}
       to={
-        '/book'
+        `/book/${book._id}`
       }
     >
       <Card className={clsx(styles.cardBody)} sx={{ maxWidth: 200, minWidth: 200 }}>

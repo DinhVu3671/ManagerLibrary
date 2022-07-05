@@ -224,18 +224,7 @@ const EnhancedTableToolbar = (props) => {
   );
 };
 //
-function TapSeach({users}) {
-  return (
-    <Autocomplete
-      disablePortal
-      id="combo-box-demo"
-      getOptionLabel={options => options.fullName}
-      options={users}
-      sx={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} label="Tên người dùng" />}
-    />
-  );
-}
+
 
 //
 function CreateOrderBook() {
@@ -244,6 +233,8 @@ function CreateOrderBook() {
   const [dateValid, setDateValid] = useState('');
   const [books, setBooks] = useState([]);
   const [users, setUsers] = useState([]);
+  const [userSelect, setUserSelect] = useState();
+  const [loading, setLoading] = useState(false);
 
   let str = ""
   if (date.getMonth() >= 9)
@@ -290,7 +281,26 @@ function CreateOrderBook() {
   }
   useEffect(() => {
     getData();
-  }, []);
+    setLoading(false)
+  }, [loading]);
+
+  const handleSelectUser = (event, value) => {
+    console.log(value);
+    setUserSelect(value._id)
+  }
+  function TapSeach({users}) {
+    return (
+      <Autocomplete
+        disablePortal
+        id="combo-box-demo"
+        getOptionLabel={options => options.fullName}
+        options={users}
+        sx={{ width: 300 }}
+        onChange={(event, value) => handleSelectUser(event, value)}
+        renderInput={(params) => <TextField {...params} label="Tên người dùng" />}
+      />
+    );
+  }
 
   const requestSearch = (searchedVal) => {
     const filteredRows = books.filter((row) => {
@@ -362,7 +372,15 @@ function CreateOrderBook() {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   //
+
+  const handleSubmitOrder = () => {
+    BorrowBookAPI.createBook({idBooks: selected, idUser: userSelect});
+    setSelected([]);
+    setUserSelect([]);
+    setLoading(true);
+  }
   console.log(selected);
+  console.log(userSelect);
   return (
     <div className={stylesOrderBook.Home}>
       <Header />
@@ -507,7 +525,7 @@ function CreateOrderBook() {
                       />
                     </Paper>
                     <div className={stylesBook.buttonM}>
-                      <Button color="success"> Tạo phiếu mượn </Button>
+                      <Button color="success" onClick={handleSubmitOrder}> Tạo phiếu mượn </Button>
                       <Button color="error"> Huỷ </Button>
                     </div>
 

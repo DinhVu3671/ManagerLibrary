@@ -23,7 +23,7 @@ function RecommendBook({featuredBook}){
     return (
         <Grid container spacing={{ xs: 3, md: 1 }} columns={{ xs: 3, sm: 5, md: 5 }}  style={{padding:'5px'}}>
               {featuredBook?.map((book, index) => (
-                <Grid item xs={1} sm={1} md={1} key={index}>
+                <Grid item xs={1} sm={1} ml={4} md={1} key={index}>
                   {/* <Card sx={{ maxWidth: 345,height:200 }}>
                     <CardActionArea>
                       <CardMedia

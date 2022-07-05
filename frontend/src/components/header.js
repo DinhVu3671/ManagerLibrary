@@ -17,6 +17,11 @@ import Menu from '@mui/material/Menu';
 import BookAPI from "../api/BookAPI";
 import BookIcon from '@mui/icons-material/Book';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import CategoriesAPI from "../api/CategoriesAPI";
+import { Grid } from "@mui/material";
+import BookCardHome from "./bookCardHome";
+import BookCardCart from "./bookCardCart";
 // import { AuthContext } from '../contextAPI/AuthContext';
 
 function Header() {
@@ -77,10 +82,18 @@ function Header() {
 
   // profile
   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorElCart, setAnchorElCart] = useState(null);
+  const [openCart, setOpenCart] = useState(false)
+
   const open = Boolean(anchorEl);
   const handleClickProfile = (e) => {
     setAnchorEl(e.currentTarget);
   };
+  const handleClickCart = (e) => {
+    setAnchorElCart(e.currentTarget);
+    setOpenCart(true);
+  };
+
   const handleCloseBookManager = () => {
     setAnchorEl(null);
     navigatePath('/bookManager');
@@ -109,6 +122,27 @@ function Header() {
     navigatePath('/readerManager');
   };
 
+  //testdata
+  const [featuredBook, setFeatureBook] = useState([]);
+  const [categories, setCategory] = useState([]);
+
+  function getData(){
+    CategoriesAPI.getCategories().then((res) => {
+      setCategory(res.data.data)
+    })
+    .catch(err => {
+      console.log(err)
+    });
+    BookAPI.outstandingBook().then((res) => {
+      setFeatureBook(res.data.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+  useEffect(() => {
+      getData(); 
+  }, []);
 
 
   return (
@@ -137,7 +171,7 @@ function Header() {
           <label
             className={`${styles.textColor} ${styles.textDate}`}
           >{`${dayCurr}, ${dateCurr}`}</label>
-
+          <div>
           <div className={styles.divUser}
             onClick={() =>
               (localStorage.getItem('token')) == null
@@ -154,7 +188,32 @@ function Header() {
               {(localStorage.getItem('token')) == null ? 'Đăng nhập' : (localStorage.getItem('fullName'))}
             </div>
           </div>
-          
+          <MenuBookIcon onClick={handleClickCart}  fontSize="large"  color="primary"> </MenuBookIcon>
+
+          </div>
+
+          {
+            ((localStorage.getItem('token')) != null) ? (((localStorage.getItem('role')) === "admin") ?
+              null :
+              <Menu
+                id="basic-menu"
+                open={openCart}
+                onClose={() => setOpenCart(false)}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+              >
+                {featuredBook?.map((book, index) => (
+                  <MenuItem>                
+                     <BookCardCart book={book} />
+                  </MenuItem>
+
+                ))}
+              </Menu>) : null
+          }
+
 
           {
             ((localStorage.getItem('token')) != null) ? (((localStorage.getItem('role')) === "admin") ?

@@ -10,6 +10,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import stylesBookManger from '../components/CSS/bookManager.module.css'
+import styleBookReader from '../components/CSS/BookReaderItem.module.css'
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -32,6 +33,7 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CategoriesAPI from '../api/CategoriesAPI';
 import BookAPI from '../api/BookAPI';
+import SearchBar from "material-ui-search-bar";
 
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -135,6 +137,11 @@ function BookManager(books) {
     ];
 
     const [open, setOpen] = useState(false);
+    const [openCategory, setOpenCategory] = useState(false);
+
+    const [searched, setSearched] = useState("");
+    const [data, setData] = useState([]);
+
     const handleOpen = async () => {
       let categoriesRes = await CategoriesAPI.getCategories().then(res => {
         return res.data;
@@ -200,6 +207,7 @@ function BookManager(books) {
     const [textTitle, setTextTitle] = useState('');
     const [textButtonRight, setTextButtonRight] = useState('');
 
+    const [newCategory, setNewCategory] = useState('');
     // info
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
@@ -272,7 +280,10 @@ function BookManager(books) {
     const [openDelete, setDelete] = useState(false);
     const handleOpenDelete = () =>  setDelete(true);
     const handleCloseDelete = () =>  setDelete(false);
-
+    const handleOpenNewCategory = () => {
+      setOpenCategory(true)
+      setNewCategory('')
+    }
     //submit product
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -315,6 +326,7 @@ function BookManager(books) {
         let bookListRes = res.data;
         console.log(bookListRes);
         setBooks(bookListRes.data);
+        setData(bookListRes.data)
       })
       .catch(err => {
         console.log(err)
@@ -328,6 +340,19 @@ function BookManager(books) {
         setOpen(true);
       }
     }, [errMsg]);
+
+
+    const requestSearch = (searchedVal) => {
+      const filteredRows = bookList.filter((row) => {
+        return row.title.toLowerCase().includes(searchedVal.toLowerCase());
+      });
+      setData(filteredRows);
+    };
+  
+    const cancelSearch = () => {
+      setSearched("");
+      requestSearch(searched);
+    };
 
     return (
       <div className={styles.Home}>
@@ -604,6 +629,37 @@ function BookManager(books) {
           </Box>
         </Modal>
 
+        <Modal
+          open={openCategory}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+          >
+          <Box  className={styleBookReader.commentBox}>
+              <div className={styles.wraper}>  
+                  <p className={stylesBookManger.formdelete}> Danh mục mới </p>
+              </div>
+              <div className={stylesBookManger.formdelete}>
+                  <input
+                  id="newCategory"
+                  name="newCategory"
+                  type="text"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  className={clsx(stylesBookManger.formInput, stylesBookManger.row)}
+                  placeholder="Tên danh mục ..."
+                  required
+                  />
+                  <div className={stylesBookManger.footFake2}>
+                      <p>  </p>
+                  </div>                                
+              </div>
+              <div className={stylesBookManger.button}>
+                  <Button onClick={() => setOpenCategory(false)}> Huỷ </Button>
+                  <Button onClick={() => setOpenCategory(false)}>Xác nhận</Button>
+              </div>
+          </Box>
+      </Modal>
+
         <div className={stylesTab.content} >
             <div className={stylesTab.tab1} >
               <InformationTab/>
@@ -615,29 +671,15 @@ function BookManager(books) {
                     <p>Quản lý sách</p>
 
                     <div className={clsx(stylesBookManger.searchBar)}>
-                      <SearchIcon className={clsx(stylesBookManger.searchIcon)} />
-                      <input
-                        className={clsx(stylesBookManger.searchInput)}
-                        type="text"
-                        placeholder="Tìm kiếm sách . . ."
-                        spellCheck={false}
-                        value={searchTerm}
-                        onChange={(e) => {
-                          console.log(e.target.value);
-                          return setSearchTerm(e.target.value);
-                        }}
-                      />
-                      {searchTerm && (
-                        <button
-                          className={clsx(stylesBookManger.clearButton)}
-                          onClick={() => setSearchTerm('')}
-                        >
-                          <CloseIcon className={clsx(stylesBookManger.clearIcon)} />
-                        </button>
-                      )}
+                       <SearchBar
+                          value={searched}
+                          onChange={(searchVal) => requestSearch(searchVal)}
+                          onCancelSearch={() => cancelSearch()}
+                          placeholder="Tìm tên sách . . ."
+                        />
                     </div>
 
-
+                    <Button href="#text-buttons" onClick={handleOpenNewCategory}>Thêm danh mục</Button>
                     <Button href="#text-buttons" onClick={handleOpen}>Thêm sách</Button>
                 </div>
                 
@@ -647,10 +689,10 @@ function BookManager(books) {
                       order={order}
                       orderBy={orderBy}
                       onRequestSort={handleRequestSort}
-                      rowCount={bookList.length}
+                      rowCount={data.length}
                     />
                     <TableBody>
-                      {bookList.slice().sort(getComparator(order, orderBy))
+                      {data.slice().sort(getComparator(order, orderBy))
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((book, index) => {
                           const isItemSelected = isSelected(book.id);

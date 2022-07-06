@@ -47,7 +47,7 @@ function BookInformation({navigation}) {
       });
 
       CommentAPI.getComment(idBook).then((res) => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         setComment(res.data.data)
       })
       .catch(err => {
@@ -57,6 +57,7 @@ function BookInformation({navigation}) {
     useEffect(() => {
         getData(); 
     }, []);
+    console.log(bookInfo)
     return (
       <div className={styles.Home}>
         <Header navigation={navigation}/>
@@ -65,7 +66,7 @@ function BookInformation({navigation}) {
             <p className={styles.tdisplay}> Thông tin sách </p>
             <div className={stylesBook.productImage}>
               <div className="image">
-                <BookImages images={[face, instagram, twitter, imageTest]} />
+                <BookImages images={[bookInfo.images]} />
               </div>
               <div className={stylesBook.information}>
                 <div className={stylesBook.title}>
@@ -83,16 +84,17 @@ function BookInformation({navigation}) {
                 <div className={stylesBook.title}>
                   <div className={stylesBook.content}>Đánh giá:</div>
                   <div  className={stylesBook.rating}>               
-                    <p>{rating?.numberStar}</p>
+                    <p>{bookInfo.numberStar?.$numberDecimal}</p>
                     <div className={stylesBook.star}>                  
-                      <Rating name="half-rating-read" defaultValue={rating?.numberStar} readOnly />     
+                      <Rating name="half-rating-read" value={Number(bookInfo.numberStar?.$numberDecimal)}
+                precision={0.1} readOnly />     
                     </div>      
                   </div>
                 </div>
 
                 <div className={stylesBook.title}>
                   <div className={stylesBook.content}>Lượt đánh giá:</div>
-                  <div>{rating?.numberRate} Đánh giá</div>
+                  <div>{bookInfo.numberStar?.$numberDecimal} Đánh giá</div>
                 </div>
 
                 <div className={stylesBook.title}>
@@ -143,9 +145,10 @@ function BookInformation({navigation}) {
             <p className={styles.tdisplay}> Đánh giá sách </p>
             <div className={stylesBook.colInformation}> 
               <div>    
-                <h3 className={stylesBook.ratingScore}> {rating?.numberStar} / 5 </h3>
+                <h3 className={stylesBook.ratingScore}> {bookInfo.numberStar?.$numberDecimal} / 5 </h3>
                 <div className={stylesBook.ratingInfo}>                  
-                  <Rating name="half-rating-read" defaultValue={rating?.numberStar} readOnly />
+                  <Rating name="half-rating-read" value={Number(bookInfo.numberStar?.$numberDecimal)}
+                precision={0.1} readOnly />
                 </div>
               </div>  
               <div>

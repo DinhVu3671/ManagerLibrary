@@ -5,11 +5,15 @@ import styles from './CSS/orderBook.module.css';
 import InformationTab from './InfomationTab';
 import OrderBookItem from './OrderBookItem';
 import BorrowBookAPI from '../api/BorrowBookAPI';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
-function OrderBook({navigation}) {
+function OrderBook({ navigation }) {
   const [books, setBooks] = useState([]);
+  const [success, setSuccess] = useState(false);
+  
   function getData() {
-    BorrowBookAPI.searchAdmin({typeBorrowBook: "await"}).then((res) => {
+    BorrowBookAPI.searchAdmin({ typeBorrowBook: "await" }).then((res) => {
       console.log(res.data.data);
       setBooks(res.data.data)
     })
@@ -19,29 +23,38 @@ function OrderBook({navigation}) {
   }
   useEffect(() => {
     getData();
-  }, []);
-    return (
-      <div className={styles.Home}>
-        <Header navigation={navigation}/>
-        <div className={styles.content} >
-            <div className={styles.tab1} >
-              <InformationTab/>
-            </div>
-
-            <div className={styles.tab2} >
-              {
-                books?.map((book) => {
-                  return(
-                    <OrderBookItem books={book} /> 
-                  )
-                })
-              }
-            </div>
+  }, [success]);
+  return (
+    <div className={styles.Home}>
+      <Header navigation={navigation} />
+      <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
+        <Alert
+          onClose={() => setSuccess(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          Đã thêm thành công
+        </Alert>
+      </Snackbar>
+      <div className={styles.content} >
+        <div className={styles.tab1} >
+          <InformationTab />
         </div>
-        <Footer navigation={navigation}/>
-        
+
+        <div className={styles.tab2} >
+          {
+            books?.map((book) => {
+              return (
+                <OrderBookItem books={book} setSuccess={setSuccess} />
+              )
+            })
+          }
+        </div>
       </div>
-    );
-  }
-  
-  export default OrderBook;
+      <Footer navigation={navigation} />
+
+    </div>
+  );
+}
+
+export default OrderBook;

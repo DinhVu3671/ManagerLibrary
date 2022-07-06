@@ -57,7 +57,7 @@ function ReturnBook({navigation}) {
               {
                 data?.map((item) => {
                   return (
-                    <OrderHistoryItem returnee={true} book={item} />  
+                    <OrderHistoryItem returnee={true} book={item} type={"refurn"} />  
                   )
                 })
               }      

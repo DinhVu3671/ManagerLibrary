@@ -19,6 +19,7 @@ import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useParams } from 'react-router-dom';
+import BookAPI from '../api/BookAPI';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -59,19 +60,19 @@ function Search() {
 
   const handleSort = (book1, book2) => {
       if(sort === 'most'){
-        if(book1.count > book2.count)
+        if(book1.availableNumber > book2.availableNumber)
           return -1
         else
           return 1
       }
       else if(sort === 'rating'){
-        if(book1.rate > book2.rate)
+        if(book1.numberStar > book2.numberStar)
           return -1
         else
           return 1
       }
       else if(sort === 'newest'){
-        if(book1.year > book2.year)
+        if(book1.publishYear > book2.publishYear)
           return -1
         else
           return 1
@@ -83,24 +84,27 @@ function Search() {
 
   //for all data -request once time when component
   const [allCategories, setAllCategories] = useState([]);
+    //data and request data
+    const [productIdList, setProductIdList] = useState([]);
+    const [shopId, setShopId] = useState('');
 
   const [showedCategories, setShowedCategories] = useState([]);
-
+  function getData(){
+    BookAPI.listBook().then((res) => {
+      let bookListRes = res.data;
+      console.log(bookListRes);
+      // setBooks(bookListRes.data);
+      // setData(bookListRes.data)
+      setProductIdList(bookListRes.data);
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
   useEffect(() => {
-    axios
-      .get('/category/get?all=true')
-      .then((res) => {
-        let allCates = res.data.data.map((item) => item.categoryName);
-        allCates = new Set(allCates);
-        allCates = [...allCates];
-        setAllCategories(allCates);
-        setShowedCategories(allCates.slice(0, 5));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    getData()
   }, []);
-
+  console.log("lii", productIdList)
   const [numPages, setNumPages] = useState(0);
 
   //for changing Filter
@@ -161,9 +165,7 @@ function Search() {
     {name: "Thám tử đã chết", rate: 1.1, count: 170, year: 2010, image: defaultImage},
 
   ];
-  //data and request data
-  const [productIdList, setProductIdList] = useState(testData);
-  const [shopId, setShopId] = useState('');
+
 
   return (
     <div className={clsx(styles.search)}>
@@ -305,7 +307,8 @@ function Search() {
                 </div>
               ) : (
                 <div className={clsx(styles.productContainer)}>
-                  {productIdList.sort(handleSort).filter((book) => book.rate >= rating).map((value, index) => (
+                  {/* .filter((book) => book.numberStar >= rating) */}
+                  {productIdList.map((value, index) => (
                     <Grid item xs={1} sm={1} md={1} key={index}>
                       <BookCard book={value} />
                     </Grid>

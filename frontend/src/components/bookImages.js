@@ -9,10 +9,11 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
+import noImage from '../assets/noImage.png';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-function BookImages({images}) {
+function BookImages({ images }) {
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = images.length;
@@ -38,20 +39,29 @@ function BookImages({images}) {
         enableMouseEvents
       >
         {images.map((step, index) => (
-          <div key={step.label}>
+          <div key={index}>
             {Math.abs(activeStep - index) <= 2 ? (
-              <Box
-                component="img"
-                sx={{
+              step ?
+                <Box
+                  component="img"
+                  sx={{
+                    height: 400,
+                    display: 'block',
+                    width: 300,
+                    overflow: 'hidden',
+                    width: '100%',
+                  }}
+                  src={step}
+                /> : <img src={noImage} alt="anh" style={{
                   height: 400,
                   display: 'block',
                   width: 300,
                   overflow: 'hidden',
                   width: '100%',
-                }}
-                src={step}
-              />
-            ) : null}
+                }} />
+            ) :
+              null
+            }
           </div>
         ))}
       </AutoPlaySwipeableViews>

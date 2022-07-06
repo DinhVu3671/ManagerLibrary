@@ -35,6 +35,8 @@ import BookAPI from '../api/BookAPI';
 import BorrowBookAPI from '../api/BorrowBookAPI';
 import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 //
 
 
@@ -232,7 +234,9 @@ function CreateReturnBook({ route, navigation }) {
   const classes = useStyles();
   const {state} = useLocation();
   const { user, listBook } = state;
-  console.log(listBook);
+  const [success, setSuccess] = useState(false);
+
+
   useEffect(() => {
     setData(listBook); 
   }, []);
@@ -307,9 +311,29 @@ function CreateReturnBook({ route, navigation }) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listBook.length) : 0;
   //
 
+  const handleCreateRefurn = async () => {
+    try{
+      BorrowBookAPI.refurnBorrowBook({idBooks: selected,idUser: user._id});
+      setSuccess(true);
+      navigate("/returnBookManager");
+    } catch (err) {
+      console.log(err)
+    }
+ 
+  }
+
   return (
     <div className={stylesOrderBook.Home}>
       <Header />
+      <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
+        <Alert
+          onClose={() => setSuccess(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+         Đã thêm thành công
+        </Alert>
+      </Snackbar>
       <div className={stylesOrderBook.content} >
         <div className={stylesOrderBook.tab1} >
           <InformationTab />
@@ -321,7 +345,7 @@ function CreateReturnBook({ route, navigation }) {
             <div className={styles.wraper}>
               <div className={styles.tdisplay2}>
                 <div style={{ display: 'flex' }}>
-                <p>Họ tên: {user}</p>
+                <p>Họ tên: {user.fullName}</p>
                   <div style={{ display: 'flex', marginLeft: '100px' }}>
                     <label
                       htmlFor="date"
@@ -431,8 +455,9 @@ function CreateReturnBook({ route, navigation }) {
                       />
                     </Paper>
                     <div className={stylesBook.buttonM}>
-                      <Button color="success"> Tạo phiếu trả </Button>
-                      <Button color="error"> Huỷ </Button>
+                      <Button variant="contained" color="success" style={{marginRight: "16px"}} 
+                      onClick={handleCreateRefurn}> Tạo phiếu trả </Button>
+                      <Button variant="outlined" color="error"> Huỷ </Button>
                     </div>
 
                   </Box>

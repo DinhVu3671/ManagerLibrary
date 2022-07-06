@@ -30,6 +30,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import BorrowBookAPI from '../api/BorrowBookAPI';
 
 
+
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -185,7 +186,7 @@ const EnhancedTableToolbar = (props) => {
   );
 };
 
-export default function OrderBookItem({books}) {
+export default function OrderBookItem({books, setSuccess}) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected, setSelected] = useState([]);
@@ -249,12 +250,14 @@ export default function OrderBookItem({books}) {
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const handleAccept = async () => {
-    BorrowBookAPI.acceptBorrowBook({idBooks: selected, idUser: books.user._id})
+    BorrowBookAPI.acceptBorrowBook({idBooks: selected, idUser: books.user._id});
+    setSuccess(true);
+    setSelected([]);
   }
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - books.book.length) : 0;
-  console.log(selected);
+  // console.log(selected);
   return (
     <div className={styles.Home}>
           <div className={styles.wraper}>

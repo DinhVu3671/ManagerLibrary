@@ -13,7 +13,7 @@ function OrderValid({navigation}) {
   const [searched, setSearched] = useState("");
 
   function getData(){
-    BorrowBookAPI.searchAdmin({typeBorrowBook: "borrowing"}).then((res) => {
+    BorrowBookAPI.outOfDateBorrowbook().then((res) => {
       //console.log(res.data)
       let bookListRes = res.data;
       setBookBorrowing(bookListRes.data)

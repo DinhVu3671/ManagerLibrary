@@ -8,8 +8,9 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import StoreIcon from '@mui/icons-material/Store';
 import CardMedia from '@mui/material/CardMedia';
 import Rating from '@mui/material/Rating';
+import noImage from '../assets/noImage.png';
 
-function BookCard({book}) {
+function BookCard({ book }) {
   // const [productInfo, setProductInfo] = useState({
   //   name: book.name,
   //   rate: book.re,
@@ -22,22 +23,24 @@ function BookCard({book}) {
     <Link
       className={clsx(styles.cardContainer)}
       to={
-        '/book'
+        `/book/${book._id}`
       }
     >
       <Card className={clsx(styles.cardBody)} sx={{ maxWidth: 200, minWidth: 200 }}>
         <div className={clsx(styles.productImage)}>
-          <CardMedia
-            // className={clsx(styles.productImage)}
-            component="img"
-            height="60"
-            image={book.image}
-            alt={book.name}
-          />
+          {book.images ?
+            <CardMedia
+              // className={clsx(styles.productImage)}
+              component="img"
+              height="60"
+              image={book.images}
+              alt={book.title}
+            /> : <img src={noImage} alt="anh" style={{height:"60"}} className="img"/>
+        }
         </div>
         <div className={clsx(styles.cardContent)}>
           <div className={clsx(styles.cardHeader)}>
-            <p className={clsx(styles.cardTitle)}>{book.name}</p>
+            <p className={clsx(styles.cardTitle)}>{book.title}</p>
             {/* <strong
               className={clsx(styles.cardPrice)}
             >{`${productInfo.price} đ`}</strong> */}
@@ -48,17 +51,17 @@ function BookCard({book}) {
               <Rating
                 name="half-rating-read"
                 className={clsx(styles.rating)}
-                value={book.rate}
+                value={book.numberStar?.$numberDecimal}
                 precision={0.1}
                 readOnly
               />
               <span className={clsx(styles.selledNumber)}>
-                Năm: {book.year}
+                Năm: {book.publishYear}
               </span>
             </div>
             <span className={clsx(styles.location)}>
               <StoreIcon className={clsx(styles.locationIcon)} />
-              {'còn ' + book.count + ' sách'}
+              {'còn ' + book.availableNumber + ' sách'}
             </span>
           </div>
         </div>

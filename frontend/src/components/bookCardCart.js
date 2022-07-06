@@ -12,14 +12,6 @@ import bookimg from '../assets/angle.jpg';
 
 
 function BookCardCart({book}) {
-  // const [productInfo, setProductInfo] = useState({
-  //   name: book.name,
-  //   rate: book.re,
-  //   count: 100,
-  //   image:
-  //     'https://res.cloudinary.com/trinhvanthoai/image/upload/v1655489389/thoaiUploads/defaultAvatar_jxx3b9.png',
-  // });
-  console.log(book)
   return (
     <Link
       className={clsx(styles.cardContainer)}
@@ -27,19 +19,19 @@ function BookCardCart({book}) {
         `/book/${book._id}`
       }
     >
-      <Card className={clsx(styles.cardBody)} sx={{ maxWidth: 150, minWidth: 150 }}>
+      <Card className={clsx(styles.cardBody)} sx={{ maxWidth: 200, minWidth: 200 }}>
         <div className={clsx(styles.productImage)}>
           <CardMedia
             // className={clsx(styles.productImage)}
             component="img"
             height="60"
-            image={bookimg}
+            image={book.images[0]}
             alt={book.title}
           />
         </div>
         <div className={clsx(styles.cardContent)}>
           <div className={clsx(styles.cardHeader)}>
-            <p className={clsx(styles.cardTitle2)}>{book.title}</p>
+            <p className={clsx(styles.cardTitle)}>{book.title}</p>
           </div>
 
           <div className={clsx(styles.productContent)}>
@@ -47,7 +39,7 @@ function BookCardCart({book}) {
               <Rating
                 name="half-rating-read"
                 className={clsx(styles.rating)}
-                value={book.rate}
+                value={Number(book.numberStar.$numberDecimal)}
                 precision={0.1}
                 readOnly
               />
@@ -57,7 +49,7 @@ function BookCardCart({book}) {
             </div>
             <span className={clsx(styles.location)}>
               <StoreIcon className={clsx(styles.locationIcon)} />
-              {'còn ' + book.total + ' sách'}
+              {`còn ${book.availableNumber} sách`}
             </span>
           </div>
         </div>

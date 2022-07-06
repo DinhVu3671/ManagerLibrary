@@ -28,18 +28,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const defaultImage = 'https://res.cloudinary.com/trinhvanthoai/image/upload/v1655489389/thoaiUploads/defaultAvatar_jxx3b9.png'
 
 function Search() {
-  let { search } = useParams();
-  //request data with search term;
-  const PRODUCT_SEARCH_URL = `/product/filter`;
-
-  const [error, setError] = useState(false);
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setError(false);
-  };
 
   //console.log(search);
   const allRating = useRef([5, 4, 3, 2, 1]);
@@ -86,20 +74,22 @@ function Search() {
   const [allCategories, setAllCategories] = useState([]);
 
   const [showedCategories, setShowedCategories] = useState([]);
+  const [bookList, setBooks] = useState([]);
+  const [data, setData] = useState([]);
 
+  function getData(){
+    BookAPI.listBook().then((res) => {
+      let bookListRes = res.data;
+      console.log(bookListRes);
+      setBooks(bookListRes.data);
+      setData(bookListRes.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
   useEffect(() => {
-    axios
-      .get('/category/get?all=true')
-      .then((res) => {
-        let allCates = res.data.data.map((item) => item.categoryName);
-        allCates = new Set(allCates);
-        allCates = [...allCates];
-        setAllCategories(allCates);
-        setShowedCategories(allCates.slice(0, 5));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      getData(); 
   }, []);
 
   const [numPages, setNumPages] = useState(0);
@@ -162,16 +152,11 @@ function Search() {
     {name: "Thám tử đã chết", rate: 1.1, count: 170, year: 2010, image: defaultImage},
 
   ];
-
-  useEffect(() => {
-    setData(testData)
-  }, []);
   
   //data and request data
   // const [productIdList, setProductIdList] = useState(testData);
   const [shopId, setShopId] = useState('');
   const [searched, setSearched] = useState("");
-  const [data, setData] = useState([]);
 
   const requestSearch = (searchedVal) => {
     const filteredRows = testData.filter((row) => {
@@ -189,16 +174,6 @@ function Search() {
   return (
     <div className={clsx(styles.search)}>
       <Header />
-      <Snackbar
-        className={clsx(styles.errorAlert)}
-        open={error}
-        autoHideDuration={2000}
-        onClose={handleClose}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          Vui lòng điền khoảng giá phù hợp!
-        </Alert>
-      </Snackbar>
       <div className={clsx(styles.searchContainer)}>
         <div className={clsx(styles.searchSidebar)}>
           <h2 className={clsx(styles.sidebarTitle)}>

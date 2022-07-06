@@ -20,6 +20,9 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useParams } from 'react-router-dom';
 import SearchBar from 'material-ui-search-bar';
+import CategoriesAPI from '../api/CategoriesAPI';
+import BookAPI from '../api/BookAPI';
+import BookCardCart from './bookCardCart';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -28,18 +31,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 const defaultImage = 'https://res.cloudinary.com/trinhvanthoai/image/upload/v1655489389/thoaiUploads/defaultAvatar_jxx3b9.png'
 
 function Search() {
-  let { search } = useParams();
-  //request data with search term;
-  const PRODUCT_SEARCH_URL = `/product/filter`;
-
-  const [error, setError] = useState(false);
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setError(false);
-  };
 
   //console.log(search);
   const allRating = useRef([5, 4, 3, 2, 1]);
@@ -60,19 +51,19 @@ function Search() {
 
   const handleSort = (book1, book2) => {
       if(sort === 'most'){
-        if(book1.count > book2.count)
+        if(Number(book1.availableNumber) > Number(book2.avaiableNumber))
           return -1
         else
           return 1
       }
       else if(sort === 'rating'){
-        if(book1.rate > book2.rate)
+        if(Number(book1.numberStar.$numberDecimal) > Number(book2.numberStar.$numberDecimal))
           return -1
         else
           return 1
       }
       else if(sort === 'newest'){
-        if(book1.year > book2.year)
+        if(Number(book1.publishYear) > Number(book2.publishYear))
           return -1
         else
           return 1
@@ -86,20 +77,27 @@ function Search() {
   const [allCategories, setAllCategories] = useState([]);
 
   const [showedCategories, setShowedCategories] = useState([]);
+  const [bookList, setBooks] = useState([]);
+  const [data, setData] = useState([]);
 
+  function getData(){
+    BookAPI.listBook().then((res) => {
+      let bookListRes = res.data;
+      setBooks(bookListRes.data);
+      setData(bookListRes.data)
+      console.log(bookListRes.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
+    CategoriesAPI.getCategories().then(res => {
+      setAllCategories(res?.data?.data.map((category) => category?.name))
+      setShowedCategories(res?.data?.data.map((category) => category?.name))
+    })
+  }
   useEffect(() => {
-    axios
-      .get('/category/get?all=true')
-      .then((res) => {
-        let allCates = res.data.data.map((item) => item.categoryName);
-        allCates = new Set(allCates);
-        allCates = [...allCates];
-        setAllCategories(allCates);
-        setShowedCategories(allCates.slice(0, 5));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      getData(); 
   }, []);
 
   const [numPages, setNumPages] = useState(0);
@@ -110,7 +108,6 @@ function Search() {
   const [rating, setRating] = useState(0);
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState('most');
-  const [loading, setLoading] = useState(true);
 
   //Categories
   const handleCategories = (category) => {
@@ -133,7 +130,7 @@ function Search() {
     //console.log(checkedUnshowed);
     if (checkedUnshowed.length !== 0) {
       for (const category of checkedUnshowed) {
-        //console.log(category);
+        console.log(category);
         setCategories(categories.filter((item) => item !== category));
       }
     }
@@ -146,36 +143,16 @@ function Search() {
 
   function handleClearAll() {
     setCategories([]);
-    // setLocations([]);
-    // setBrands([]);
     setRating(0);
     setApply(false);
     setSort('none');
   }
-  const testData = [
-    {name: "em gái mẹ kế là người yêu cũ của tôi", rate: 4.6, count: 100, year: 2020, image: defaultImage},
-    {name: "Kết hôn với người ghét nhất", rate: 4.3, count: 120, year: 2020, image: defaultImage},
-    {name: "Tình yêu giả tạo", rate: 2.1, count: 180, year: 2021, image: defaultImage},
-    {name: "Giải cứu bạn thuở nhỏ", rate: 0.5, count: 1130, year: 2024, image: defaultImage},
-    {name: "Cạo râu xong, tôi nhặt gái cao trung về", rate: 1.2, count: 110, year: 2019, image: defaultImage},
-    {name: "Bạn gái lại có thêm bạn gái", rate: 3.8, count: 140, year: 2018, image: defaultImage},
-    {name: "Thám tử đã chết", rate: 1.1, count: 170, year: 2010, image: defaultImage},
 
-  ];
-
-  useEffect(() => {
-    setData(testData)
-  }, []);
-  
-  //data and request data
-  // const [productIdList, setProductIdList] = useState(testData);
-  const [shopId, setShopId] = useState('');
   const [searched, setSearched] = useState("");
-  const [data, setData] = useState([]);
 
   const requestSearch = (searchedVal) => {
-    const filteredRows = testData.filter((row) => {
-      return row.name.toLowerCase().includes(searchedVal.toLowerCase());
+    const filteredRows = bookList.filter((row) => {
+      return row.title.toLowerCase().includes(searchedVal.toLowerCase());
     });
     setData(filteredRows);
   };
@@ -189,16 +166,6 @@ function Search() {
   return (
     <div className={clsx(styles.search)}>
       <Header />
-      <Snackbar
-        className={clsx(styles.errorAlert)}
-        open={error}
-        autoHideDuration={2000}
-        onClose={handleClose}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          Vui lòng điền khoảng giá phù hợp!
-        </Alert>
-      </Snackbar>
       <div className={clsx(styles.searchContainer)}>
         <div className={clsx(styles.searchSidebar)}>
           <h2 className={clsx(styles.sidebarTitle)}>
@@ -263,7 +230,7 @@ function Search() {
                     value={rate}
                     checked={rating === rate}
                     onChange={() => {
-                      setRating(rate);
+                    setRating(rate);
                     }}
                   />
                   <label
@@ -328,9 +295,11 @@ function Search() {
                 </div>
               ) : (
                 <div className={clsx(styles.productContainer)}>
-                  {data?.sort(handleSort).filter((book) => book.rate >= rating).map((value, index) => (
+                  {data?.sort(handleSort).filter((book) => Number(book?.numberStar.$numberDecimal) >= rating)
+                  .filter((book) => { return (categories.length === 0 || categories.includes(book?.categories[0]?.name))})
+                  .map((value, index) => (
                     <Grid item xs={1} sm={1} md={1} key={index}>
-                      <BookCard book={value} />
+                      <BookCardCart book={value} />
                     </Grid>
                   ))}
                 </div>

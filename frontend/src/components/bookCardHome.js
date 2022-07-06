@@ -9,6 +9,7 @@ import StoreIcon from '@mui/icons-material/Store';
 import CardMedia from '@mui/material/CardMedia';
 import Rating from '@mui/material/Rating';
 import bookimg from '../assets/angle.jpg';
+import noImage from '../assets/noImage.png';
 
 
 function BookCardHome({book}) {
@@ -29,13 +30,16 @@ function BookCardHome({book}) {
     >
       <Card className={clsx(styles.cardBody)} sx={{ maxWidth: 200, minWidth: 200 }}>
         <div className={clsx(styles.productImage)}>
-          <CardMedia
+          {
+            book.images ? <CardMedia
             // className={clsx(styles.productImage)}
             component="img"
             height="60"
-            image={bookimg}
+            image={book.images}
             alt={book.title}
-          />
+          /> : <img src={noImage} alt="anh" />
+          }
+          
         </div>
         <div className={clsx(styles.cardContent)}>
           <div className={clsx(styles.cardHeader)}>
@@ -50,7 +54,8 @@ function BookCardHome({book}) {
               <Rating
                 name="half-rating-read"
                 className={clsx(styles.rating)}
-                value={book.rate}
+                value={book.numberStar?.$numberDecimal}
+                // defaultValue={book.numberStar}
                 precision={0.1}
                 readOnly
               />
@@ -60,7 +65,7 @@ function BookCardHome({book}) {
             </div>
             <span className={clsx(styles.location)}>
               <StoreIcon className={clsx(styles.locationIcon)} />
-              {'còn ' + book.total + ' sách'}
+              {'còn ' + book.availableNumber+ ' sách'}
             </span>
           </div>
         </div>

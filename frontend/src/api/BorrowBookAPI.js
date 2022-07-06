@@ -36,6 +36,16 @@ function BorrowBookAPI() {
     this.acceptBorrowBook = (data) => {
         return callAPI.post('borrowbooks/acceptBorrowBook', data);
     }
+
+    //[POST] - Tạo đơn trả
+    this.refurnBorrowBook = (data) => {
+        return callAPI.post('borrowbooks/refurn', data);
+    }
+
+    //[POST] - Sách quá hạn
+    this.outOfDateBorrowbook = () => {
+        return callAPI.get('borrowbooks/outOfDateBorrowbook');
+    }
 }
 
 export default new BorrowBookAPI()

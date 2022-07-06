@@ -75,6 +75,9 @@ function Search() {
 
   //for all data -request once time when component
   const [allCategories, setAllCategories] = useState([]);
+    //data and request data
+    const [productIdList, setProductIdList] = useState([]);
+    const [shopId, setShopId] = useState('');
 
   const [showedCategories, setShowedCategories] = useState([]);
   const [bookList, setBooks] = useState([]);
@@ -99,7 +102,7 @@ function Search() {
   useEffect(() => {
       getData(); 
   }, []);
-
+  console.log("lii", productIdList)
   const [numPages, setNumPages] = useState(0);
 
   //for changing Filter

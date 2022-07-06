@@ -12,10 +12,12 @@ import categoryImg from '../assets/categoryImg.png';
 function BoxCategory({categories}){
   console.log(categories)
     return (
-        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 8 }}  style={{padding:'5px'}}>
+        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 5, md: 5 }}  style={{padding:'5px'}}>
               {categories?.map((category, index) => (
-                <Grid item xs={2} sm={1} md={1} key={index}>
-                  <Card sx={{ maxWidth: 345,height:200 }}>
+                <Grid item xs={1} sm={1} ml={4} md={1} key={index}>
+                  <Card 
+                  // sx={{ maxWidth: 345,height:200 }}
+                  >
                     <CardActionArea>
                       <CardMedia
                         component="img"

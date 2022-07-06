@@ -153,7 +153,7 @@ function EnhancedTableHead(props) {
 }
 
 
-export default function OrderHistoryItem({valid, book}) {
+export default function OrderHistoryItem({valid, book, type}) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected, setSelected] = useState([]);
@@ -205,7 +205,7 @@ export default function OrderHistoryItem({valid, book}) {
   };
 
   const handleCreateReturnBook = () => {
-    navigate("/createReturnBook", { state: { user: book.user.fullName, listBook: book.book } });
+    navigate("/createReturnBook", { state: { user: book.user, listBook: book.book } });
   }
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
@@ -300,7 +300,9 @@ export default function OrderHistoryItem({valid, book}) {
                       />
                   </Paper>
                   <div className={stylesBook.buttonM}>
-                      <Button color="success" onClick={handleCreateReturnBook}> Tạo phiếu trả </Button>                                                   
+                      { type === "refurn" ? null :
+                        <Button color="success" onClick={handleCreateReturnBook}> Tạo phiếu trả </Button>
+                        }                                                  
                   </div>
                   </Box>
               </div>

@@ -29,7 +29,9 @@ booksController.create = async (req, res, next) => {
             author: author,
             images: dataImages,
             description: description,
-            publishYear: publishYear
+            publishYear: publishYear,
+            numberStar: 0,
+            numberRate: 0
         });
 
         let bookSaved = (await book.save()).populate('images');

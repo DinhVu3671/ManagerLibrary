@@ -54,4 +54,11 @@ borrowBookRoutes.post(
     auth,
     borrowBookController.accreptBorrowBook);
 
+// lấy sách quá hạn
+borrowBookRoutes.get(
+    "/outOfDateBorrowbook",
+    auth,
+    borrowBookController.outOfDateBorrowbook
+);
+
 module.exports = borrowBookRoutes;

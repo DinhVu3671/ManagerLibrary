@@ -1,3 +1,4 @@
+const { Decimal128 } = require("mongodb");
 const mongoose = require("mongoose");
 
 const booksSchema = new mongoose.Schema({
@@ -9,12 +10,10 @@ const booksSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    images: [
-        {
+    images: {
             type: String,
             required: false
-        }
-    ],
+    },
     total: {
         type: String,
         required: true,
@@ -42,6 +41,15 @@ const booksSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    numberStar: {
+        type: Decimal128 ,
+        required: false
+    },
+    numberRate: {
+        type: Number ,
+        required: false
+    },
+
 });
 booksSchema.set('timestamps', true);
 module.exports = mongoose.model('Books', booksSchema);

@@ -51,21 +51,40 @@ borrowBookController.create = async (req, res, next) => {
 }
 borrowBookController.edit = async (req, res, next) => {
     try {
-       let idBooks = [
-        "62aedc052d6f3f3bf410f095",
-        "62aedc1c2d6f3f3bf410f09a"
-        ];
-        let borrowBookSaved = await BorrowBookModel.find({book: {$in: idBooks}}).populate({
-            path: 'book',
-            select: '_id title categories author',
-            model: 'Books',
-        }).populate({
-            path: 'idUser',
-            select: '_id fullName phone gmail',
-            model: 'Users',
-        });
+        const {
+            idBooks,
+            idUser
+        } = req.body;
+        let responsive = [];
+        if(idBooks.length > 0) {
+            idBooks.map(async (item) => {
+                let bookBorrow = await BorrowBookModel.findOne({book: item, user: idUser, status: 'borrowing'});
+                if (bookBorrow.length === 0) {
+                    return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Không tồn tại quyển sách này đã mượn", idBook: item});
+                }
+                console.log(bookBorrow)
+                let borrowBookRefurn = await BorrowBookModel.findByIdAndUpdate(bookBorrow._id, {
+                    book: bookBorrow.book,
+                    user: bookBorrow.user,
+                    // status: "refurn",
+                    borrowDate: bookBorrow.borrowDate,
+                    // refundDate: new Date(),
+                    refundAppointmentDate: new Date(new Date().getTime() + 3600000*24*15)
+                });
+            })
+            responsive = await BorrowBookModel.find({book: {$in: idBooks}}).populate({
+                path: 'book',
+                select: '_id title categories author',
+                model: 'Books',
+            }).populate({
+                path: 'idUser',
+                select: '_id fullName phone',
+                model: 'Users',
+            });
+
+        }
         return res.status(httpStatus.OK).json({
-            data: borrowBookSaved
+            data: responsive
         });
     } catch (e) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
@@ -318,6 +337,61 @@ borrowBookController.accreptBorrowBook = async ( req, res, next) => {
 
         return res.status(httpStatus.OK).json({
             data: responsive
+        });
+    } catch (e) {
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            message: e.message
+        });
+    }
+}
+
+borrowBookController.outOfDateBorrowbook = async (req, res, next) => {
+    try {
+        // const {
+        //     typeBorrowBook,
+        // } = req.body;
+        let bookBorrow = await BorrowBookModel.aggregate([
+            { "$match": { status: "borrowing", refundAppointmentDate: {$lt: new Date()}}},
+            {
+              $group: {
+                "_id": "$user",
+                "status": { "$first": "$status" },
+                "book": { "$addToSet": "$book"}
+              }
+            },
+        { "$lookup": {
+                "from": "users",
+                "localField": "_id",
+                "foreignField": "_id",
+                "as": "user",
+                
+           }},
+            { "$lookup": {
+                "from": "books",
+                "localField": "book",
+                "foreignField": "_id",
+                "as": "book"
+           }},
+    //        {"$lookup": {
+    //         "from": "categories",
+    //         "localField": "categories",
+    //         "foreignField": "_id",
+    //         "as": "categories"
+    //    }},
+           { "$unwind": { "path" : "$user" } },
+        //    { "$unwind": { "path" : "$book" } }
+          ]);
+        // .populate({
+        //                 path: 'categories',
+        //                 select: '_id name',
+        //                 model: 'Categories',
+        //             })
+        if (bookBorrow.length === 0) {
+            return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Không tồn tại quyển sách nào"});
+        }
+              
+        return res.status(httpStatus.OK).json({
+            data: bookBorrow
         });
     } catch (e) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({

@@ -30,21 +30,27 @@ commentsController.create = async (req, res, next) => {
         });
         let borrowBookCommentSaved = await borrowBookComment.save();
         //câp nhat start book
-        const rating = await RatingModel.findOne({
-            book: req.params.borrowBookId,
-        });
+        await BorrowBookModel.findOneAndUpdate({
+            book: req.params.borrowBookId},{
+                numberStar: (borrowBook.numberStar*Number(borrowBook.numberRate) + numberStart) / ((borrowBook.numberRate) + 1),
+                numberRate: Number(borrowBook.numberRate) + 1
+            }, {
+                new: true,
+                runValidators: true
+            }
+        );
         // let ratingSaved = await rating.save().populate({
         //     path: 'book',
         //     select: '_id title categories author',
         //     model: 'Books',
         // })
-        user = await RatingModel.findOneAndUpdate({book: rating.book}, {
-            numberStar: (Number(rating.numberStar)*Number(rating.numberRate) + numberStart) / ((rating.numberRate) + 1),
-            numberRate: Number(rating.numberRate) + 1
-        }, {
-            new: true,
-            runValidators: true
-        });
+        // user = await RatingModel.findOneAndUpdate({book: rating.book}, {
+        //     numberStar: (Number(rating.numberStar)*Number(rating.numberRate) + numberStart) / ((rating.numberRate) + 1),
+        //     numberRate: Number(rating.numberRate) + 1
+        // }, {
+        //     new: true,
+        //     runValidators: true
+        // });
         
 
         borrowBookCommentSaved = await CommentModel.findById(borrowBookCommentSaved._id).populate('images', ['fileName'])

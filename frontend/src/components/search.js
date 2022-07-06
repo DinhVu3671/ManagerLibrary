@@ -19,6 +19,7 @@ import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useParams } from 'react-router-dom';
+import SearchBar from 'material-ui-search-bar';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -45,7 +46,7 @@ function Search() {
   const allSort = useRef([
     {
       value: 'most',
-      showed: 'Mượn nhiều',
+      showed: 'Còn nhiều',
     },
     {
       value: 'rating',
@@ -161,9 +162,29 @@ function Search() {
     {name: "Thám tử đã chết", rate: 1.1, count: 170, year: 2010, image: defaultImage},
 
   ];
+
+  useEffect(() => {
+    setData(testData)
+  }, []);
+  
   //data and request data
-  const [productIdList, setProductIdList] = useState(testData);
+  // const [productIdList, setProductIdList] = useState(testData);
   const [shopId, setShopId] = useState('');
+  const [searched, setSearched] = useState("");
+  const [data, setData] = useState([]);
+
+  const requestSearch = (searchedVal) => {
+    const filteredRows = testData.filter((row) => {
+      return row.name.toLowerCase().includes(searchedVal.toLowerCase());
+    });
+    setData(filteredRows);
+  };
+
+  const cancelSearch = () => {
+    setSearched("");
+    requestSearch(searched);
+  };
+
 
   return (
     <div className={clsx(styles.search)}>
@@ -271,10 +292,12 @@ function Search() {
         </div>
         <div className={clsx(styles.searchBody)}>
           <div>
-            <span className={clsx(styles.searchedTitle)}>
-              <ManageSearchOutlinedIcon className={clsx(styles.searchedIcon)} />{' '}
-              Kết quả tìm kiếm liên quan đến '<strong> {search}</strong>'
-            </span>
+              <SearchBar
+                value={searched}
+                onChange={(searchVal) => requestSearch(searchVal)}
+                onCancelSearch={() => cancelSearch()}
+                placeholder="Tìm tên sách . . ."
+              />
             <div className={clsx(styles.productContent)}>
               <div className={clsx(styles.productSort)}>
                 <span className={clsx(styles.productSortTitle)}>
@@ -299,13 +322,13 @@ function Search() {
                   ))}
                 </div>
               </div>
-              {productIdList.length === 0 ? (
+              {data?.length === 0 ? (
                 <div className={clsx(styles.productContainer)}>
                   Không tìm thấy kết quả nào
                 </div>
               ) : (
                 <div className={clsx(styles.productContainer)}>
-                  {productIdList.sort(handleSort).filter((book) => book.rate >= rating).map((value, index) => (
+                  {data?.sort(handleSort).filter((book) => book.rate >= rating).map((value, index) => (
                     <Grid item xs={1} sm={1} md={1} key={index}>
                       <BookCard book={value} />
                     </Grid>

@@ -12,14 +12,14 @@ booksController.create = async (req, res, next) => {
             categories,
             author,
             description,
-            publishYear
+            publishYear,
         } = req.body;
-        let dataImages = [];
-        if (Array.isArray(images)) {
-            for (const image of images) {
-                 dataImages.push(image)
-            }
-        }
+        // let dataImages = [];
+        // if (Array.isArray(images)) {
+        //     for (const image of images) {
+        //          dataImages.push(image)
+        //     }
+        // }
         const book = new BookModel({
             title: title,
             status: total > 0 ? "Available" : "UnAvailable",
@@ -27,25 +27,25 @@ booksController.create = async (req, res, next) => {
             availableNumber: total,
             categories: categories,
             author: author,
-            images: dataImages,
             description: description,
             publishYear: publishYear,
+            images: images,
             numberStar: 0,
             numberRate: 0
         });
 
-        let bookSaved = (await book.save()).populate('images');
-        const rating = new RatingModel({
-            book: bookSaved._id,
-            numberStar: 0,
-            numberRate: 0
-        })
-        let ratingSaved = await rating.save().populate({
-            path: 'book',
-            select: '_id title categories author',
-            model: 'Books',
-        })
-        bookSaved = await BookModel.findById(bookSaved._id).populate('images', ['fileName'])
+        let bookSaved = (await book.save());
+        // const rating = new RatingModel({
+        //     book: bookSaved._id,
+        //     numberStar: 0,
+        //     numberRate: 0
+        // })
+        // let ratingSaved = await rating.save().populate({
+        //     path: 'book',
+        //     select: '_id title categories author',
+        //     model: 'Books',
+        // })
+        bookSaved = await BookModel.findById(bookSaved._id)
         .populate({
             path: 'categories',
             select: '_id name',
@@ -79,20 +79,21 @@ booksController.edit = async (req, res, next) => {
             description,
             publishYear
         } = req.body;
-        let dataImages = [];
-        if (Array.isArray(images)) {
-            for (const image of images) {
-                dataImages.push(image);
-            }
-        }
-
+        // let dataImages = [];
+        // if (Array.isArray(images)) {
+        //     for (const image of images) {
+        //         dataImages.push(image);
+        //     }
+        // }
+        let categoriUpdate = [];
+        categoriUpdate.push(categories)
         let bookSaved = await BookModel.findByIdAndUpdate(bookId, {
             title: title,
             status: total > 0  ? (availableNumber == 0 ? "UnAvailable" : "Available") : "UnAvailable",
             images: images,
             total: total,
             availableNumber: availableNumber,
-            categories: categories,
+            categories: categoriUpdate,
             author: author,
             description: description,
             publishYear: publishYear
@@ -103,7 +104,7 @@ booksController.edit = async (req, res, next) => {
             model: 'Categories',
         });
         return res.status(httpStatus.OK).json({
-            data: postSaved
+            data: bookSaved
         });
     } catch (e) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
@@ -179,14 +180,14 @@ booksController.search = async (req, res, next) => {
 }
 booksController.outstandingBook = async (req, res, next) => {
     try {
-        let result = await RatingModel.find({}).sort({numberStar: -1}).limit(6).exec();
-        let bookIds = [];
-        result?.map((item) => {
-            bookIds.push(item.book)
-        })
-        let bookList = await BookModel.find({_id: {$in: bookIds}}).exec();
+        let result = await BookModel.find({}).sort({numberStar: -1}).limit(8).exec();
+        // let bookIds = [];
+        // result?.map((item) => {
+        //     bookIds.push(item.book)
+        // })
+        // let bookList = await BookModel.find({_id: {$in: bookIds}}).exec();
         res.status(200).json({
-            data: bookList
+            data: result
         });
 
     } catch (e) {

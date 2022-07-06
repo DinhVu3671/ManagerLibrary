@@ -10,12 +10,10 @@ const booksSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    images: [
-        {
+    images: {
             type: String,
             required: false
-        }
-    ],
+    },
     total: {
         type: String,
         required: true,

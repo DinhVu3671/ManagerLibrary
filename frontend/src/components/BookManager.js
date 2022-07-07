@@ -638,7 +638,7 @@ function BookManager(books) {
                     id="lastUpdate"
                     name="lastUpdate"
                     type="text"
-                    value={lastUpdate}
+                    value={(new Date(lastUpdate)).toLocaleString()}
                     className={clsx(stylesBookManger.formInput, stylesBookManger.row)}
                     readOnly
                     required

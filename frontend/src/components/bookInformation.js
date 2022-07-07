@@ -126,7 +126,7 @@ function BookInformation({navigation}) {
 
                 <div className={stylesBook.title}>
                   <div className={stylesBook.content}>Cập nhật lần cuối:</div>
-                  <div>{bookInfo?.updatedAt}</div>
+                  <div>{(new Date(bookInfo?.updatedAt)).toLocaleString()}</div>
                 </div>
                 <p className={styles.tdisplay}> </p>
 

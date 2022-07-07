@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import { Grid } from '@mui/material';
 import categoryImg from '../assets/categoryImg.png';
+import noImage from '../assets/noImage.png';
 
 function BoxCategory({categories}){
   console.log(categories)
@@ -15,14 +16,14 @@ function BoxCategory({categories}){
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 5, md: 5 }}  style={{padding:'5px'}}>
               {categories?.map((category, index) => (
                 <Grid item xs={1} sm={1} ml={4} md={1} key={index}>
-                  <Card 
+                  <Card sx={{ maxWidth: 200, minWidth: 200}}
                   // sx={{ maxWidth: 345,height:200 }}
                   >
                     <CardActionArea>
                       <CardMedia
                         component="img"
-                        height="60"
-                        image={categoryImg}
+                        height="200"
+                        image={noImage}
                         alt="green iguana"
                       />
                       <CardContent>

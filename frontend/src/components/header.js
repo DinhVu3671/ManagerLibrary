@@ -22,6 +22,7 @@ import CategoriesAPI from "../api/CategoriesAPI";
 import { Grid } from "@mui/material";
 import BookCardHome from "./bookCardHome";
 import BookCardCart from "./bookCardCart";
+import Badge from '@mui/material/Badge';
 // import { AuthContext } from '../contextAPI/AuthContext';
 
 function Header() {
@@ -52,18 +53,18 @@ function Header() {
   const [username, setUsername] = useState('');
   const [bookList, setBooks] = useState([]);
 
-  function getData(){
+  function getData() {
     BookAPI.listBook().then((res) => {
       let bookListRes = res.data;
       setBooks(bookListRes.data);
     })
-    .catch(err => {
-      console.log(err)
-    })
+      .catch(err => {
+        console.log(err)
+      })
   }
   useEffect(() => {
-    getData(); 
-}, []);
+    getData();
+  }, []);
 
   const navigatePath = function (path) {
     if (window.location.pathname !== path) {
@@ -92,6 +93,7 @@ function Header() {
   const handleClickCart = (e) => {
     setAnchorElCart(e.currentTarget);
     setOpenCart(true);
+    navigatePath('/cartBook');
   };
 
   const handleCloseBookManager = () => {
@@ -125,23 +127,29 @@ function Header() {
   //testdata
   const [featuredBook, setFeatureBook] = useState([]);
   const [categories, setCategory] = useState([]);
+  const [numberCart, setNumberCart] = useState(0);
 
-  function getData(){
+  function getData() {
     CategoriesAPI.getCategories().then((res) => {
       setCategory(res.data.data)
     })
-    .catch(err => {
-      console.log(err)
-    });
+      .catch(err => {
+        console.log(err)
+      });
     BookAPI.outstandingBook().then((res) => {
       setFeatureBook(res.data.data)
     })
-    .catch(err => {
-      console.log(err)
-    })
+      .catch(err => {
+        console.log(err)
+      });
+
+      let cart = JSON.parse(sessionStorage.getItem("listBook"));
+      if(cart) {
+        setNumberCart(cart.length);
+      }
   }
   useEffect(() => {
-      getData(); 
+    getData();
   }, []);
 
 
@@ -171,24 +179,32 @@ function Header() {
           <label
             className={`${styles.textColor} ${styles.textDate}`}
           >{`${dayCurr}, ${dateCurr}`}</label>
-          <div>
-          <div className={styles.divUser}
-            onClick={() =>
-              (localStorage.getItem('token')) == null
-                ? navigatePath('/login')
-                : null
-            }>
-            <img
-              src={userImage}
-              className={styles.userIcon}
-              onClick={handleClickProfile}
-              alt="Profile"
-            />
-            <div className={styles.textColor}>
-              {(localStorage.getItem('token')) == null ? 'Đăng nhập' : (localStorage.getItem('fullName'))}
+          <div style={{ display: "flex", marginTop: "10px" }}>
+            {
+              localStorage.getItem('token') ? ((localStorage.getItem('role') === "admin") ? null :
+                <Badge badgeContent={numberCart} color="primary">
+                  <MenuBookIcon onClick={handleClickCart} fontSize="medium" sx={{ color: "white" }}> </MenuBookIcon>
+                </Badge>
+              ) : null
+            }
+
+            <div className={styles.divUser} style={{marginLeft: "16px"}}
+              onClick={() =>
+                (localStorage.getItem('token')) == null
+                  ? navigatePath('/login')
+                  : null
+              }>
+              <img
+                src={userImage}
+                className={styles.userIcon}
+                onClick={handleClickProfile}
+                alt="Profile"
+              />
+              <div className={styles.textColor}>
+                {(localStorage.getItem('token')) == null ? 'Đăng nhập' : (localStorage.getItem('fullName'))}
+              </div>
             </div>
-          </div>
-          <MenuBookIcon onClick={handleClickCart}  fontSize="large"  color="primary"> </MenuBookIcon>
+
 
           </div>
 
@@ -206,12 +222,12 @@ function Header() {
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
               >
                 {featuredBook?.map((book, index) => (
-                  <MenuItem>                
-                     <BookCardCart book={book} />
+                  <MenuItem>
+                    <BookCardCart book={book} />
                   </MenuItem>
 
                 ))}
-                <Button style={{marginLeft: '20px'}} variant="outlined"> Đăng kí mượn </Button>
+                <Button style={{ marginLeft: '20px' }} variant="outlined"> Đăng kí mượn </Button>
               </Menu>) : null
           }
 

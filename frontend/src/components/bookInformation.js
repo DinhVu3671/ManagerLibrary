@@ -57,6 +57,18 @@ function BookInformation({navigation}) {
     useEffect(() => {
         getData(); 
     }, []);
+    const handleBorrow = () => {
+      let data = [];
+      data.push(bookInfo);
+      let listBook = JSON.parse(sessionStorage.getItem("listBook"));
+      if(!listBook) {
+        sessionStorage.setItem("listBook", JSON.stringify(data));
+      }
+      else {
+        listBook.push(bookInfo);
+        sessionStorage.setItem("listBook", JSON.stringify(listBook));
+      }
+    }
     console.log(bookInfo)
     return (
       <div className={styles.Home}>
@@ -119,7 +131,7 @@ function BookInformation({navigation}) {
                 <p className={styles.tdisplay}> </p>
 
                 <div>
-                  <Button> Thêm vào danh sách mượn </Button>
+                  <Button onClick={handleBorrow}> Thêm vào danh sách mượn </Button>
                   <Button onClick={() => {navigatePath("/cartBook")}}> Mượn ngay </Button>
                 </div>
                 <div className={stylesBook.footFake}>

@@ -28,6 +28,8 @@ import stylesBook from '../components/CSS/BookInformation.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import BookAPI from '../api/BookAPI';
 import BorrowBookAPI from '../api/BorrowBookAPI';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 
 function createData(
@@ -218,6 +220,9 @@ export default function CartBook() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
   const [bookList, setBookList] = useState([]);
+  const [success, setSuccess] = useState(false);
+  const [statusAlert, setStatusAlert] = useState();
+  const [messErr, setMessErr] = useState();
 
   const navigatePath = function (path) {
     if (window.location.pathname !== path) {
@@ -225,13 +230,10 @@ export default function CartBook() {
     }
   };
   function getData() {
-    BookAPI.listBook().then((res) => {
-      console.log(res.data.data);
-      setBookList(res.data.data)
-    })
-      .catch(err => {
-        console.log(err)
-      })
+    let listBook = JSON.parse(sessionStorage.getItem("listBook"));
+    if (listBook) {
+      setBookList(listBook)
+    }
   }
   useEffect(() => {
     getData();
@@ -286,15 +288,22 @@ export default function CartBook() {
   const handleSubmit = async () => {
     try {
       console.log(selected);
-      let idBooks = selected;
-      const response = await BorrowBookAPI.awaitBorrowBook({idBooks});
-      // console.log(JSON.stringify(response?.data));
+      // let idBooks = selected;
+      const response = await BorrowBookAPI.awaitBorrowBook({ idBooks: selected });
+      setSuccess(true);
+      setStatusAlert("success");
+      sessionStorage.clear();
+
+      navigatePath(`/bookReaderManager`)
 
     } catch (err) {
-        console.log(err);
-      } 
+      setStatusAlert("error");
+      setSuccess(true);
+      setMessErr(err.response.data.message);
+      console.log(err);
     }
-  
+  }
+
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -302,11 +311,20 @@ export default function CartBook() {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-  console.log(selected)
+  console.log(statusAlert);
   return (
     <div className={styles.Home}>
       <Header />
-      <       div className={styles.content} >
+      <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
+        <Alert
+          onClose={() => setSuccess(false)}
+          severity={statusAlert}
+          sx={{ width: '100%' }}
+        >
+          {statusAlert == "success" ? "Tạo đơn mượn thành công" : messErr}
+        </Alert>
+      </Snackbar>
+      <div className={styles.content} >
         <div className={styles.wraper}>
           <div className={styles.tdisplay}>
             <p>Mượn sách</p>
@@ -360,7 +378,7 @@ export default function CartBook() {
                                 id={labelId}
                                 scope="row"
                                 padding="none"
-                                onClick={() => { navigatePath("/book") }}
+                                onClick={() => { navigatePath(`/book/${row._id}`) }}
                               >
                                 {row.title}
                               </TableCell>

@@ -1,7 +1,7 @@
 import Header from './header';
 import Footer from './footer';
 import styles from '../screens/CSS/home.module.css';
-import React, { useEffect, useState, useRef, memo } from 'react';
+import React, { useEffect, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -15,32 +15,22 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import clsx from 'clsx';
-import axios from '../config/axios';
-// import MuiAlert from '@mui/material/Alert';
 import ImageUploader from '../components/imageUploader';
-import imageTest from '../assets/testproduct.jpg'
 import TablePagination from '@mui/material/TablePagination';
-import CloseIcon from '@mui/icons-material/Close';
-import SearchIcon from '@mui/icons-material/Search';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import { visuallyHidden } from '@mui/utils';
 import stylesTab from './CSS/orderBook.module.css';
 import InformationTab from './InfomationTab';
-import OrderBookItem from './OrderBookItem';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import CategoriesAPI from '../api/CategoriesAPI';
 import BookAPI from '../api/BookAPI';
 import SearchBar from "material-ui-search-bar";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
-
-// const Alert = React.forwardRef(function Alert(props, ref) {
-//   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-// });
 
 const defautlAvatar =
   'https://res.cloudinary.com/trinhvanthoai/image/upload/v1655489389/thoaiUploads/defaultAvatar_jxx3b9.png';
@@ -56,8 +46,6 @@ function descendingComparator(a, b, orderBy) {
   }
   return 0;
 }
-
-let Order = 'asc' | 'desc';
 
 function getComparator(order, orderBy) {
   return order === 'desc'
@@ -88,7 +76,7 @@ function stableSort(array, compare) {
 }
 
 function EnhancedTableHead(props) {
-  const { order, orderBy, numSelected, rowCount, onRequestSort } =
+  const { order, orderBy, onRequestSort } =
     props;
   const createSortHandler =
     (property) => (event) => {
@@ -127,16 +115,6 @@ function EnhancedTableHead(props) {
 function BookManager(books) {
   const [categories, setCategories] = useState([]);
   const [bookList, setBooks] = useState([]);
-
-  const posts = [
-    { id: "1", title: "Mo hinh 1", type: "Romance", writter: "DTV", solded: 3, count: 100, rating: 4.3, ratingCount: 123, description: "Mo hinh de thuong", year: 2012, lastUpdate: "15:30:00 15/5/2022" },
-    { id: "2", title: "Mo hinh 2", type: "Romance", writter: "DTV", solded: 1, count: 130, rating: 4.7, ratingCount: 123, description: "Mo hinh best", year: 2018, lastUpdate: "15:30:00 15/5/2022" },
-    { id: "3", title: "Mo hinh 3", type: "Romance", writter: "DTV", solded: 2, count: 160, rating: 4.5, ratingCount: 123, description: "Mo hinh nho nhan", year: 2019, lastUpdate: "15:30:00 15/5/2022" },
-    { id: "4", title: "Mo hinh 4", type: "Comody", writter: "DTV", solded: 3, count: 120, rating: 4.1, ratingCount: 123, description: "Mo hinh de thuong", year: 2020, lastUpdate: "15:30:00 15/5/2022" },
-    { id: "5", title: "Mo hinh 5", type: "Comody", writter: "DTV", solded: 3, count: 120, rating: 4.1, ratingCount: 123, description: "Mo hinh de thuong", year: 2020, lastUpdate: "15:30:00 15/5/2022" },
-    { id: "6", title: "Mo hinh 6", type: "Comody", writter: "DTV", solded: 3, count: 120, rating: 4.1, ratingCount: 123, description: "Mo hinh de thuong", year: 2020, lastUpdate: "15:30:00 15/5/2022" },
-    { id: "7", title: "Mo hinh 7", type: "Comody", writter: "DTV", solded: 3, count: 120, rating: 4.1, ratingCount: 123, description: "Mo hinh de thuong", year: 2020, lastUpdate: "15:30:00 15/5/2022" }
-  ];
 
   const [open, setOpen] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
@@ -223,17 +201,13 @@ function BookManager(books) {
   const [success, setSuccess] = useState(false);
   //console.log(avatarImg);
 
-  //page
-  const [searchTerm, setSearchTerm] = useState('');
-
   const [page, setPage] = useState(0);
   // const [warehouse, setWareW]
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [order, setOrder] = React.useState('asc');
+  const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = React.useState('id');
-  const [dense, setDense] = React.useState(false);
+  const [orderBy, setOrderBy] = useState('id');
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -257,35 +231,11 @@ function BookManager(books) {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - bookList.length) : 0;
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
   };
 
   // select tyoe
   const handleChange = (e) => {
     setType(e.target.value);
-  };
-
-
-  //
-  const handleCloseAvatar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-    setErrMsg('');
   };
 
   const [openDelete, setDelete] = useState(false);
@@ -298,10 +248,7 @@ function BookManager(books) {
   //submit product
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const REGISTER_URL = `/api/v1/registerProduct`;
-
     if (errMsg === '') {
-      //console.log(avatarImg);
       let data = {};
       let img = []
       img.push(avatarImg);
@@ -318,14 +265,10 @@ function BookManager(books) {
       try {
         if (!openInforBook) {
           const response = await BookAPI.createBook(data);
-          console.log(JSON.stringify(response?.data));
-          // console.log(JSON.stringify(response));
           setSuccess(true);
           setOpen(false);
         } else {
           const response = await BookAPI.editBook(data, id);
-          console.log(JSON.stringify(response?.data));
-          // console.log(JSON.stringify(response));
           setSuccess(true);
           setOpen(false);
         }
@@ -459,15 +402,6 @@ function BookManager(books) {
                   >
                     Thể loại:
                   </label>
-                  {/* <input
-                      id="type"
-                      name="type"
-                      type="text"
-                      value={type}
-                      onChange={(e) => setType(e.target.value)}
-                      className={clsx(stylesBookManger.formInput, stylesBookManger.row)}
-                      required
-                    /> */}
                   <FormControl className={clsx(stylesBookManger.formInput, stylesBookManger.row)}>
                     <InputLabel id="demo-simple-select-label">Thể loại </InputLabel>
                     <Select
@@ -724,7 +658,6 @@ function BookManager(books) {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((book, index) => {
                       const isItemSelected = isSelected(book.id);
-                      const labelId = `enhanced-table-checkbox-${index}`;
 
                       return (
                         <TableRow
@@ -759,35 +692,6 @@ function BookManager(books) {
                     </TableRow>
                   )}
                 </TableBody>
-                {/* <TableBody>
-                      {posts.map((book) => (
-                        <TableRow
-                          key={book.id}
-                          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                          <TableCell component="th" scope="row">
-                            {book.id}
-                          </TableCell>
-                          <TableCell align="right"><Button onClick={() => handleOpenInforBook(book)}>{book.title}</Button></TableCell>
-                          <TableCell align="right">{book.writter}</TableCell>
-                          <TableCell align="right">{book.type}</TableCell>
-                          <TableCell align="right">{book.year}</TableCell>
-                          <TableCell align="right">{book.solded}</TableCell>
-                          <TableCell align="right">{book.count}</TableCell>
-                          <TableCell align="right">{book.rating}</TableCell>
-                          <TableCell align="right">{book.lastUpdate}</TableCell>
-                        </TableRow>
-                      ))}
-                      {emptyRows > 0 && (
-                        <TableRow
-                          style={{
-                            height: (dense ? 33 : 53) * emptyRows,
-                          }}
-                        >
-                          <TableCell colSpan={6} />
-                        </TableRow>
-                      )}
-                    </TableBody> */}
               </Table>
             </TableContainer>
             <TablePagination

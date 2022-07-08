@@ -1,20 +1,14 @@
 import Header from './header';
 import Footer from './footer';
-import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
-import { Button, CardActionArea } from '@mui/material';
+import { Button } from '@mui/material';
 import styles from '../screens/CSS/home.module.css';
 import stylesBook from '../components/CSS/BookInformation.module.css';
 import imageTest from '../assets/testproduct.jpg'
 import { Rating } from '@mui/material';
 import UserRating from './ReaderRating';
-import logo from '../assets/logo.png'
-import face from '../assets/facebook.png'
-import instagram from '../assets/instagram.png'
-import twitter from '../assets/twitter.png'
 import BookImages from './bookImages';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import React, { useEffect, useState, useRef, memo} from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState} from 'react';
 import BookAPI from '../api/BookAPI';
 import RatingAPI from '../api/RatingAPI';
 import CommentAPI from '../api/CommentAPI';
@@ -121,7 +115,7 @@ function BookInformation({navigation}) {
 
                 <div className={stylesBook.title}>
                   <div className={stylesBook.content}>Tình trạng:</div>
-                  <div>{bookInfo?.status == 'Available' ? "Có thể mượn" : "Đã cho mượn hết"}</div>
+                  <div>{bookInfo?.status === 'Available' ? "Có thể mượn" : "Đã cho mượn hết"}</div>
                 </div>
 
                 <div className={stylesBook.title}>

@@ -3,11 +3,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 import { Grid } from '@mui/material';
-import categoryImg from '../assets/categoryImg.png';
 import noImage from '../assets/noImage.png';
 import { Link } from 'react-router-dom';
 

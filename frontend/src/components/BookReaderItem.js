@@ -4,16 +4,14 @@ import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import { CardActionArea } from '@mui/material';
 import styles from '../components/CSS/BookInformation.module.css';
-import imageTest from '../assets/testproduct.jpg'
 import Button from '@mui/material/Button';
 import clsx from 'clsx';
 import Box from '@mui/material/Box';
 import Rating from '@mui/material/Rating';
-import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import stylesBookManger from '../components/CSS/bookManager.module.css';
 import Modal from '@mui/material/Modal';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import CommentAPI from '../api/CommentAPI';
 
 function ButtonOrder({post, st}){
@@ -32,7 +30,6 @@ function ButtonOrder({post, st}){
             numberStart: value,
         }
         try {
-            let comnetRes = await CommentAPI.createComment(post, data);
             setRating(false)
         }
         catch (err) {
@@ -107,16 +104,16 @@ function BookReaderItem({book, idShow}){
         navigate(path);
       }
     };
-    const posts = [
-        {status: "borrowing", button1: "", button2: ""},
-        {status: "refurn", button1: "Mượn lại", button2: "Đánh giá sách"},
-      ];
+    // const posts = [
+    //     {status: "borrowing", button1: "", button2: ""},
+    //     {status: "refurn", button1: "Mượn lại", button2: "Đánh giá sách"},
+    //   ];
     return(
         <div className={styleBookReader.Home}>
             <div className={styleBookReader.content} >
                 <div className={styleBookReader.wraper}>
                     <div className={styleBookReader.tdisplay}>  
-                        { (idShow === 0 && <h3 className={styleBookReader.statusTitle}> {book.status == "borrowing" ? "Đang mượn" : (book.status == "refurn") ? "Đã Trả": "Đang chờ duyệt"} </h3> ) ||                         
+                        { (idShow === 0 && <h3 className={styleBookReader.statusTitle}> {book.status === "borrowing" ? "Đang mượn" : (book.status === "refurn") ? "Đã Trả": "Đang chờ duyệt"} </h3> ) ||                         
                             <p>  </p>
                         }
                     </div>

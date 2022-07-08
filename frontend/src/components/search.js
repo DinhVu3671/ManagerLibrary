@@ -74,7 +74,6 @@ function Search() {
       let bookListRes = res.data;
       setBooks(bookListRes.data);
       setData(bookListRes.data)
-      console.log(bookListRes.data)
     })
     .catch(err => {
       console.log(err)

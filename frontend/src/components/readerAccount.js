@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, memo } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import styles from './CSS/accountReader.module.css';
 import axios from '../config/axios';
@@ -8,15 +8,13 @@ import ImageUploader from './imageUploader';
 import Header from './header';
 import Footer from './footer';
 import imageTest from '../assets/testproduct.jpg'
-import { Button } from '@mui/material';
-import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
-import { Tabs, AppBar } from '@mui/material';
+import { Tabs } from '@mui/material';
 import UsersAPI from '../api/UsersAPI';
 
 function TabInfor(props) {
-  const { children, value, account, ...other } = props;
+  const { value, account } = props;
   const [firstName, setFirstName] = useState('Chuyen De');
   const [email, setEmail] = useState('dtv@gmail.com');
   const [phone, setPhone] = useState('0123456798');
@@ -27,8 +25,6 @@ function TabInfor(props) {
 
   const [success, setSuccess] = useState(false);
 
-  const [repass, setRepass] = useState(false);
-  //console.log(avatarImg);
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -42,16 +38,13 @@ function TabInfor(props) {
     const REGISTER_URL = `/api/v1/register`;
 
     if (errMsg === '') {
-      //console.log(avatarImg);
       let data = {};
-      console.log('submit');
       data = {
         email: email,
         firstName: firstName,
         phoneNumber: phone,
         avatar: avatarImg,
       };
-      console.log(data);
       try {
         const response = await axios.post(REGISTER_URL, JSON.stringify(data), {
           headers: {
@@ -59,8 +52,6 @@ function TabInfor(props) {
           },
           // withCredentials: true,
         });
-        console.log(JSON.stringify(response?.data));
-        console.log(JSON.stringify(response));
         setSuccess(true);
       } catch (err) {
         if (!err?.response) {
@@ -82,7 +73,6 @@ function TabInfor(props) {
     }
   }, [errMsg]);
 
-  console.log(account)
   return (
     <div>
       {value === 0 &&(
@@ -171,118 +161,6 @@ function TabInfor(props) {
                       />
                     </div>
                   </div>
-
-                  {/* <div className={clsx(styles.formRow, styles.row)}>
-
-                    <div className={clsx(styles.formField, styles.col3)}>
-                      <label
-                        htmlFor="gender"
-                        className={clsx(styles.formLabel, styles.row)}
-                      >
-                        Giới tính:
-                      </label>
-                      <div
-                        className={clsx(
-                          styles.formRow,
-                          styles.row,
-                          styles.formGender
-                        )}
-                      >
-                        <div>
-                          <input
-                            type="radio"
-                            id="male"
-                            onChange={() => setGender('male')}
-                            checked={gender === 'male'}
-                          />
-
-                          <label
-                            className={clsx(
-                              styles.genderSelection,
-                              styles.formLabel
-                            )}
-                            htmlFor="male"
-                          >
-                            Nam
-                          </label>
-                        </div>
-
-                        <div>
-                          <input
-                            type="radio"
-                            id="female"
-                            onChange={() => setGender('female')}
-                            checked={gender === 'female'}
-                          />
-                          <label
-                            className={clsx(
-                              styles.genderSelection,
-                              styles.formLabel
-                            )}
-                            htmlFor="female"
-                          >
-                            Nữ
-                          </label>
-                        </div>
-
-                        <div>
-                          <input
-                            type="radio"
-                            id="others"
-                            onChange={() => setGender('others')}
-                            checked={gender === 'others'}
-                          />
-                          <label
-                            className={clsx(
-                              styles.genderSelection,
-                              styles.formLabel
-                            )}
-                            htmlFor="others"
-                          >
-                            Khác
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className={clsx(styles.formField, styles.col3)}>
-                      <label
-                        htmlFor="birthday"
-                        className={clsx(styles.formLabel, styles.row)}
-                      >
-                        Ngày sinh:
-                      </label>
-                      <input
-                        id="birthday"
-                        name="birthday"
-                        min="1900-01-01"
-                        max="2022-01-01"
-                        type="date"
-                        value={birthday}
-                        onChange={(e) => setBirthday(e.target.value)}
-                        className={clsx(styles.formInput, styles.row)}
-                        required
-                      />
-                    </div>
-                    <div className={clsx(styles.formField, styles.col3)}>
-                      <label
-                        htmlFor="address"
-                        className={clsx(styles.formLabel, styles.row)}
-                      >
-                        Địa chỉ:
-                      </label>
-                      <input
-                        id="address"
-                        name="address"
-                        type="text"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        className={clsx(styles.formInput, styles.row)}
-                        placeholder="Địa chỉ..."
-                        required
-                      />
-                    </div>
-                  </div> */}
                 </div>
 
                 <div className={clsx(styles.avatarInput, styles.col)}>
@@ -328,7 +206,6 @@ function TabPassword(props) {
 
   const [success, setSuccess] = useState(false);
 
-  //console.log(avatarImg);
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -352,9 +229,7 @@ function TabPassword(props) {
     }
 
     if (errMsg === '') {
-      //console.log(avatarImg);
       let data = {};
-      console.log('submit');
       const bday = new Date(birthday);
       data = {
         email: email,
@@ -366,7 +241,6 @@ function TabPassword(props) {
         password: password,
         avatar: avatarImg,
       };
-      console.log(data);
       try {
         const response = await axios.post(REGISTER_URL, JSON.stringify(data), {
           headers: {
@@ -374,8 +248,6 @@ function TabPassword(props) {
           },
           // withCredentials: true,
         });
-        console.log(JSON.stringify(response?.data));
-        console.log(JSON.stringify(response));
         setSuccess(true);
       } catch (err) {
         if (!err?.response) {
@@ -519,7 +391,6 @@ function ReaderAccount({navigation, account}) {
 
     function getData(){
       UsersAPI.getUserById(localStorage.getItem('id')).then((res) => {
-        console.log(res.data.data)
         let bookListRes = res.data;
         setUser(bookListRes.data)
       })

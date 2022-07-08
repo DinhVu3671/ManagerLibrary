@@ -170,7 +170,7 @@ function Header() {
         <div>
           <ul className={`${styles.textColor} ${styles.narMenu}`}>
             {listTopic.map((topic) => (
-              <Link className={styles.narItem} to={`/${topic[1]}`}>{topic[0]}</Link>
+              <Link className={styles.narItem} to={`/${topic[1]}`} state={{ param: "None" }}>{topic[0]}</Link>
             ))}
           </ul>
         </div>

@@ -1,25 +1,14 @@
-import React, { useState, useEffect, memo } from 'react';
 import { Link } from 'react-router-dom';
-import axios from '../config/axios';
 import clsx from 'clsx';
 import styles from './CSS/ProductCardCSS.module.scss';
 import Card from '@mui/material/Card';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import StoreIcon from '@mui/icons-material/Store';
 import CardMedia from '@mui/material/CardMedia';
 import Rating from '@mui/material/Rating';
-import bookimg from '../assets/angle.jpg';
 import noImage from '../assets/noImage.png';
 
 
 function BookCardHome({book}) {
-  // const [productInfo, setProductInfo] = useState({
-  //   name: book.name,
-  //   rate: book.re,
-  //   count: 100,
-  //   image:
-  //     'https://res.cloudinary.com/trinhvanthoai/image/upload/v1655489389/thoaiUploads/defaultAvatar_jxx3b9.png',
-  // });
   console.log(book)
   return (
     <Link
@@ -32,7 +21,6 @@ function BookCardHome({book}) {
         <div className={clsx(styles.productImage)}>
           {
             book.images ? <CardMedia
-            // className={clsx(styles.productImage)}
             component="img"
             height="60"
             image={book.images}
@@ -55,7 +43,6 @@ function BookCardHome({book}) {
                 name="half-rating-read"
                 className={clsx(styles.rating)}
                 value={book.numberStar?.$numberDecimal}
-                // defaultValue={book.numberStar}
                 precision={0.1}
                 readOnly
               />

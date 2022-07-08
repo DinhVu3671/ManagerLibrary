@@ -40,7 +40,7 @@ function Search() {
 
   const handleSort = (book1, book2) => {
       if(sort === 'most'){
-        if(Number(book1.availableNumber) < Number(book2.avaiableNumber))
+        if(Number(book1.availableNumber) < Number(book2.availableNumber))
           return -1
         else
           return 1

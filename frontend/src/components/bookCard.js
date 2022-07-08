@@ -18,7 +18,6 @@ function BookCard({ book }) {
   //   image:
   //     'https://res.cloudinary.com/trinhvanthoai/image/upload/v1655489389/thoaiUploads/defaultAvatar_jxx3b9.png',
   // });
-  console.log(book)
   return (
     <Link
       className={clsx(styles.cardContainer)}

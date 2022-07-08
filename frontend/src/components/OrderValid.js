@@ -14,7 +14,6 @@ function OrderValid({navigation}) {
 
   function getData(){
     BorrowBookAPI.outOfDateBorrowbook().then((res) => {
-      //console.log(res.data)
       let bookListRes = res.data;
       setBookBorrowing(bookListRes.data)
       setData(bookListRes.data)
@@ -29,7 +28,6 @@ function OrderValid({navigation}) {
 
   const requestSearch = (searchedVal) => {
     const filteredRows = bookBorrowing?.filter((row) => {
-      console.log(row);
       return row?.user?.fullName?.toLowerCase().includes(searchedVal.toLowerCase());
     });
     setData(filteredRows);
@@ -39,7 +37,6 @@ function OrderValid({navigation}) {
     setSearched("");
     requestSearch(searched);
   };
-  //console.log(bookBorrowing)
     return (
       <div className={styles.Home}>
         <Header navigation={navigation}/>

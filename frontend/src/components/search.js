@@ -2,9 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import styles from './CSS/searchCSS.module.scss';
 import { useEffect, useState, useRef } from 'react';
-import axios from '../config/axios';
 import Header from './header';
-import BookCard from './bookCard';
 
 import Rating from '@mui/material/Rating';
 import Pagination from '@mui/material/Pagination';
@@ -14,25 +12,16 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Button from '@mui/material/Button';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
-import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
-import { useParams } from 'react-router-dom';
 import SearchBar from 'material-ui-search-bar';
 import CategoriesAPI from '../api/CategoriesAPI';
 import BookAPI from '../api/BookAPI';
 import BookCardCart from './bookCardCart';
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
-const defaultImage = 'https://res.cloudinary.com/trinhvanthoai/image/upload/v1655489389/thoaiUploads/defaultAvatar_jxx3b9.png'
+import { useLocation } from 'react-router-dom';
 
 function Search() {
+  const location = useLocation()
+  const { param } = location.state
 
-  //console.log(search);
   const allRating = useRef([5, 4, 3, 2, 1]);
   const allSort = useRef([
     {
@@ -51,7 +40,7 @@ function Search() {
 
   const handleSort = (book1, book2) => {
       if(sort === 'most'){
-        if(Number(book1.availableNumber) > Number(book2.avaiableNumber))
+        if(Number(book1.availableNumber) < Number(book2.availableNumber))
           return -1
         else
           return 1
@@ -75,9 +64,6 @@ function Search() {
 
   //for all data -request once time when component
   const [allCategories, setAllCategories] = useState([]);
-    //data and request data
-    const [productIdList, setProductIdList] = useState([]);
-    const [shopId, setShopId] = useState('');
 
   const [showedCategories, setShowedCategories] = useState([]);
   const [bookList, setBooks] = useState([]);
@@ -88,7 +74,6 @@ function Search() {
       let bookListRes = res.data;
       setBooks(bookListRes.data);
       setData(bookListRes.data)
-      console.log(bookListRes.data)
     })
     .catch(err => {
       console.log(err)
@@ -98,11 +83,17 @@ function Search() {
       setAllCategories(res?.data?.data.map((category) => category?.name))
       setShowedCategories(res?.data?.data.map((category) => category?.name))
     })
+
+    if(param !== "None" && param !== null){
+      console.log(param)
+      setCategories((prev) => {
+          return [...prev, param];
+      });
+    }
   }
   useEffect(() => {
-      getData(); 
+    getData(); 
   }, []);
-  console.log("lii", productIdList)
   const [numPages, setNumPages] = useState(0);
 
   //for changing Filter

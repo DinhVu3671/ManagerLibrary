@@ -14,7 +14,6 @@ function OrderHistory({navigation}) {
 
   function getData(){
     BorrowBookAPI.searchAdmin({typeBorrowBook: "borrowing"}).then((res) => {
-      //console.log(res.data)
       let bookListRes = res.data;
       setBookBorrowing(bookListRes.data)
       setData(bookListRes.data)
@@ -29,7 +28,6 @@ function OrderHistory({navigation}) {
 
   const requestSearch = (searchedVal) => {
     const filteredRows = bookBorrowing?.filter((row) => {
-      console.log(row);
       return row?.user?.fullName?.toLowerCase().includes(searchedVal.toLowerCase());
     });
     setData(filteredRows);

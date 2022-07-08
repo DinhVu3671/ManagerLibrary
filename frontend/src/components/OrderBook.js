@@ -14,7 +14,6 @@ function OrderBook({ navigation }) {
   
   function getData() {
     BorrowBookAPI.searchAdmin({ typeBorrowBook: "await" }).then((res) => {
-      console.log(res.data.data);
       setBooks(res.data.data)
     })
       .catch(err => {

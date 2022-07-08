@@ -63,13 +63,6 @@ function LoginForm(props) {
     try {
       const response = await Login_RegisterAPI.loginCall({phone: user, password: pwd})
        
-        
-      console.log(response?.data);
-
-      // if (response.data.status === 2) {
-      //   setErrMsg('Tên đăng nhập hoặc mật khẩu không đúng.');
-      //   setOpen(true);
-      // } else {
       const data = response?.data;
       // AuthDispatch({ type: "LOGIN_SUCCESS", payload: data});
       localStorage.setItem('token', data.token);

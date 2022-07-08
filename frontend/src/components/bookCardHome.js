@@ -9,7 +9,6 @@ import noImage from '../assets/noImage.png';
 
 
 function BookCardHome({book}) {
-  console.log(book)
   return (
     <Link
       className={clsx(styles.cardContainer)}

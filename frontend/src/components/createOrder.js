@@ -285,7 +285,6 @@ function CreateOrderBook() {
   }, [loading]);
 
   const handleSelectUser = (event, value) => {
-    console.log(value);
     setUserSelect(value._id)
   }
   function TapSeach({users}) {
@@ -379,8 +378,6 @@ function CreateOrderBook() {
     setUserSelect([]);
     setLoading(true);
   }
-  console.log(selected);
-  console.log(userSelect);
   return (
     <div className={stylesOrderBook.Home}>
       <Header />

@@ -41,9 +41,9 @@ function Search() {
   const handleSort = (book1, book2) => {
       if(sort === 'most'){
         if(Number(book1.availableNumber) < Number(book2.avaiableNumber))
-          return true
+          return -1
         else
-          return false
+          return 1
       }
       else if(sort === 'rating'){
         if(Number(book1.numberStar.$numberDecimal) > Number(book2.numberStar.$numberDecimal))

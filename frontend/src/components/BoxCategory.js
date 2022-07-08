@@ -8,7 +8,6 @@ import noImage from '../assets/noImage.png';
 import { Link } from 'react-router-dom';
 
 function BoxCategory({categories}){
-  console.log(categories)
     return (
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 5, md: 5 }}  style={{padding:'5px'}}>
               {categories?.map((category, index) => (

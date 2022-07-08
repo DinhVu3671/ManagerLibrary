@@ -210,7 +210,6 @@ export default function OrderBookItem({books, setSuccess}) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      console.log(books)
       const newSelecteds = books.book.map((n) => n._id);
       setSelected(newSelecteds);
       return;
@@ -257,7 +256,6 @@ export default function OrderBookItem({books, setSuccess}) {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - books.book.length) : 0;
-  // console.log(selected);
   return (
     <div className={styles.Home}>
           <div className={styles.wraper}>

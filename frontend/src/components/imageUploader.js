@@ -22,7 +22,6 @@ function ImageUploader(props) {
       (error, result) => {
         console.log(error);
         if (!error && result && result.event === 'success') {
-          //console.log('Done! Here is the image info: ', result.info);
           props.onAvatarChange(result.info.url);
         }
       }
@@ -37,18 +36,7 @@ function ImageUploader(props) {
       },
       false
     );
-    // return () => {
-    //   document.getElementById('upload_widget').removeEventListener(
-    //     'click',
-    //     function () {
-    //       myWidget.open();
-    //     },
-    //     false
-    //   );
-    // };
   }, []);
-
-  // console.log(props.avatarImg);
 
   return (
     <div id="upload_widget" className={styles.avatarContainer}>

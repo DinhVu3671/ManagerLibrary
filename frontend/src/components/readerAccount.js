@@ -16,8 +16,8 @@ import UsersAPI from '../api/UsersAPI';
 function TabInfor(props) {
   const { value, account } = props;
   const [firstName, setFirstName] = useState('Chuyen De');
-  const [email, setEmail] = useState('dtv@gmail.com');
-  const [phone, setPhone] = useState('0123456798');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [avatarImg, setAvatarImg] = useState(imageTest);
   const [errMsg, setErrMsg] = useState('');
 
@@ -35,23 +35,15 @@ function TabInfor(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const REGISTER_URL = `/api/v1/register`;
-
+  
     if (errMsg === '') {
       let data = {};
       data = {
-        email: email,
-        firstName: firstName,
-        phoneNumber: phone,
-        avatar: avatarImg,
+        gmail: email,
+        fullName: firstName,
       };
       try {
-        const response = await axios.post(REGISTER_URL, JSON.stringify(data), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          // withCredentials: true,
-        });
+        const response = await UsersAPI.editUserInfo(data);
         setSuccess(true);
       } catch (err) {
         if (!err?.response) {

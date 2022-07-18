@@ -235,7 +235,7 @@ function CreateReturnBook({ route, navigation }) {
   const {state} = useLocation();
   const { user, listBook } = state;
   const [success, setSuccess] = useState(false);
-
+  const [statusAlert, setStatusAlert] = useState("");
 
   useEffect(() => {
     setData(listBook); 
@@ -315,9 +315,11 @@ function CreateReturnBook({ route, navigation }) {
     try{
       BorrowBookAPI.refurnBorrowBook({idBooks: selected,idUser: user._id});
       setSuccess(true);
+      setStatusAlert("success")
       navigate("/returnBookManager");
     } catch (err) {
-      console.log(err)
+      console.log(err);
+      setSuccess(true);
     }
  
   }
@@ -328,10 +330,10 @@ function CreateReturnBook({ route, navigation }) {
       <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
         <Alert
           onClose={() => setSuccess(false)}
-          severity="success"
+          severity={statusAlert}
           sx={{ width: '100%' }}
         >
-         Đã thêm thành công
+         {statusAlert == "success" ? "Đã trả thành công" : "Không tìm thấy quyển sách này đã mượn"}
         </Alert>
       </Snackbar>
       <div className={stylesOrderBook.content} >

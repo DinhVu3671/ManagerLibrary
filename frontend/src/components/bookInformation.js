@@ -59,11 +59,40 @@ function BookInformation({navigation}) {
         sessionStorage.setItem("listBook", JSON.stringify(data));
       }
       else {
-        listBook.push(bookInfo);
-        sessionStorage.setItem("listBook", JSON.stringify(listBook));
+        let check = false;
+          listBook.map((item) => {
+              if (item._id == bookInfo._id) {
+                  check = true;
+              }
+          });
+          if(!check) {
+              listBook.push(bookInfo);
+              sessionStorage.setItem("listBook", JSON.stringify(listBook));
+          }
       }
     }
-    console.log(bookInfo)
+    const handleBorrowAplly = () => {
+      let data = [];
+      data.push(bookInfo);
+      let listBook = JSON.parse(sessionStorage.getItem("listBook"));
+      if(!listBook) {
+        sessionStorage.setItem("listBook", JSON.stringify(data));
+      }
+      else {
+          let check = false;
+          listBook.map((item) => {
+              if (item._id == bookInfo._id) {
+                  check = true;
+              }
+          });
+          if(!check) {
+              listBook.push(bookInfo);
+              sessionStorage.setItem("listBook", JSON.stringify(listBook));
+          }
+      }
+      navigatePath("/cartBook")
+    }
+    // console.log(bookInfo)
     return (
       <div className={styles.Home}>
         <Header navigation={navigation}/>
@@ -126,7 +155,7 @@ function BookInformation({navigation}) {
 
                 <div>
                   <Button onClick={handleBorrow}> Thêm vào danh sách mượn </Button>
-                  <Button onClick={() => {navigatePath("/cartBook")}}> Mượn ngay </Button>
+                  <Button onClick={handleBorrowAplly}> Mượn ngay </Button>
                 </div>
                 <div className={stylesBook.footFake}>
                   <p>  </p>

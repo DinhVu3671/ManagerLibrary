@@ -28,6 +28,8 @@ import styles from '../screens/CSS/home.module.css';
 import stylesBook from '../components/CSS/BookInformation.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import BorrowBookAPI from '../api/BorrowBookAPI';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 
 
@@ -177,16 +179,16 @@ const EnhancedTableToolbar = (props) => {
           Chưa chọn sách nào
         </Typography>
       )}
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+      <Tooltip title="Filter list">
+        <IconButton>
+          <FilterListIcon />
+        </IconButton>
+      </Tooltip>
     </Toolbar>
   );
 };
 
-export default function OrderBookItem({books, setSuccess}) {
+export default function OrderBookItem({ books, setSuccess }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected, setSelected] = useState([]);
@@ -249,7 +251,7 @@ export default function OrderBookItem({books, setSuccess}) {
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const handleAccept = async () => {
-    BorrowBookAPI.acceptBorrowBook({idBooks: selected, idUser: books.user._id});
+    BorrowBookAPI.acceptBorrowBook({ idBooks: selected, idUser: books.user._id });
     setSuccess(true);
     setSelected([]);
   }
@@ -258,101 +260,110 @@ export default function OrderBookItem({books, setSuccess}) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - books.book.length) : 0;
   return (
     <div className={styles.Home}>
-          <div className={styles.wraper}>
-              <div className={styles.tdisplay2}>  
-                  <div style={{display: 'flex'}}>          
-                    <p>Họ tên: {books?.user?.fullName}</p>
-                    <p style={{marginLeft : '100px'}}>SĐT: {books.user.phone}</p>
-                  </div>
-
-                  <Box sx={{ width: '100%' }}>
-                  <Paper sx={{ width: '100%', mb: 2 }}>
-                      <EnhancedTableToolbar numSelected={selected.length} />
-                      <TableContainer>
-                      <Table
-                          sx={{ minWidth: 750 }}
-                          aria-labelledby="tableTitle"
-                          size={'medium'}
-                      >
-                          <EnhancedTableHead
-                          numSelected={selected.length}
-                          order={order}
-                          orderBy={orderBy}
-                          onSelectAllClick={handleSelectAllClick}
-                          onRequestSort={handleRequestSort}
-                          rowCount={books.book.length}
-                          />
-                          <TableBody>
-                          {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-                          rows.slice().sort(getComparator(order, orderBy)) */}
-                          {books.book.slice().sort(getComparator(order, orderBy))
-                              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                              .map((row, index) => {
-                              const isItemSelected = isSelected(row._id);
-                              const labelId = `enhanced-table-checkbox-${index}`;
-
-                              return (
-                                  <TableRow
-                                  hover
-                                  onClick={(event) => handleClick(event, row._id)}
-                                  role="checkbox"
-                                  aria-checked={isItemSelected}
-                                  tabIndex={-1}
-                                  key={row._id}
-                                  selected={isItemSelected}
-                                  >
-                                  <TableCell padding="checkbox">
-                                      <Checkbox
-                                      color="primary"
-                                      checked={isItemSelected}
-                                      inputProps={{
-                                          'aria-labelledby': labelId,
-                                      }}
-                                      />
-                                  </TableCell>
-                                  <TableCell
-                                      component="th"
-                                      id={labelId}
-                                      scope="row"
-                                      padding="none"
-                                      onClick={()=>{navigatePath(`/book/${row._id}`)}}
-                                  >
-                                      {row.title}
-                                  </TableCell>
-                                  <TableCell align="right">{row.categories ? (row.categories)[0].name : null}</TableCell>
-                                  <TableCell align="right">{row.author}</TableCell>
-                                  <TableCell align="right">{row.availableNumber}</TableCell>
-                                  <TableCell align="right">{(new Date(row.updatedAt)).toLocaleString()}</TableCell>
-                                  </TableRow>
-                              );
-                              })}
-                              {emptyRows > 0 && (
-                                  <TableRow
-                                  >
-
-                                  </TableRow>
-                                  )}
-                          </TableBody>
-                      </Table>
-                      </TableContainer>
-                      <TablePagination
-                      rowsPerPageOptions={[5, 10, 15]}
-                      component="div"
-                      count={books.book.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                      />
-                  </Paper>
-                  <div className={stylesBook.buttonM}>
-                      <Button color="success" onClick={handleAccept}> Đồng ý </Button>                            
-                      <Button color="error"> Từ chối </Button>                            
-                  </div>
-
-                  </Box>
-              </div>
+      {/* <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
+        <Alert
+          onClose={() => setSuccess(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          Đã thêm thành công
+        </Alert>
+      </Snackbar> */}
+      <div className={styles.wraper}>
+        <div className={styles.tdisplay2}>
+          <div style={{ display: 'flex' }}>
+            <p>Họ tên: {books?.user?.fullName}</p>
+            <p style={{ marginLeft: '100px' }}>SĐT: {books.user.phone}</p>
           </div>
+
+          <Box sx={{ width: '100%' }}>
+            <Paper sx={{ width: '100%', mb: 2 }}>
+              <EnhancedTableToolbar numSelected={selected.length} />
+              <TableContainer>
+                <Table
+                  sx={{ minWidth: 750 }}
+                  aria-labelledby="tableTitle"
+                  size={'medium'}
+                >
+                  <EnhancedTableHead
+                    numSelected={selected.length}
+                    order={order}
+                    orderBy={orderBy}
+                    onSelectAllClick={handleSelectAllClick}
+                    onRequestSort={handleRequestSort}
+                    rowCount={books.book.length}
+                  />
+                  <TableBody>
+                    {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+                          rows.slice().sort(getComparator(order, orderBy)) */}
+                    {books.book.slice().sort(getComparator(order, orderBy))
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((row, index) => {
+                        const isItemSelected = isSelected(row._id);
+                        const labelId = `enhanced-table-checkbox-${index}`;
+
+                        return (
+                          <TableRow
+                            hover
+                            onClick={(event) => handleClick(event, row._id)}
+                            role="checkbox"
+                            aria-checked={isItemSelected}
+                            tabIndex={-1}
+                            key={row._id}
+                            selected={isItemSelected}
+                          >
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                color="primary"
+                                checked={isItemSelected}
+                                inputProps={{
+                                  'aria-labelledby': labelId,
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell
+                              component="th"
+                              id={labelId}
+                              scope="row"
+                              padding="none"
+                              onClick={() => { navigatePath(`/book/${row._id}`) }}
+                            >
+                              {row.title}
+                            </TableCell>
+                            <TableCell align="right">{row.categories ? (row.categories)[0].name : null}</TableCell>
+                            <TableCell align="right">{row.author}</TableCell>
+                            <TableCell align="right">{row.availableNumber}</TableCell>
+                            <TableCell align="right">{(new Date(row.updatedAt)).toLocaleString()}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    {emptyRows > 0 && (
+                      <TableRow
+                      >
+
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 15]}
+                component="div"
+                count={books.book.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </Paper>
+            <div className={stylesBook.buttonM}>
+              <Button color="success" onClick={handleAccept}> Đồng ý </Button>
+              <Button color="error"> Từ chối </Button>
+            </div>
+
+          </Box>
+        </div>
+      </div>
     </div>
   );
 }

@@ -12,7 +12,7 @@ function BoxCategory({categories}){
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 5, md: 5 }}  style={{padding:'5px'}}>
               {categories?.map((category, index) => (
                 <Grid item xs={1} sm={1} ml={4} md={1} key={index}>
-                  <Link to="/search" state={{ param: category?.name }}>
+                  <Link to="/search" state={{ param: category?.name }} style={{textDecoration: 'none'}}>
                     <Card sx={{ maxWidth: 200, minWidth: 200}}
                     >
                       <CardActionArea>
@@ -23,8 +23,8 @@ function BoxCategory({categories}){
                           alt="green iguana"
                         />
                         <CardContent>
-                          <Typography gutterBottom variant="h5" component="div" fontSize={15}>
-                            <p>{category.name}</p>
+                          <Typography gutterBottom variant="h5" component="div" fontSize={15} >
+                            <p style={{fontWeight: 600}}>{category.name}</p>
                             <p>Tổng: {category.total} quyển</p>
                           </Typography>
                         </CardContent>

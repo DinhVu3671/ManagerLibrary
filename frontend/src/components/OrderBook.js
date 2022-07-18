@@ -32,7 +32,7 @@ function OrderBook({ navigation }) {
           severity="success"
           sx={{ width: '100%' }}
         >
-          Đã thêm thành công
+          Đã duyệt sách mượn thành công
         </Alert>
       </Snackbar>
       <div className={styles.content} >

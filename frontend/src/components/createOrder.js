@@ -34,6 +34,8 @@ import SearchBar from "material-ui-search-bar";
 import BookAPI from '../api/BookAPI';
 import BorrowBookAPI from '../api/BorrowBookAPI';
 import UsersAPI from '../api/UsersAPI';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 //
 
@@ -261,6 +263,9 @@ function CreateOrderBook() {
   const [searched, setSearched] = useState("");
   const classes = useStyles();
 
+  const [success, setSuccess] = useState(false);
+  const [statusAlert, setStatusAlert] = useState("");
+
 
   function getData() {
     BookAPI.listBook().then((res) => {
@@ -373,14 +378,33 @@ function CreateOrderBook() {
   //
 
   const handleSubmitOrder = () => {
-    BorrowBookAPI.createBook({idBooks: selected, idUser: userSelect});
-    setSelected([]);
-    setUserSelect([]);
-    setLoading(true);
+
+    try{
+      BorrowBookAPI.createBook({idBooks: selected, idUser: userSelect});
+      setSelected([]);
+      setUserSelect([]);
+      setLoading(true);
+      setSuccess(true);
+      setStatusAlert("success");
+    }
+    catch(error) {
+      console.log(error);
+      setSuccess(true);
+      setStatusAlert("error");
+    }
   }
   return (
     <div className={stylesOrderBook.Home}>
       <Header />
+      <Snackbar open={success} autoHideDuration={3000} onClose={() => setSuccess(false)}>
+        <Alert
+          onClose={() => setSuccess(false)}
+          severity={statusAlert}
+          sx={{ width: '100%' }}
+        >
+         {statusAlert == "success" ? "Đã tạo đơn mượn thành công" : "Tồn tại quyển sách đang mượn"}
+        </Alert>
+      </Snackbar>
       <div className={stylesOrderBook.content} >
         <div className={stylesOrderBook.tab1} >
           <InformationTab />

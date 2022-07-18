@@ -199,6 +199,7 @@ function BookManager(books) {
   // info
   const [errMsg, setErrMsg] = useState('');
   const [success, setSuccess] = useState(false);
+  const [contents, setContents] = useState('');
   //console.log(avatarImg);
 
   const [page, setPage] = useState(0);
@@ -266,10 +267,12 @@ function BookManager(books) {
         if (!openInforBook) {
           const response = await BookAPI.createBook(data);
           setSuccess(true);
+          setContents("thêm sách");
           setOpen(false);
         } else {
           const response = await BookAPI.editBook(data, id);
           setSuccess(true);
+          setContents("chỉnh sửa");
           setOpen(false);
         }
       } catch (err) {
@@ -287,17 +290,18 @@ function BookManager(books) {
 
   const handleAddCategory = async () => {
     try {
-      console.log(newCategory);
+      // console.log(newCategory);
       const response = await CategoriesAPI.createCategory({ name: newCategory });
       console.log(JSON.stringify(response?.data));
-      // console.log(JSON.stringify(response));
+      setSuccess(true);
+      setContents("thêm danh mục");
       setOpenCategory(false);
     } catch (err) {
       if (!err?.response) {
         setErrMsg('No Server Response');
         // setOpen(true);
       } else {
-        setErrMsg('Thêm sách.');
+        setErrMsg('Thêm danh mục.');
         console.log(err);
         // setOpen(true);
       }
@@ -344,7 +348,7 @@ function BookManager(books) {
           severity="success"
           sx={{ width: '100%' }}
         >
-         Đã thêm thành công
+         Đã {contents} thành công
         </Alert>
       </Snackbar>
       <Header />
@@ -641,8 +645,8 @@ function BookManager(books) {
                 />
               </div>
 
-              <Button href="#text-buttons" onClick={handleOpenNewCategory}>Thêm danh mục</Button>
-              <Button href="#text-buttons" onClick={handleOpen}>Thêm sách</Button>
+              <Button onClick={handleOpenNewCategory}>Thêm danh mục</Button>
+              <Button onClick={handleOpen}>Thêm sách</Button>
             </div>
 
             <TableContainer component={Paper}>

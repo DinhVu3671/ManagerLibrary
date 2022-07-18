@@ -262,9 +262,8 @@ borrowBookController.awaitBorrowBook = async (req, res, next) => {
         if(idBooks.length > 0) {
             let responsive = [];
             idBooks.map(async (item) => {
-                console.log(item);
-                console.log(idUser);
                 let checkDuplicate = await BorrowBookModel.find({book: item, user: idUser, status: {$in: ["borrowing", "await"]}}).exec();
+                console.log(checkDuplicate);
                 if (checkDuplicate.length > 0) {
                     console.log(checkDuplicate);
                     return res.status(httpStatus.NOT_ACCEPTABLE).json({message: "Tồn tại quyển sách đã mượn hoặc đang chờ mượn", id: item});

@@ -1,4 +1,5 @@
 const BookModel = require("../model/Books");
+const CategoriesModel = require("../model/Categories")
 const RatingModel = require("../model/Rating");
 const httpStatus = require("../utils/httpStatus");
 
@@ -14,12 +15,6 @@ booksController.create = async (req, res, next) => {
             description,
             publishYear,
         } = req.body;
-        // let dataImages = [];
-        // if (Array.isArray(images)) {
-        //     for (const image of images) {
-        //          dataImages.push(image)
-        //     }
-        // }
         const book = new BookModel({
             title: title,
             status: total > 0 ? "Available" : "UnAvailable",
@@ -35,6 +30,12 @@ booksController.create = async (req, res, next) => {
         });
 
         let bookSaved = (await book.save());
+        let category = await CategoriesModel.findById(categories);
+        let categoryUpdate = await CategoriesModel.findByIdAndUpdate(categories, {
+            total: String(Number(category.total) + 1)
+
+        })
+        
         // const rating = new RatingModel({
         //     book: bookSaved._id,
         //     numberStar: 0,

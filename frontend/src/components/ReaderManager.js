@@ -57,8 +57,24 @@ const useStyles = makeStyles({
   }
 });
 
+const rows = [
+  createData('Đinh Tiến Vũ', "dtv@gmail.com", "031212542","Jun-24-2022 14:43"),
+  createData('Đinh Vũ Tiến', "dvt@gmail.com", "012331342","Jun-25-2022 11:13"),
+  createData('Tiến Đinh Vũ', "tdv@gmail.com", "213443241","Jun-21-2022 14:03"),
+  createData('Tiến Vũ Đinh', "tvd@gmail.com", "324124123","Jun-27-2022 16:13"),
+  createData('Vũ Tiến Đinh', "vtd@gmail.com", "123412344","Jun-22-2022 11:43"),
+  createData('Vũ Đinh Tiến', "vdt@gmail.com", "423532345","Jun-29-2022 19:21"),
+];
 
-
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
 
 let Order = 'asc' | 'desc';
 
@@ -70,9 +86,81 @@ function getComparator(order, orderBy) {
 
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
+function stableSort(array, comparator) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+}
+
+const headCells = [
+  {
+    id: 'name',
+    numeric: false,
+    disablePadding: true,
+    label: 'Họ tên',
+  },
+  {
+    id: 'email',
+    numeric: false,
+    disablePadding: false,
+    label: 'Email',
+  },
+  {
+    id: 'phone',
+    numeric: false,
+    disablePadding: false,
+    label: 'Số điện thoại',
+  },
+  {
+    id: 'lastUpdate',
+    numeric: false,
+    disablePadding: false,
+    label: 'Cập nhật lần cuối',
+  },
+];
 
 
+function EnhancedTableHead(props) {
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const createSortHandler =
+    (property) => (event) => {
+      onRequestSort(event, property);
+    };
 
+  return (
+    <TableHead>
+      <TableRow>
+        {headCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align='left'
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+}
 
 function ReaderManager() {
     const [order, setOrder] = useState('asc');
